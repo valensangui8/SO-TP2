@@ -1,4 +1,4 @@
-#include "./test/test_util.h"
+#include "test_util.h"
 #include "memoryManagerADT.h"
 #include "syscall.h"
 #include <stdio.h>
