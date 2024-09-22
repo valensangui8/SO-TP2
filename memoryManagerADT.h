@@ -4,18 +4,18 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define MEM_ADDRESS 0x50000 // del manual pure64 aca esta free
-// #define MEM_ADDRESS 0x100000	// recomienda usar pure64
+#define MEM_ADDRESS 0x50000
+#define MEM_ADDRESS_MAX 0x9FFFF
 
-#define BLOCK_SIZE 10
-#define GET_BLOCKS(mem) (mem / BLOCK_SIZE)
-#define MEM_BLOCK(blocks) (blocks * BLOCK_SIZE)
+#define BLOCK_SIZE 50
+#define TOTAL_BLOCKS 20
 #define FREE 0
+#define USED 1
 
 typedef struct MemoryManagerCDT *MemoryManagerADT;
 
 MemoryManagerADT init_memory_manager(uint64_t size, void *start_address);
 void *alloc_memory(MemoryManagerADT memory, uint64_t size);
-void free_memory(MemoryManagerADT memory, void *ptr, uint64_t size);
+void free_memory(MemoryManagerADT memory, void *ptr);
 
 #endif

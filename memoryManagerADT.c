@@ -1,67 +1,70 @@
 #include "memoryManagerADT.h"
+#include <stdio.h>
 
 typedef struct MemoryInfo {
-	uint64_t free_blocks;
-	uint64_t used_blocks;
-	uint64_t total_blocks;
-	uint64_t free_memory;
-	uint64_t used_memory;
+	void *free_blocks[TOTAL_BLOCKS];
+	int current;
 } MemoryInfo;
 
-typedef struct MemoryManagerCDT {
+struct MemoryManagerCDT {
 	uint64_t size;
 	void *start_address;
-	int index;
 	MemoryInfo info;
 };
 
-void init_memory_info(MemoryInfo *memory_info, uint64_t size) {
-	uint64_t blocks = GET_BLOCKS(size);
-	memory_info->free_blocks = blocks;
-	memory_info->total_blocks = blocks;
-	memory_info->used_blocks = 0;
-	memory_info->free_memory = size;
-	memory_info->used_memory = 0;
+static int check_already_free(MemoryManagerADT memory, void *ptr);
+static int free_blocks_remaining(MemoryInfo *memory_info);
+
+void init_memory_info(MemoryInfo *memory_info, void *start) {
+	memory_info->current = 0;
+	for (int i = 0; i < TOTAL_BLOCKS - 1; i++) {
+		memory_info->free_blocks[i] = start + BLOCK_SIZE * i;
+	}
 }
 
 MemoryManagerADT init_memory_manager(uint64_t size, void *start_address) {
-	MemoryManagerADT new_memory = (MemoryManagerADT) MEM_ADDRESS; // Memory manager is assigned to the free memory
+	if ((uintptr_t) start_address > MEM_ADDRESS_MAX || (uintptr_t) start_address < MEM_ADDRESS) {
+		return NULL;
+	}
+	MemoryManagerADT new_memory = (MemoryManagerADT) MEM_ADDRESS;
 	new_memory->start_address = start_address;
 	new_memory->size = size;
-	new_memory->index = 0;
-	init_memory_block_info(&(new_memory->info), size);
+	init_memory_info(&(new_memory->info), start_address);
 	return new_memory;
 }
-// ver tema de como saber que no esta ocupado ya
-void *alloc_memory(MemoryManagerADT memory, uint64_t size) {
-	uint64_t blocks = (size + BLOCK_SIZE - 1) / BLOCK_SIZE;
 
-	if (memory->index + blocks <= memory->info.total_blocks && memory->info.free_blocks >= blocks) {
-		// uso char para usar bytes
-		void *allocated_address = (uint8_t *) memory->start_address + (memory->index * (blocks));
-		memory->info.free_blocks -= blocks;
-		memory->info.used_blocks += blocks;
-		memory->info.free_memory -= MEM_BLOCK(blocks);
-		memory->info.used_memory += MEM_BLOCK(blocks);
-		memory->index += blocks;
-		return allocated_address;
+void *alloc_memory(MemoryManagerADT memory, uint64_t size) {
+	int free_blocks = free_blocks_remaining(&(memory->info));
+	int needed_blocks;
+	if (free_blocks == 0 || (needed_blocks = (size + BLOCK_SIZE - 1) / BLOCK_SIZE) > free_blocks) {
+		return NULL;
 	}
-	return NULL;
+	void *ret_ptr = memory->info.free_blocks[memory->info.current];
+	memory->info.current += needed_blocks;
+	return ret_ptr;
 }
-// check tema de doble free como saber si ya se libero o no
-void free_memory(MemoryManagerADT memory, void *ptr, uint64_t size) {
-	if (ptr < memory->start_address || ptr >= (uint64_t *) memory->start_address + (memory->size)) {
-		// error
+
+void free_memory(MemoryManagerADT memory, void *ptr) {
+	if (ptr > memory->size + memory->start_address || ptr < memory->start_address || memory->info.current == 0) {
+		// error no es válido el puntero
 		return;
 	}
+	if (check_already_free(memory, ptr) == 1) {
+		// doble free
+		return;
+	}
+	memory->info.free_blocks[--(memory->info.current)] = ptr;
+}
 
-	uint64_t offset = (uint64_t *) ptr - (uint64_t *) memory->start_address;
-	uint64_t block_index = GET_BLOCKS(offset);
-	uint64_t blocks_to_free = GET_BLOCKS(size);
+int check_already_free(MemoryManagerADT memory, void *ptr) {
+	for (int i = 0; i < free_blocks_remaining(&(memory->info)); i++) {
+		if (memory->info.free_blocks[i] == ptr) {
+			return 1;
+		}
+	}
+	return 0;
+}
 
-	memory->index = block_index;
-	memory->info.free_blocks += blocks_to_free;
-	memory->info.used_blocks -= blocks_to_free;
-	memory->info.free_memory += size;
-	memory->info.used_memory -= size;
+int free_blocks_remaining(MemoryInfo *memory_info) {
+	return TOTAL_BLOCKS - memory_info->current;
 }
