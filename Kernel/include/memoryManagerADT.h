@@ -3,9 +3,9 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "utils.h"
 
-#define MEM_ADDRESS 0x50000
-#define MEM_ADDRESS_MAX 0x9FFFF
+
 #define SIZE_MEM 0x10000
 
 #define BLOCK_SIZE 0x400
