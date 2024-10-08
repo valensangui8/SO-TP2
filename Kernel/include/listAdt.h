@@ -7,6 +7,4 @@ typedef struct Node {
 	struct Node *next;
 } Node;
 
-
-
 #endif

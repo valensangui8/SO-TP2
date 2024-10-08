@@ -6,18 +6,18 @@
 #include <stdint.h>
 #include <videoDriver.h>
 // structure of registers that will be saved in the snapshot and interrupts
-typedef struct registerStructT{
+typedef struct registerStructT {
 	uint64_t rax, rbx, rcx, rdx;
 	uint64_t rsi, rdi, rbp, rsp;
-	uint64_t  r8,  r9, r10, r11;
+	uint64_t r8, r9, r10, r11;
 	uint64_t r12, r13, r14, r15;
 	uint64_t ss, cs, rflags, rip;
 } registerStructT;
 
 #include <interrupts.h>
 
-extern registerStructT * registers;
+extern registerStructT *registers;
 extern int flag_screenShot;
 
-void printRegisters(registerStructT * registers);
+void printRegisters(registerStructT *registers);
 #endif /* _REGISTERS_H */
