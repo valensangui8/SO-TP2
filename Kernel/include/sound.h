@@ -1,7 +1,6 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-
 #include <lib.h>
 #include <stdint.h>
 #include <time.h>
