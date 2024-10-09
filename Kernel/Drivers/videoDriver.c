@@ -301,9 +301,11 @@ void updateAfterCommand() {
 
 /////////////////DELETE////////////////////
 
+//tp
+
 // function to delete a character
 void delete() {
-	if (x <= 21 * 8 * scale && flag_enter == 1) {
+	if (x <= 16 * 8 * scale && flag_enter == 1) {
 		return;
 	}
 	if (x < WIDTH_FONT * scale) {

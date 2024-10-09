@@ -51,11 +51,11 @@ void *initializeKernelBinary() {
 int main() {
 	load_idt();
 
-	start();
-	sleep(1000);
-	start();
+	// start();
+	// sleep(1000);
+	// start();
 
-	clear();
+	// clear();
 
 	initialize();
 
