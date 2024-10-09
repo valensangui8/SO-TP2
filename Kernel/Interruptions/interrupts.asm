@@ -203,23 +203,20 @@ _irq80Handler:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-	irqHandlerMaster 0
+	pushState
 
+	mov rdi, 0 ; pasaje de parametro
+	call irqDispatcher
 
-;	pushState
-;
-;	mov rdi, 0 ; pasaje de parametro
-;	call irqDispatcher
-;
-;	mov rdi, rsp
-;	call schedule
-;	mov rsp, rax
-;
-;	mov al, 20h
-;	out 20h, al
-;
-;	popState
-;	iretq
+	mov rdi, rsp
+	call schedule
+	mov rsp, rax
+
+	mov al, 20h
+	out 20h, al
+
+	popState
+	iretq
 
 ;Keyboard
 _irq01Handler:
