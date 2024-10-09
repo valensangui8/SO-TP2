@@ -63,7 +63,7 @@ void add_process(PCBT *process) {
 			for (int j = 0; j < MAX_PROCESS * PRIORITY4 && inserted < priority; j++) {
 				int index = (start_index + j) % (MAX_PROCESS * PRIORITY4);
 
-				if (scheduler->round_robin[index] == NULL) { // Place the process in the free slot
+				if (scheduler->round_robin[index] == NULL || scheduler->round_robin[index]->state == DEAD) { // Place the process in the free slot
 					scheduler->round_robin[index] = process;
 					inserted++;
 
