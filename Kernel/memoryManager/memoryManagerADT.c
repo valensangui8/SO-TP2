@@ -1,6 +1,8 @@
 #include "memoryManagerADT.h"
 #include "videoDriver.h"
-#include <stdio.h>
+
+#include "utils.h"
+
 
 typedef struct MemoryInfo {
 	void *free_blocks[TOTAL_BLOCKS];
