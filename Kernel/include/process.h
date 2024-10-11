@@ -5,23 +5,18 @@
 #include <stdint.h>
 #include <utils.h>
 
-#define DESCRIPTORS 3
+
 #define IDLE_PID 0
 
-typedef struct PCB {
-	char name[32];
-	uint16_t pid;
-	uint16_t ppid;
-	Priority priority;
-	PCBState state;
-	int16_t file_descriptors[DESCRIPTORS];
-	void *stack_base;
-	void *stack_pointer;
-} PCBT;
-
-void init_procces(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, PCBState state, int16_t file_descriptors[], void *stack_base, void *stack_pointer);
+void init_procces(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, PCBState state, void *stack_pointer, char foreground, char **argv, int argc);
 uint8_t has_children(unsigned int pid);
 void wait_children(unsigned int ppid);
 uint8_t kill_process(unsigned int pid);
+void yield();
+void run_process(PCBT *process);
+void unblock_process(unsigned int pid);
+void block_process(unsigned int pid);
+void update_priority(unsigned int pid, Priority new_priority);
+void update_process_stack(void *sp);
 
 #endif

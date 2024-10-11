@@ -27,7 +27,7 @@ void init_memory_info(MemoryInfo *memory_info, void *start) {
 }
 
 MemoryManagerADT init_memory_manager(uint64_t size, void *start_address) {
-	if ((uintptr_t) start_address > FREE_MEM_ADDRESS_MAX || (uintptr_t) start_address < MM_ADDRESS) {
+	if ((uintptr_t) start_address > MEM_ADDRESS_MAX || (uintptr_t) start_address < MM_ADDRESS) {
 		return NULL;
 	}
 	MemoryManagerADT new_memory = (MemoryManagerADT) MM_ADDRESS;

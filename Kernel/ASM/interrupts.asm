@@ -26,6 +26,7 @@ EXTERN exceptionDispatcher
 EXTERN retUserland
 EXTERN getStackBase
 EXTERN printRegisters
+EXTERN scheduler
 
 SECTION .text
 
@@ -204,22 +205,20 @@ _irq80Handler:
 ;8254 Timer (Timer Tick)
 _irq00Handler:
 	irqHandlerMaster 0
+	pushState
+;
+	mov rdi, 0 ; pasaje de parametro
+	call irqDispatcher
 
+	mov rdi, rsp
+	call scheduler
+	mov rsp, rax
 
-;	pushState
-;
-;	mov rdi, 0 ; pasaje de parametro
-;	call irqDispatcher
-;
-;	mov rdi, rsp
-;	call schedule
-;	mov rsp, rax
-;
-;	mov al, 20h
-;	out 20h, al
-;
-;	popState
-;	iretq
+	mov al, 20h
+	out 20h, al
+
+	popState
+	iretq
 
 ;Keyboard
 _irq01Handler:
