@@ -207,8 +207,8 @@ _irq00Handler:
 
 	irqHandlerMaster 0
 	pushState
-;
-	mov rdi, 0 ; pasaje de parametro
+
+	mov rdi, 0 
 	call irqDispatcher
 
 	mov rdi, rsp

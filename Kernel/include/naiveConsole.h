@@ -1,5 +1,5 @@
-#ifndef NAIVE_CONSOLE_H
-#define NAIVE_CONSOLE_H
+#ifndef _NAIVE_CONSOLE_H
+#define _NAIVE_CONSOLE_H
 
 #include <stdint.h>
 

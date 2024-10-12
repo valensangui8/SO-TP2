@@ -7,6 +7,7 @@
 #include <string.h>
 #include <time.h>
 #include <videoDriver.h>
+#include <utils.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -23,7 +24,7 @@ static void *const sampleDataModuleAddress = (void *) 0x500000;
 typedef int (*EntryPoint)();
 
 void clearBSS(void *bssAddress, uint64_t bssSize) {
-	memset(bssAddress, 0, bssSize);
+	my_memset(bssAddress, 0, bssSize);
 }
 
 void *getStackBase() {
@@ -41,27 +42,45 @@ void *initializeKernelBinary() {
 		sampleDataModuleAddress};
 
 	uint64_t userspace_mem = loadModules(&endOfKernelBinary, moduleAddresses);
-	MemoryManagerADT mm = init_memory_manager(SIZE_MEM, sampleDataModuleAddress + userspace_mem);
+
+
 
 	clearBSS(&bss, &endOfKernel - &bss);
+
+	MemoryManagerADT mm = init_memory_manager(SIZE_MEM, sampleDataModuleAddress + userspace_mem);
+	create_scheduler();
 
 	return getStackBase();
 }
 
+void idle_process(){
+    while(1){
+        _hlt();
+    }
+}
+
 int main() {
+
 	load_idt();
 
-	start();
-	sleep(1000);
-	start();
+	create_process("shell", 0, 0, PRIORITY0, READY, FOREGROUND, NULL, 0, (main_function) ((EntryPoint) sampleCodeModuleAddress)());
 
-	clear();
+	create_process("idle", 1, 0, PRIORITY0, RUNNING, FOREGROUND, NULL, 0, (main_function) idle_process);
 
-	initialize();
+	
 
-	((EntryPoint) sampleCodeModuleAddress)();
+	// start();
+	// sleep(1000);
+	// start();
 
-	while (1)
-		;
+	// clear();
+
+	//initialize();
+
+	
+
+	//((EntryPoint) sampleCodeModuleAddress)();
+
+	//while (1);
 	return 0;
 }

@@ -1,5 +1,5 @@
-#ifndef BUF_KB_H
-#define BUF_KB_H
+#ifndef _BUFKB_H
+#define _BUFKB_H
 
 #define SIZE 4096
 

@@ -1,5 +1,5 @@
-#ifndef SOUND_H
-#define SOUND_H
+#ifndef _SOUND_H
+#define _SOUND_H
 
 #include <lib.h>
 #include <stdint.h>

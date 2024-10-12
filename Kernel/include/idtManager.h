@@ -1,5 +1,5 @@
-#ifndef IDTMANAGER_H
-#define IDTMANAGER_H
+#ifndef _IDTMANAGER_H
+#define _IDTMANAGER_H
 
 #include <keyboardDriver.h>
 #include <register.h>

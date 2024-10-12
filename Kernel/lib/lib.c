@@ -2,7 +2,7 @@
 #include <lib.h>
 #include <naiveConsole.h>
 
-void * memset(void * destination, int32_t c, uint64_t length)
+void * my_memset(void * destination, int32_t c, uint64_t length)
 {
 	uint8_t chr = (uint8_t)c;
 	char * dst = (char*)destination;
@@ -13,7 +13,7 @@ void * memset(void * destination, int32_t c, uint64_t length)
 	return destination;
 }
 
-void * memcpy(void * destination, const void * source, uint64_t length)
+void * my_memcpy(void * destination, const void * source, uint64_t length)
 {
 	/*
 	* memcpy does not support overlapping buffers, so always do it
@@ -49,4 +49,24 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 	}
 
 	return destination;
+}
+
+
+unsigned int my_strlen(const char *s) {
+    unsigned int len = 0;
+    while (s[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+
+void my_strncpy(char *dest, const char *src, unsigned int n) {
+    unsigned int i;
+    for (i = 0; i < n && src[i] != '\0'; i++) {
+        dest[i] = src[i];
+    }
+    for (; i < n; i++) {
+        dest[i] = '\0';
+    }
 }

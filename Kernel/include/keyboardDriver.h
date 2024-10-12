@@ -1,5 +1,5 @@
-#ifndef KEYBOARDDRIVER_H
-#define KEYBOARDDRIVER_H
+#ifndef _KEYBOARDDRIVER_H
+#define _KEYBOARDDRIVER_H
 
 #include <buf_kb.h>
 #include <interrupts.h>

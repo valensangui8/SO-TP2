@@ -1,14 +1,13 @@
 #ifndef _PROCESS_H
 #define _PROCESS_H
 
-#include <scheduler.h>
-#include <stdint.h>
 #include <utils.h>
-
+#include <stack.h>
+#include <scheduler.h>
 
 #define IDLE_PID 0
 
-void init_procces(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, PCBState state, void *stack_pointer, char foreground, char **argv, int argc);
+void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, PCBState state, char foreground, char **argv, int argc, uint64_t rip);
 uint8_t has_children(unsigned int pid);
 void wait_children(unsigned int ppid);
 uint8_t kill_process(unsigned int pid);

@@ -1,5 +1,5 @@
-#ifndef MEMORY_MANAGER_ADT_H
-#define MEMORY_MANAGER_ADT_H
+#ifndef _MEMORY_MANAGER_ADT_H
+#define _MEMORY_MANAGER_ADT_H
 
 #include "videoDriver.h"
 #include <stddef.h>

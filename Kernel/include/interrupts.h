@@ -5,8 +5,8 @@
  *      Author: anizzomc
  */
 
-#ifndef INTERRUPS_H_
-#define INTERRUPS_H_
+#ifndef _INTERRUPTS_H_
+#define _INTERRUPTS_H_
 
 #include <idtLoader.h>
 #include <register.h>
@@ -38,4 +38,4 @@ void printRegAsm(void);
 // Termina la ejecución de la cpu.
 void haltcpu(void);
 
-#endif /* INTERRUPS_H_ */
+#endif /* _INTERRUPTS_H_ */
