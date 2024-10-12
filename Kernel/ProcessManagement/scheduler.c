@@ -48,6 +48,7 @@ int8_t get_state() {
 
 void create_process(char *name, uint16_t pid, uint16_t ppid, Priority priority, PCBState state, void *stack_pointer, char foreground, char *argv[], int argc) {
 	SchedulerInfo scheduler = get_scheduler();
+
 	int free_spot = scheduler->index_p;
 	if( free_spot == -1){
 		return;
@@ -66,6 +67,7 @@ void create_process(char *name, uint16_t pid, uint16_t ppid, Priority priority, 
 			inserted++;
 			if (inserted == priority) {
 				scheduler->index_rr = (index + 1) % (MAX_PROCESS * PRIORITY4);
+
 			}
 		}
 	}

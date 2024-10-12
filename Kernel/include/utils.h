@@ -6,11 +6,14 @@
 
 #define MM_ADDRESS 0x50000
 #define SCHEDULER_ADDRESS 0x60000
+
 #define FREE_ 0x9FFFF
 #define heap_size 4092
 #define MEM_ADDRESS_MAX 0x9FFFF
 #define FOREGROUND 1
 #define BACKGROUND !FOREGROUND
+
+
 
 typedef enum { BLOCKED = 0,
 			   READY,
