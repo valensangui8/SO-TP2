@@ -1,11 +1,11 @@
 #ifndef _SCHEDULER_H
 #define _SCHEDULER_H
 
-#include <utils.h>
 #include <process.h>
+#include <utils.h>
 
 #define QUANTUM 3 // 20ms
-#define RR_INDEX(i) ((i+1)%(MAX_PROCESS * PRIORITY4))
+#define RR_INDEX(i) ((i + 1) % (MAX_PROCESS * PRIORITY4))
 
 SchedulerInfo create_scheduler();
 int8_t set_state(uint8_t new_state);

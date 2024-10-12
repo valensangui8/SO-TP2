@@ -7,10 +7,11 @@
 #include <stdio.h>
 #include <utils.h>
 
-#define SIZE_MEM 0x10000
-
 #define BLOCK_SIZE 0x400
-#define TOTAL_BLOCKS 1024
+#define HEAP_START 0x100000
+#define MM_SIZE 0x100000
+#define TOTAL_BLOCKS (MM_SIZE / BLOCK_SIZE)
+
 #define FREE 0
 #define USED 1
 

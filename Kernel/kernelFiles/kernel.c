@@ -6,8 +6,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <time.h>
-#include <videoDriver.h>
 #include <utils.h>
+#include <videoDriver.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -43,31 +43,25 @@ void *initializeKernelBinary() {
 
 	uint64_t userspace_mem = loadModules(&endOfKernelBinary, moduleAddresses);
 
-
-
 	clearBSS(&bss, &endOfKernel - &bss);
 
-	MemoryManagerADT mm = init_memory_manager(SIZE_MEM, sampleDataModuleAddress + userspace_mem);
+	MemoryManagerADT mm = init_memory_manager(MM_SIZE, sampleDataModuleAddress + userspace_mem);
 	create_scheduler();
 
 	return getStackBase();
 }
 
-void idle_process(){
-    while(1){
-        _hlt();
-    }
+void idle_process() {
+	while (1) {
+		_hlt();
+	}
 }
 
 int main() {
-
 	load_idt();
-
-	create_process("shell", 0, 0, PRIORITY0, READY, FOREGROUND, NULL, 0, (main_function) ((EntryPoint) sampleCodeModuleAddress)());
+	create_process("shell", 0, 0, PRIORITY0, READY, FOREGROUND, NULL, 0, (main_function) sampleCodeModuleAddress);
 
 	create_process("idle", 1, 0, PRIORITY0, RUNNING, FOREGROUND, NULL, 0, (main_function) idle_process);
-
-	
 
 	// start();
 	// sleep(1000);
@@ -75,12 +69,11 @@ int main() {
 
 	// clear();
 
-	//initialize();
-
-	
+	// initialize();
 
 	//((EntryPoint) sampleCodeModuleAddress)();
 
-	//while (1);
+	while (1)
+		;
 	return 0;
 }

@@ -1,9 +1,11 @@
 #ifndef _PROCESS_H
 #define _PROCESS_H
 
-#include <utils.h>
-#include <stack.h>
 #include <scheduler.h>
+#include <stack.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <utils.h>
 
 #define IDLE_PID 0
 

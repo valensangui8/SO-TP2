@@ -1,5 +1,5 @@
-#ifdef SCANCODE_H
-#define SCANCODES_H
+#ifdef _SCANCODE_H
+#define _SCANCODES_H
 
 static char ScanCodes[256] = {
 	0,	  // 0x00 - Null

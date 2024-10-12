@@ -1,16 +1,15 @@
 #include <process.h>
-#include <stdint.h>
 
 void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, PCBState state, char foreground, char **argv, int argc, uint64_t rip) {
-    process->pid = pid;
-    process->ppid = ppid;
-    process->priority = priority;
-    process->state = state;
-    process->foreground = foreground;
-    my_strncpy(process->name, name, sizeof(process->name));
+	process->pid = pid;
+	process->ppid = ppid;
+	process->priority = priority;
+	process->state = state;
+	process->foreground = foreground;
+	my_strncpy(process->name, name, sizeof(process->name));
 	process->stack_process = load_stack_pointer(rip, process->stack_process->rsp, argv, argc);
-    process->argv = argv;
-    process->argc = argc;
+	process->argv = argv;
+	process->argc = argc;
 }
 
 uint8_t has_children(unsigned int pid) {
@@ -82,5 +81,3 @@ void yield() {
 	SchedulerInfo scheduler = get_scheduler();
 	scheduler->quantum_remaining = 0;
 }
-
-
