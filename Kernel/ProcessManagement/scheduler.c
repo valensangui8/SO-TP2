@@ -48,17 +48,24 @@ int8_t get_state() {
 	return process->state;
 }
 
-void create_process(char *name, uint16_t pid, uint16_t ppid, Priority priority, PCBState state, char foreground, char *argv[], int argc, main_function rip) {
+uint16_t create_process(char *name, uint16_t pid, uint16_t ppid, Priority priority, PCBState state, char foreground, char *argv[], int argc, main_function rip) {
 	SchedulerInfo scheduler = get_scheduler();
 
 	int free_spot = scheduler->index_p;
 	if (free_spot == -1) {
-		return;
+		return -1;
 	}
+	drawWord("Proceso insertado en el lugar: ");
+	drawInt(free_spot);
+	enter();
 	PCBT *process = &(scheduler->processes[free_spot]);
+	process->is_active = 1;
 	update_index_p(scheduler);
 	char **new_argv = alloc_arguments(argv, argc);
+
+	
 	init_process(process, name, pid, ppid, priority, state, foreground, new_argv, argc, rip);
+	
 	int start_index = scheduler->index_rr;
 	int process_priority = process->priority;
 	int inserted = 0;
@@ -73,7 +80,7 @@ void create_process(char *name, uint16_t pid, uint16_t ppid, Priority priority, 
 			}
 		}
 	}
-	return;
+	return pid;
 }
 
 static void update_index_p(SchedulerInfo scheduler) {

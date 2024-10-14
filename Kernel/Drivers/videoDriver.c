@@ -197,6 +197,29 @@ void drawLine(char letter) {
 	updateCursor();
 }
 
+void drawInt(int num) {
+	char buffer[256] = {0};
+	int i = 0;
+	if (num == 0) {
+		buffer[i++] = '0';
+	}
+	while (num > 0) {
+		buffer[i++] = num % 10 + '0';
+		num /= 10;
+	}
+	buffer[i] = 0;
+	i--;
+	int j = 0;
+	while (i > j) {
+		char aux = buffer[i];
+		buffer[i] = buffer[j];
+		buffer[j] = aux;
+		i--;
+		j++;
+	}
+	drawWord(buffer);
+}
+
 // function to update the cursor position
 void updateCursor() {
 	drawSquare(characterColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);

@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <naiveConsole.h>
 
 #define MAX_PROCESS 20
 #define MM_ADDRESS 0x50000
@@ -23,11 +24,10 @@ typedef enum { BLOCKED = 0,
 			   DEAD
 } PCBState;
 
-typedef enum { PRIORITY0 = 0,
-			   PRIORITY1,
-			   PRIORITY2,
-			   PRIORITY3,
-			   PRIORITY4
+typedef enum {  PRIORITY1 = 1,
+			    PRIORITY2,
+			    PRIORITY3,
+			    PRIORITY4
 } Priority;
 
 typedef int (*main_function)(char **argv, uint64_t argc);
@@ -85,4 +85,7 @@ typedef struct Scheduler {
 
 typedef struct Scheduler *SchedulerInfo;
 
+
+
 #endif
+

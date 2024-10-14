@@ -17,6 +17,7 @@ void drawWord(char * word); // draw a word in the screen
 void drawLine(char letter); // draw a line in the screen
 void updateCursor(); // update the cursor position
 void drawWithColor(char * word, uint32_t hexColor); // draw a word with a given color
+void drawInt(int num); // draw an integer
 
 /////////////////CLEAR////////////////////
 
