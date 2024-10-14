@@ -1,22 +1,12 @@
 #include <process.h>
 
-static void printHex(uint64_t value) {
-	char buffer[17];
-	for (int i = 15; i >= 0; i--) {
-		buffer[i] = "0123456789ABCDEF"[value % 16];
-		value /= 16;
-	}
-	buffer[16] = '\0';
-	drawWord(buffer); // Supongo que drawWord imprime en pantalla
-}
-
-void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, PCBState state, char foreground, char **argv, int argc, main_function rip) {
+void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char **argv, int argc, main_function rip) {
 	process->pid = pid;
 	process->ppid = ppid;
 	process->priority = priority;
-	process->state = state;
+	process->state = READY;
 	process->foreground = foreground;
-	// process->is_active = 1;
+
 	my_strncpy(process->name, name, sizeof(process->name));
 	process->stack_process = load_stack_pointer(rip, 0, argv, argc);
 	process->argv = argv;
@@ -26,30 +16,31 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 uint8_t has_children(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
 	for (int i = 0; i < MAX_PROCESS; i++) {
-		if (scheduler->processes[i].is_active != 0 && scheduler->processes[i].ppid == pid) {
+		if (scheduler->processes[i].ppid == pid && scheduler->processes[i].is_active != 0) {
 			return 1;
 		}
 	}
 	return 0;
 }
 
-void wait_children(unsigned int ppid) {
+int64_t wait_children(unsigned int ppid) {
 	if (has_children(ppid)) {
 		SchedulerInfo scheduler = get_scheduler();
 		for (int i = 0; i < MAX_PROCESS; i++) {
-			if (scheduler->processes[i].is_active == 1 && scheduler->processes[i].ppid == ppid) {
+			if (scheduler->processes[i].ppid == ppid && scheduler->processes[i].is_active == 1) {
 				while (scheduler->processes[i].state != DEAD) {
 					// wait
 				}
 			}
 		}
 	}
+	return 0;
 }
 
 uint8_t kill_process(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
 	for (int i = 0; i < MAX_PROCESS; i++) {
-		if (scheduler->processes[i].is_active == 1 && scheduler->processes[i].pid == pid) {
+		if (scheduler->processes[i].pid == pid && scheduler->processes[i].is_active == 1) {
 			scheduler->processes[i].state = DEAD;
 			scheduler->processes[i].is_active = 0;
 			scheduler->amount_processes--;
@@ -65,25 +56,16 @@ void update_priority(unsigned int pid, Priority new_priority) {
 
 	// Buscar el proceso con el pid dado
 	for (int i = 0; i < MAX_PROCESS; i++) {
-		if (scheduler->processes[i].is_active == 1 && scheduler->processes[i].pid == pid) {
+		if (scheduler->processes[i].pid == pid && scheduler->processes[i].is_active == 1) {
 			process = &(scheduler->processes[i]);
 			break;
 		}
 	}
-
-	// Si no se encuentra el proceso, no hacemos nada
-	if (process == NULL) {
-		drawWord("Proceso no encontrado");
+	if (process == NULL || process->priority == new_priority) {
 		return;
 	}
 
 	int old_priority = process->priority;
-
-	// Si la prioridad no cambia, no hacemos nada
-	if (old_priority == new_priority) {
-		drawWord("La prioridad ya es la misma");
-		return;
-	}
 
 	if (new_priority > old_priority) {
 		int additional_slots = new_priority - old_priority;
@@ -96,8 +78,6 @@ void update_priority(unsigned int pid, Priority new_priority) {
 				inserted++;
 			}
 		}
-
-		drawWord("Prioridad aumentada correctamente");
 	}
 	else if (new_priority < old_priority) {
 		int to_remove = old_priority - new_priority;
@@ -110,8 +90,6 @@ void update_priority(unsigned int pid, Priority new_priority) {
 				removed++;
 			}
 		}
-
-		drawWord("Prioridad reducida correctamente");
 	}
 
 	process->priority = new_priority;
@@ -152,32 +130,12 @@ void yield() {
 	scheduler->quantum_remaining = 0;
 }
 
-void process_status(int pid) {
-	SchedulerInfo scheduler = get_scheduler();
-	drawWord("NAME    ID     RSP      RBP    	STATE");
-	enter();
-	for (int i = 0; i < scheduler->amount_processes; i++) {
-		if (scheduler->processes[i].pid == pid) {
-			drawWord(scheduler->processes[i].name);
-			drawWord("     ");
-			drawInt(scheduler->processes[i].pid);
-			drawWord("    ");
-			drawHex(scheduler->processes[i].stack_process->rsp);
-			drawWord("   ");
-			drawHex(scheduler->processes[i].stack_process->my_registers.rbp);
-			drawWord("   ");
-			drawWord(process_state(scheduler->processes[i].state, scheduler->processes[i].priority, scheduler->processes[i].foreground));
-		}
-	}
-	enter();
-}
-
-char *process_state(PCBState state, Priority priority, char foreground) {
+char *process_state(PCBT process) {
 	static char status[10];
 	my_strcpy(status, "");
 
 	// Base state
-	switch (state) {
+	switch (process.state) {
 		case BLOCKED:
 			my_strcat(status, "T");
 			break;
@@ -194,15 +152,40 @@ char *process_state(PCBState state, Priority priority, char foreground) {
 			my_strcat(status, "UNKNOWN");
 			return status;
 	}
-	if (priority == PRIORITY4) {
+	if (process.priority == PRIORITY4) {
 		my_strcat(status, "<"); // High priority
 	}
-	else if (priority == PRIORITY1) {
+	else if (process.priority == PRIORITY1) {
 		my_strcat(status, "N"); // Low priority
 	}
-	if (foreground) {
+	if (process.foreground) {
 		my_strcat(status, "+"); // Foreground process
+	}
+	else if (process.pid == SESSION_LEADER) {
+		my_strcat(status, "s"); // Background process
 	}
 	my_strcat(status, "\0");
 	return status;
+}
+
+void process_status(unsigned int pid) {
+	SchedulerInfo scheduler = get_scheduler();
+	commandEnter();
+	drawWord("PID        STAT          RSP           RBP         COMMAND");
+	commandEnter();
+	for (int i = 0; i < scheduler->amount_processes; i++) {
+		if (scheduler->processes[i].pid == pid) {
+			drawInt(scheduler->processes[i].pid);
+			drawWord("        ");
+			drawWord(process_state(scheduler->processes[i]));
+			drawWord("        ");
+			drawHex(scheduler->processes[i].stack_process->rsp);
+			drawWord("        ");
+			drawHex(scheduler->processes[i].stack_process->my_registers.rbp);
+			drawWord("        ");
+			drawWord(scheduler->processes[i].name);
+			commandEnter();
+		}
+	}
+	enter();
 }

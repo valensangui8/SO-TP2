@@ -49,7 +49,7 @@ int8_t get_state() {
 	return process->state;
 }
 
-uint16_t create_process(char *name, uint16_t pid, uint16_t ppid, Priority priority, PCBState state, char foreground, char *argv[], int argc, main_function rip) {
+uint16_t create_process(char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char *argv[], int argc, main_function rip) {
 	SchedulerInfo scheduler = get_scheduler();
 	scheduler->amount_processes++;
 
@@ -57,14 +57,12 @@ uint16_t create_process(char *name, uint16_t pid, uint16_t ppid, Priority priori
 	if (free_spot == -1) {
 		return -1;
 	}
-	drawInt(free_spot);
-	enter();
 	PCBT *process = &(scheduler->processes[free_spot]);
 	process->is_active = 1;
 	update_index_p(scheduler);
 	char **new_argv = alloc_arguments(argv, argc);
 
-	init_process(process, name, pid, ppid, priority, state, foreground, new_argv, argc, rip);
+	init_process(process, name, pid, ppid, priority, foreground, new_argv, argc, rip);
 
 	int start_index = scheduler->index_rr;
 	int process_priority = process->priority;
@@ -137,6 +135,12 @@ unsigned int get_pid() {
 	return scheduler->current_pid;
 }
 
+unsigned int get_ppid() {
+	SchedulerInfo scheduler = get_scheduler();
+	PCBT *process = scheduler->round_robin[scheduler->index_rr];
+	return process->ppid;
+}
+
 // https://github.com/avilamowski/TP2_SO/blob/master/Kernel/processes/process.c#L66
 static char **alloc_arguments(char **argv, uint64_t argc) {
 	int totalArgsLen = 0;
@@ -156,20 +160,22 @@ static char **alloc_arguments(char **argv, uint64_t argc) {
 	return newArgsArray;
 }
 
-void print_processes_status() {
+void list_processes_state() {
 	SchedulerInfo scheduler = get_scheduler();
-	drawWord("NAME    ID     RSP      RBP    	STATE");
-	enter();
+	commandEnter();
+	drawWord("PID        STAT          RSP           RBP         COMMAND");
+	commandEnter();
 	for (int i = 0; i < scheduler->amount_processes; i++) {
-		drawWord(scheduler->processes[i].name);
-		drawWord("     ");
 		drawInt(scheduler->processes[i].pid);
-		drawWord("    ");
+		drawWord("        ");
+		drawWord(process_state(scheduler->processes[i]));
+		drawWord("        ");
 		drawHex(scheduler->processes[i].stack_process->rsp);
-		drawWord("   ");
+		drawWord("        ");
 		drawHex(scheduler->processes[i].stack_process->my_registers.rbp);
-		drawWord("   ");
-		drawWord(process_state(scheduler->processes[i].state, scheduler->processes[i].priority, scheduler->processes[i].foreground));
-		enter();
+		drawWord("        ");
+		drawWord(scheduler->processes[i].name);
+		commandEnter();
 	}
+	enter();
 }

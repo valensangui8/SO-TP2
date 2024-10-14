@@ -7,14 +7,20 @@
 #define QUANTUM 3 // 20ms
 #define RR_INDEX(i) ((i + 1) % (MAX_PROCESS * PRIORITY4))
 
+#define PID_WIDTH 6
+#define STAT_WIDTH 8
+#define RSP_WIDTH 10
+#define RBP_WIDTH 10
+#define COMMAND_WIDTH 20
+
 SchedulerInfo create_scheduler();
 int8_t set_state(uint8_t new_state);
 SchedulerInfo get_scheduler();
 int8_t get_state();
-uint16_t create_process(char *name, uint16_t pid, uint16_t ppid, Priority priority, PCBState state, char foreground, char *argv[], int argc, main_function rip);
+uint16_t create_process(char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char *argv[], int argc, main_function rip);
 unsigned int get_pid();
 uint64_t scheduler(void *stack_pointer);
 PCBT *update_quantum(void *stack_pointer);
-void print_processes_status();
+void list_processes_state();
 
 #endif

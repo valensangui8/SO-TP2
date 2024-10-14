@@ -17,6 +17,23 @@ GLOBAL call_sys_draw
 GLOBAL call_sys_sleep
 GLOBAL call_sys_sound
 GLOBAL call_sys_checkHeight
+
+GLOBAL call_sys_kill_process
+GLOBAL call_sys_update_priority
+GLOBAL call_sys_block_process
+GLOBAL call_sys_unblock_process
+GLOBAL call_sys_yield
+GLOBAL call_sys_process_status
+GLOBAL call_sys_create_process
+GLOBAL call_sys_list_processes_state
+GLOBAL call_sys_get_pid
+GLOBAL call_sys_get_ppid
+GLOBAL call_sys_wait
+GLOBAL call_sys_draw_int
+
+GLOBAL call_sys_halt
+
+
 call_sys_read:
     mov rax, 0
     int 80h
@@ -115,3 +132,69 @@ call_sys_checkHeight:
     int 80h
     ret
 
+
+call_sys_kill_process:
+    mov rax, 17
+    int 80h
+    ret
+
+call_sys_update_priority:
+    mov rax, 18
+    int 80h
+    ret
+
+call_sys_block_process:
+    mov rax, 19
+    int 80h
+    ret
+
+call_sys_unblock_process:
+    mov rax, 20
+    int 80h
+    ret
+
+call_sys_yield:
+    mov rax, 21
+    int 80h
+    ret
+
+call_sys_process_status:
+    mov rax, 22
+    int 80h
+    ret
+
+call_sys_create_process:
+    mov rax, 23
+    int 80h
+    ret
+
+call_sys_list_processes_state:
+    mov rax, 24
+    int 80h
+    ret
+    
+
+call_sys_get_pid:
+    mov rax, 25
+    int 80h
+    ret
+
+call_sys_get_ppid;
+    mov rax, 26
+    int 80h
+    ret
+
+call_sys_wait:
+    mov rax, 27
+    int 80h
+    ret
+
+call_sys_draw_int:
+    mov rax, 28
+    int 80h
+    ret
+
+call_sys_halt:
+    mov rax, 29
+    int 80h
+    ret

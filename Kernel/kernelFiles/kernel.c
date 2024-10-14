@@ -60,18 +60,22 @@ void idle() {
 int main() {
 	load_idt();
 
-	initialize();
 	// test_processes(1, (char *[]){"2"});
 	// test_prio();
-	//((EntryPoint) sampleCodeModuleAddress)();
-	create_process("idle", 0, 0, PRIORITY1, RUNNING, FOREGROUND, NULL, 0, (main_function) idle);
-	create_process("shell", 1, 0, PRIORITY4, READY, FOREGROUND, NULL, 0, (main_function) sampleCodeModuleAddress);
-	print_processes_status();
+
+	initialize();
+	// create_process("idle", 0, 0, PRIORITY1, RUNNING, FOREGROUND, NULL, 0, (main_function) idle);
+	// create_process("shell", 0, 0, PRIORITY4, FOREGROUND, NULL, 0, (main_function) sampleCodeModuleAddress);
+	// list_processes_state();
 	// start();
 	// sleep(1000);
 	// start();
 
 	// clear();
+	//_irq00Handler();
+
+	((EntryPoint) sampleCodeModuleAddress)();
+	drawWord("Kernel Panic AYUDAAAA");
 
 	while (1)
 		;
