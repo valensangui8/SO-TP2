@@ -2,6 +2,7 @@ GLOBAL cpuVendor
 GLOBAL get_key
 GLOBAL outb
 GLOBAL inb
+GLOBAL timer_tick
 
 section .text
 	
@@ -60,6 +61,10 @@ outb:
     mov rsp, rbp
     pop rbp
     ret
+
+timer_tick:
+	int 0x20
+	ret
 
 section .data
 timeval:

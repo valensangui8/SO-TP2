@@ -1,5 +1,6 @@
 #include <process.h>
 
+
 void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char **argv, int argc, main_function rip) {
 	process->pid = pid;
 	process->ppid = ppid;

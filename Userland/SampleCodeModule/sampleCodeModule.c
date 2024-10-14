@@ -15,6 +15,7 @@
 #define BUFFER_SIZE 256
 
 int main() {
+	
 	char c;
 	while (1) {
 		char buffer[BUFFER_SIZE] = {0};
@@ -39,7 +40,12 @@ int main() {
 		}
 		buffer[buffer_pos] = '\0';
 
-		initialize_shell(buffer);
+	
+        
+        initialize_shell(buffer);
+		call_sys_yield();
+
+
 
 		// test_processes(1, (char *[]){"2"});
 	}

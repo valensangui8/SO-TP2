@@ -204,8 +204,7 @@ _irq80Handler:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-
-	irqHandlerMaster 0
+	;irqHandlerMaster 0
 	pushState
 
 	mov rdi, 0 
@@ -214,7 +213,6 @@ _irq00Handler:
 	mov rdi, rsp
 	call scheduler
 	mov rsp, rax
-
 
 	mov al, 20h
 	out 20h, al

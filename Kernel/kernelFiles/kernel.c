@@ -1,4 +1,4 @@
-#include "memoryManagerADT.h"
+#include <memoryManagerADT.h>
 #include <idtLoader.h>
 #include <lib.h>
 #include <moduleLoader.h>
@@ -8,6 +8,7 @@
 #include <time.h>
 #include <utils.h>
 #include <videoDriver.h>
+#include <interrupts.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -57,25 +58,29 @@ void idle() {
 	}
 }
 
+void timo(){
+	drawWord("TImo puto");
+	commandEnter();
+	yield();
+}
+
+
+
 int main() {
 	load_idt();
 
-	// test_processes(1, (char *[]){"2"});
-	// test_prio();
-
 	initialize();
-	// create_process("idle", 0, 0, PRIORITY1, RUNNING, FOREGROUND, NULL, 0, (main_function) idle);
-	// create_process("shell", 0, 0, PRIORITY4, FOREGROUND, NULL, 0, (main_function) sampleCodeModuleAddress);
-	// list_processes_state();
-	// start();
-	// sleep(1000);
-	// start();
 
-	// clear();
-	//_irq00Handler();
+	create_process("Shell", 0, 0, 4, 1, 1, NULL, 0, (main_function) sampleCodeModuleAddress);
 
-	((EntryPoint) sampleCodeModuleAddress)();
-	drawWord("Kernel Panic AYUDAAAA");
+	// timer_tick();
+	
+
+	create_process("Timo", 1, 0, 1, 1, 1, NULL, 0, (main_function) timo);
+
+	//((EntryPoint) sampleCodeModuleAddress)();
+
+	
 
 	while (1)
 		;

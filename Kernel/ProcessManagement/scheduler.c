@@ -3,6 +3,8 @@
 static void update_index_p(SchedulerInfo scheduler);
 static char **alloc_arguments(char **argv, uint64_t argc);
 
+static int initialized = 0;
+
 SchedulerInfo create_scheduler() {
 	SchedulerInfo scheduler = (SchedulerInfo) SCHEDULER_ADDRESS;
 	for (int i = 0; i < MAX_PROCESS; i++) {
@@ -16,6 +18,7 @@ SchedulerInfo create_scheduler() {
 	scheduler->index_rr = 0;
 	scheduler->quantum_remaining = QUANTUM;
 	scheduler->amount_processes = 0;
+	initialized = 1;
 	return scheduler;
 }
 
@@ -59,20 +62,28 @@ uint16_t create_process(char *name, uint16_t pid, uint16_t ppid, Priority priori
 	}
 	PCBT *process = &(scheduler->processes[free_spot]);
 	process->is_active = 1;
+	
 	update_index_p(scheduler);
 	char **new_argv = alloc_arguments(argv, argc);
 
 	init_process(process, name, pid, ppid, priority, foreground, new_argv, argc, rip);
 
+	
+	
+	if(pid == 0) {
+		scheduler->index_rr = 0;
+	}
 	int start_index = scheduler->index_rr;
 	int process_priority = process->priority;
 	int inserted = 0;
 	// Round robin insertion
 	for (int j = 0; j < MAX_PROCESS * PRIORITY4 && inserted < process_priority; j++) {
 		int index = (start_index + j) % (MAX_PROCESS * PRIORITY4);
+		
 		if (scheduler->round_robin[index] == NULL || scheduler->round_robin[index]->is_active == 0 || scheduler->round_robin[index]->state == DEAD) {
 			scheduler->round_robin[index] = process;
 			inserted++;
+			
 			if (inserted == process_priority) {
 				scheduler->index_rr = (index + 1) % (MAX_PROCESS * PRIORITY4);
 			}
@@ -96,6 +107,9 @@ static void update_index_p(SchedulerInfo scheduler) {
 }
 
 PCBT *update_quantum(void *stack_pointer) {
+	commandEnter();
+	drawWord("update_quantum");
+	commandEnter();
 	SchedulerInfo scheduler = get_scheduler();
 	if (scheduler->quantum_remaining == 0 || scheduler->round_robin[scheduler->index_rr]->state == BLOCKED) {
 		if (scheduler->round_robin[scheduler->index_rr]->state == RUNNING) {
@@ -104,29 +118,48 @@ PCBT *update_quantum(void *stack_pointer) {
 		scheduler->round_robin[scheduler->index_rr]->stack_process = get_snapshot(scheduler->round_robin[scheduler->index_rr]->stack_process, stack_pointer);
 		scheduler->index_rr = (scheduler->index_rr + 1) % (MAX_PROCESS * PRIORITY4);
 		scheduler->quantum_remaining = QUANTUM;
+
+		int start_index = scheduler->index_rr;
 		while (scheduler->round_robin[scheduler->index_rr]->state != READY) {
 			if (scheduler->round_robin[scheduler->index_rr]->state == DEAD) {
 				scheduler->round_robin[scheduler->index_rr] = NULL;
 			}
 			scheduler->index_rr = (scheduler->index_rr + 1) % (MAX_PROCESS * PRIORITY4);
 		}
+		
 	}
 	else {
 		scheduler->quantum_remaining--;
 	}
+	
 	return scheduler->round_robin[scheduler->index_rr];
 }
 
 uint64_t scheduler(void *stack_pointer) {
+	drawWord("scheduler");
+	commandEnter();
 	SchedulerInfo scheduler = get_scheduler();
 	PCBT *process = scheduler->round_robin[scheduler->index_rr];
-	drawWord(process->name);
-	if (process == NULL) {
+	if( !initialized ) {
 		return (uint64_t) stack_pointer;
 	}
+	if(process == NULL || process->is_active == 0 || process->state == DEAD) { 
+		scheduler->index_rr = (scheduler->index_rr + 1) % (MAX_PROCESS * PRIORITY4 );
+		return (uint64_t) stack_pointer;
+	}
+	if(process->state == READY){
+		process->state = RUNNING;
+	}
 	process = update_quantum(stack_pointer);
+
+	drawInt(scheduler->index_rr);
+	commandEnter();
+
 	scheduler->current_pid = process->pid;
 
+	drawInt(scheduler->current_pid);
+	commandEnter();
+	
 	return process->stack_process->rsp;
 }
 

@@ -17,6 +17,7 @@
 #define FOREGROUND 1
 #define BACKGROUND !FOREGROUND
 
+
 typedef enum { BLOCKED = 0,
 			   READY,
 			   RUNNING,
@@ -53,7 +54,7 @@ typedef struct stack_registers {
 typedef struct stack {
 	uint64_t rip;
 	uint64_t cs;
-	uint64_t rflags;
+	uint64_t eflags;
 	uint64_t rsp;
 	uint64_t ss;
 	Stack_registers my_registers;
@@ -85,5 +86,6 @@ typedef struct Scheduler {
 } Scheduler;
 
 typedef struct Scheduler *SchedulerInfo;
+
 
 #endif
