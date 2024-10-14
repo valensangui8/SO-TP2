@@ -15,6 +15,7 @@ SchedulerInfo create_scheduler() {
 	scheduler->index_p = 0;
 	scheduler->index_rr = 0;
 	scheduler->quantum_remaining = QUANTUM;
+	scheduler->amount_processes = 0;
 	return scheduler;
 }
 
@@ -50,12 +51,12 @@ int8_t get_state() {
 
 uint16_t create_process(char *name, uint16_t pid, uint16_t ppid, Priority priority, PCBState state, char foreground, char *argv[], int argc, main_function rip) {
 	SchedulerInfo scheduler = get_scheduler();
+	scheduler->amount_processes++;
 
 	int free_spot = scheduler->index_p;
 	if (free_spot == -1) {
 		return -1;
 	}
-	drawWord("Proceso insertado en el lugar: ");
 	drawInt(free_spot);
 	enter();
 	PCBT *process = &(scheduler->processes[free_spot]);
@@ -63,9 +64,8 @@ uint16_t create_process(char *name, uint16_t pid, uint16_t ppid, Priority priori
 	update_index_p(scheduler);
 	char **new_argv = alloc_arguments(argv, argc);
 
-	
 	init_process(process, name, pid, ppid, priority, state, foreground, new_argv, argc, rip);
-	
+
 	int start_index = scheduler->index_rr;
 	int process_priority = process->priority;
 	int inserted = 0;
@@ -154,4 +154,22 @@ static char **alloc_arguments(char **argv, uint64_t argc) {
 	}
 	newArgsArray[argc] = NULL;
 	return newArgsArray;
+}
+
+void print_processes_status() {
+	SchedulerInfo scheduler = get_scheduler();
+	drawWord("NAME    ID     RSP      RBP    	STATE");
+	enter();
+	for (int i = 0; i < scheduler->amount_processes; i++) {
+		drawWord(scheduler->processes[i].name);
+		drawWord("     ");
+		drawInt(scheduler->processes[i].pid);
+		drawWord("    ");
+		drawHex(scheduler->processes[i].stack_process->rsp);
+		drawWord("   ");
+		drawHex(scheduler->processes[i].stack_process->my_registers.rbp);
+		drawWord("   ");
+		drawWord(process_state(scheduler->processes[i].state, scheduler->processes[i].priority, scheduler->processes[i].foreground));
+		enter();
+	}
 }

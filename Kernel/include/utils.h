@@ -4,11 +4,11 @@
 #include <interrupts.h>
 #include <lib.h>
 #include <memoryManagerADT.h>
+#include <naiveConsole.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <naiveConsole.h>
 
 #define MAX_PROCESS 20
 #define MM_ADDRESS 0x50000
@@ -24,10 +24,10 @@ typedef enum { BLOCKED = 0,
 			   DEAD
 } PCBState;
 
-typedef enum {  PRIORITY1 = 1,
-			    PRIORITY2,
-			    PRIORITY3,
-			    PRIORITY4
+typedef enum { PRIORITY1 = 1,
+			   PRIORITY2,
+			   PRIORITY3,
+			   PRIORITY4
 } Priority;
 
 typedef int (*main_function)(char **argv, uint64_t argc);
@@ -81,11 +81,9 @@ typedef struct Scheduler {
 	uint16_t index_p; // va a estar en un lugar libre, si esta lleno valdra -1
 	uint16_t index_rr;
 	int8_t quantum_remaining;
+	uint32_t amount_processes;
 } Scheduler;
 
 typedef struct Scheduler *SchedulerInfo;
 
-
-
 #endif
-

@@ -51,28 +51,29 @@ void *initializeKernelBinary() {
 	return getStackBase();
 }
 
-
+void idle() {
+	while (1) {
+		_hlt();
+	}
+}
 
 int main() {
 	load_idt();
 
 	initialize();
-	//test_processes(1, (char *[]){"2"});
-	//test_prio();
-	((EntryPoint) sampleCodeModuleAddress)();
-	
-
-	
-	//create_process("shell", 0, 0, PRIORITY0, READY, FOREGROUND, NULL, 0, (main_function) sampleCodeModuleAddress);
-
-	//create_process("idle", 1, 0, PRIORITY0, RUNNING, FOREGROUND, NULL, 0, (main_function) idle_process);
-
+	// test_processes(1, (char *[]){"2"});
+	// test_prio();
+	//((EntryPoint) sampleCodeModuleAddress)();
+	create_process("idle", 0, 0, PRIORITY1, RUNNING, FOREGROUND, NULL, 0, (main_function) idle);
+	create_process("shell", 1, 0, PRIORITY4, READY, FOREGROUND, NULL, 0, (main_function) sampleCodeModuleAddress);
+	print_processes_status();
 	// start();
 	// sleep(1000);
 	// start();
 
 	// clear();
-	
-	while (1);
+
+	while (1)
+		;
 	return 0;
 }

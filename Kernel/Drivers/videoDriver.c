@@ -220,6 +220,37 @@ void drawInt(int num) {
 	drawWord(buffer);
 }
 
+void drawHex(uint64_t value) {
+	char buffer[256] = {0};
+	int i = 0;
+	// Agregar el prefijo "0x"
+	buffer[i++] = '0';
+	buffer[i++] = 'x';
+	if (value == 0) {
+		buffer[i++] = '0';
+	}
+	else {
+		// Convertir el valor a hexadecimal
+		while (value > 0) {
+			uint64_t nibble = value & 0xF;
+			buffer[i++] = (nibble < 10) ? (char) ('0' + nibble) : (char) ('A' + (nibble - 10));
+			value >>= 4;
+		}
+	}
+	buffer[i] = 0; // Terminar la cadena
+	// Invertir el contenido del buffer (sin contar "0x")
+	int start = 2; // Comenzar después de "0x"
+	int end = i - 1;
+	while (end > start) {
+		char aux = buffer[end];
+		buffer[end] = buffer[start];
+		buffer[start] = aux;
+		end--;
+		start++;
+	}
+	drawWord(buffer);
+}
+
 // function to update the cursor position
 void updateCursor() {
 	drawSquare(characterColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);

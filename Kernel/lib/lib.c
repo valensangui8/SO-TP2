@@ -71,3 +71,17 @@ unsigned int log(uint64_t n, int base) {
 		count++;
 	return count;
 }
+
+void my_strcpy(char *dest, const char *src) {
+	char *aux = dest;
+	while ((*dest++ = *src++))
+		;
+	return aux;
+}
+
+void my_strcat(char *dest, const char *src) {
+	while (*dest)
+		dest++;
+	while ((*dest++ = *src++))
+		;
+}

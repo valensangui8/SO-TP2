@@ -5,6 +5,7 @@
 #include <stack.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 #include <utils.h>
 
 #define IDLE_PID 0
@@ -19,5 +20,7 @@ uint16_t unblock_process(unsigned int pid);
 uint16_t block_process(unsigned int pid);
 void update_priority(unsigned int pid, Priority new_priority);
 void update_process_stack(void *sp);
+void process_status(int pid);
+char *process_state(PCBState state, Priority priority, char foreground);
 
 #endif

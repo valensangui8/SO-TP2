@@ -15,5 +15,6 @@ uint16_t create_process(char *name, uint16_t pid, uint16_t ppid, Priority priori
 unsigned int get_pid();
 uint64_t scheduler(void *stack_pointer);
 PCBT *update_quantum(void *stack_pointer);
+void print_processes_status();
 
 #endif
