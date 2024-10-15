@@ -10,7 +10,7 @@ char getChar(){
     while(size == 0){
         call_sys_read(&c,1,&size);
         if(size == 0){
-            call_sys_yield();  // Yield the CPU while waiting for input
+            call_sys_yield();  
         }
     }
     return c;

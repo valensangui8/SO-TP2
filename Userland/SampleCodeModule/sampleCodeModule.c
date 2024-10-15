@@ -15,7 +15,7 @@
 #define BUFFER_SIZE 256
 
 int main() {
-	
+
 	char c;
 	while (1) {
 		char buffer[BUFFER_SIZE] = {0};

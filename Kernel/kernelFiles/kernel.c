@@ -58,16 +58,6 @@ void idle() {
 	}
 }
 
-void timo(){
-	 while (1) {
-        drawWord("Timo process running");
-        commandEnter();
-        yield(); // Yield the CPU to allow other processes to run
-    }
-}
-
-
-
 int main() {
 	load_idt();
 
@@ -75,8 +65,6 @@ int main() {
 
 	create_process("Shell", 0, 4, 1, NULL, 0, (main_function) sampleCodeModuleAddress);
 
-	// timer_tick();
-	
 
 	create_process("Idle", 0, 1, 1, NULL, 0, (main_function) idle);
 

@@ -8,10 +8,10 @@ static int initialized = 0;
 SchedulerInfo create_scheduler() {
 	SchedulerInfo scheduler = (SchedulerInfo) SCHEDULER_ADDRESS;
 	for (int i = 0; i < MAX_PROCESS; i++) {
-		scheduler->processes[i].is_active = 0; // No process when initialized
+		scheduler->processes[i].is_active = 0; 
 	}
 	for (int i = 0; i < MAX_PROCESS * PRIORITY4; i++) {
-		scheduler->round_robin[i] = NULL; // No process when initialized
+		scheduler->round_robin[i] = NULL; 
 	}
 	scheduler->current_pid = 0;
 	scheduler->index_p = 0;
@@ -77,7 +77,6 @@ uint16_t create_process(char *name, uint16_t ppid, Priority priority, char foreg
 	int start_index = scheduler->index_rr;
 	int process_priority = process->priority;
 	int inserted = 0;
-	// Round robin insertion
 	for (int j = 0; j < MAX_PROCESS * PRIORITY4 && inserted < process_priority; j++) {
 		int index = (start_index + j) % (MAX_PROCESS * PRIORITY4);
 		
@@ -118,11 +117,6 @@ PCBT *update_quantum(void *stack_pointer) {
 			current_process->stack_pointer = stack_pointer;
         }
 
-        // Save the current process's stack pointer
-        //current_process->stack_process = (Process_stack)stack_pointer;
-
-
-        // Move to the next process
         do {
             scheduler->index_rr = (scheduler->index_rr + 1) % (MAX_PROCESS * PRIORITY4);
             current_process = scheduler->round_robin[scheduler->index_rr];
@@ -133,7 +127,6 @@ PCBT *update_quantum(void *stack_pointer) {
         scheduler->quantum_remaining--;
     }
 
-    // Set the next process to RUNNING
     current_process->state = RUNNING;
 
     return current_process;
@@ -152,15 +145,13 @@ void *scheduler(void *stack_pointer) {
         return stack_pointer;
     }
 
-    // Save the current process's stack pointer before switching
     current_process->stack_pointer = stack_pointer;
 
-    // Get the next process to run
     current_process = update_quantum(stack_pointer);
 
 
+
     scheduler->current_pid = current_process->pid;
-    // current_process->state = RUNNING; // Already set in update_quantum
 
     return current_process->stack_pointer;
 }

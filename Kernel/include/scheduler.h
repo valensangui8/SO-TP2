@@ -1,7 +1,6 @@
 #ifndef _SCHEDULER_H
 #define _SCHEDULER_H
 
-#include <process.h>
 #include <utils.h>
 
 #define QUANTUM 2
