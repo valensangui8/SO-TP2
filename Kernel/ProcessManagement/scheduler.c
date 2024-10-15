@@ -20,6 +20,7 @@ SchedulerInfo create_scheduler() {
 	scheduler->amount_processes = 0;
 	scheduler->next_pid = 1;
 	initialized = 1;
+	
 	return scheduler;
 }
 
@@ -67,9 +68,9 @@ uint16_t create_process(char *name, uint16_t ppid, Priority priority, char foreg
 	update_index_p(scheduler);
 	char **new_argv = alloc_arguments(argv, argc);
 	process->pid = scheduler->next_pid++;
-
+	
 	init_process(process, name, process->pid, ppid, priority, foreground, new_argv, argc, rip);
-
+	
 
 	if(process->pid ==1){
 		scheduler->index_rr = 0;
@@ -89,6 +90,7 @@ uint16_t create_process(char *name, uint16_t ppid, Priority priority, char foreg
 			}
 		}
 	}
+	
 	return process->pid;
 }
 
@@ -153,6 +155,8 @@ void *scheduler(void *stack_pointer) {
 
     scheduler->current_pid = current_process->pid;
 
+	
+
     return current_process->stack_pointer;
 }
 
@@ -198,9 +202,9 @@ void list_processes_state() {
 		drawWord("        ");
 		drawWord(process_state(scheduler->processes[i]));
 		drawWord("        ");
-		drawHex(scheduler->processes[i].stack_process->rsp);
+		drawHex(scheduler->processes[i].stack_pointer);
 		drawWord("        ");
-		drawHex(scheduler->processes[i].stack_process->my_registers.rbp);
+		drawHex(scheduler->processes[i].stack_base);
 		drawWord("        ");
 		drawWord(scheduler->processes[i].name);
 		commandEnter();

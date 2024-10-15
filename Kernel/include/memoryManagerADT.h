@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <utils.h>
 
-#define BLOCK_SIZE 0x400
+#define BLOCK_SIZE 4096
 #define HEAP_START 0x100000
 #define MM_SIZE 0x100000
 #define TOTAL_BLOCKS (MM_SIZE / BLOCK_SIZE)

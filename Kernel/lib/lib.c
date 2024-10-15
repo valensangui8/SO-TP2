@@ -76,7 +76,7 @@ void my_strcpy(char *dest, const char *src) {
 	char *aux = dest;
 	while ((*dest++ = *src++))
 		;
-	return aux;
+	return;
 }
 
 void my_strcat(char *dest, const char *src) {

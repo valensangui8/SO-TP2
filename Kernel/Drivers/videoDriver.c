@@ -300,7 +300,7 @@ void initialize() {
 	scale = 1;
 	x = 0;
 	y = 0;
-	drawWord("TP-SO-Grupo-10$ ");
+	//drawWord("TP-SO-Grupo-10$ ");
 	updateCursor();
 }
 

@@ -2,7 +2,10 @@
 
 
 void process_function(main_function rip, char **argv, uint64_t argc) {
-    int ret = rip(argc, argv);
+	drawWord("Process function rip de : ");
+	drawHex(rip);
+	enter();
+    int ret = rip(argv, argc);
 
     kill_process(get_pid());
 
@@ -28,6 +31,8 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 	my_strncpy(process->name, name, sizeof(process->name));
 	process->argv = argv;
 	process->argc = argc;
+	
+	
 	process->stack_pointer = _initialize_stack_frame(&process_function, rip, stackEnd,(void *) process->argv);
 
 }
@@ -194,9 +199,9 @@ void process_status(unsigned int pid) {
 			drawWord("        ");
 			drawWord(process_state(scheduler->processes[i]));
 			drawWord("        ");
-			drawHex(scheduler->processes[i].stack_process->rsp);
+			drawHex(scheduler->processes[i].stack_pointer);
 			drawWord("        ");
-			drawHex(scheduler->processes[i].stack_process->my_registers.rbp);
+			drawHex(scheduler->processes[i].stack_base);
 			drawWord("        ");
 			drawWord(scheduler->processes[i].name);
 			commandEnter();

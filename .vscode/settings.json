@@ -8,6 +8,7 @@
         "lib.h": "c",
         "stack.h": "c",
         "stdint.h": "c",
-        "idtmanager.h": "c"
+        "idtmanager.h": "c",
+        "memorymanageradt.h": "c"
     }
 }
