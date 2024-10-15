@@ -43,7 +43,7 @@ int main() {
 	
         
         initialize_shell(buffer);
-		call_sys_yield();
+		
 
 
 

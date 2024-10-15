@@ -70,6 +70,8 @@ typedef struct PCB {
 	Priority priority;
 	PCBState state;
 	Process_stack stack_process;
+	void * stack_pointer;
+	void * stack_base;
 	char foreground;
 	char **argv;
 	int argc;
@@ -83,6 +85,7 @@ typedef struct Scheduler {
 	uint16_t index_rr;
 	int8_t quantum_remaining;
 	uint32_t amount_processes;
+	uint64_t next_pid;
 } Scheduler;
 
 typedef struct Scheduler *SchedulerInfo;

@@ -25,7 +25,7 @@ static uint16_t sys_block_process(unsigned int pid);
 static uint16_t sys_unblock_process(unsigned int pid);
 static void sys_yield();
 static void sys_process_status(unsigned int pid);
-static uint16_t sys_create_process(char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char *argv[], int argc, main_function rip);
+static uint16_t sys_create_process(char *name, uint16_t ppid, Priority priority, char foreground, char *argv[], int argc, main_function rip);
 static void sys_list_processes_state();
 
 static int64_t sys_get_pid();
@@ -105,7 +105,7 @@ void idtManager(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 			sys_process_status((unsigned int) rdi);
 			break;
 		case 23:
-			sys_create_process((char *) rdi, (uint16_t) rsi, (uint16_t) rdx, (Priority) rcx, (char) r8, (char **) r9, (int) r10, (main_function) r11);
+			sys_create_process((char *) rdi, (uint16_t) rsi, (Priority) rdx, (char) rcx, (char **) r8, (int) r9, (main_function) r10);
 			break;
 		case 24:
 			sys_list_processes_state();
@@ -220,8 +220,8 @@ void sys_process_status(unsigned int pid) {
 	process_status(pid);
 }
 
-uint16_t sys_create_process(char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char *argv[], int argc, main_function rip) {
-	return create_process(name, pid, ppid, priority, foreground, argv, argc, rip);
+uint16_t sys_create_process(char *name, uint16_t ppid, Priority priority, char foreground, char *argv[], int argc, main_function rip) {
+	return create_process(name, ppid, priority, foreground, argv, argc, rip);
 }
 
 void sys_list_processes_state() {

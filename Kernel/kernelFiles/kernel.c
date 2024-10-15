@@ -59,9 +59,11 @@ void idle() {
 }
 
 void timo(){
-	drawWord("TImo puto");
-	commandEnter();
-	yield();
+	 while (1) {
+        drawWord("Timo process running");
+        commandEnter();
+        yield(); // Yield the CPU to allow other processes to run
+    }
 }
 
 
@@ -71,12 +73,12 @@ int main() {
 
 	initialize();
 
-	create_process("Shell", 0, 0, 4, 1, 1, NULL, 0, (main_function) sampleCodeModuleAddress);
+	create_process("Shell", 0, 4, 1, NULL, 0, (main_function) sampleCodeModuleAddress);
 
 	// timer_tick();
 	
 
-	create_process("Timo", 1, 0, 1, 1, 1, NULL, 0, (main_function) timo);
+	create_process("Idle", 0, 1, 1, NULL, 0, (main_function) idle);
 
 	//((EntryPoint) sampleCodeModuleAddress)();
 

@@ -28,7 +28,7 @@ void test_prio() {
 	uint64_t i;
 
 	for (i = 0; i < TOTAL_PROCESSES; i++)
-		pids[i] = call_sys_create_process("idle", i, 0, LOWEST, FOREGROUND, NULL, 0, (main_function) idle_process);
+		pids[i] = call_sys_create_process("idle", 0, LOWEST, FOREGROUND, NULL, 0, (main_function) idle_process);
 
 	call_sys_draw_int(call_sys_get_pid());
 	bussy_wait(WAIT);

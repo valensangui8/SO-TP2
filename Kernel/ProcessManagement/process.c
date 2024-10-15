@@ -1,17 +1,40 @@
 #include <process.h>
 
 
+void process_function(main_function rip, char **argv, uint64_t argc) {
+    // Execute the main function of the process
+    int ret = rip(argc, argv);
+
+    // Clean up the process (e.g., mark it as DEAD)
+    kill_process(get_pid());
+
+    // Yield CPU to scheduler
+    yield();
+
+    // Halt to prevent further execution
+    while (1) {
+        _hlt();
+    }
+}
+
 void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char **argv, int argc, main_function rip) {
 	process->pid = pid;
 	process->ppid = ppid;
 	process->priority = priority;
 	process->state = READY;
 	process->foreground = foreground;
-
+	process->stack_base = alloc_memory(4096);
+	if (process->stack_base == NULL) {
+        free_memory(process->stack_base);
+        return NULL;
+    }
+	void *stackEnd = (void *) ((uint64_t) process->stack_base + 4096);
 	my_strncpy(process->name, name, sizeof(process->name));
-	process->stack_process = load_stack_pointer(rip, 0, argv, argc);
+	//process->stack_process = load_stack_pointer(rip, 0, argv, argc);
 	process->argv = argv;
 	process->argc = argc;
+	process->stack_pointer = _initialize_stack_frame(&process_function, rip, stackEnd,(void *) process->argv);
+
 }
 
 uint8_t has_children(unsigned int pid) {

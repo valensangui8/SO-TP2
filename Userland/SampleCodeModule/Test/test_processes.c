@@ -45,7 +45,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
 	while (1) {
 		// Create max_processes processes
 		for (rq = 0; rq < max_processes; rq++) {
-			p_rqs[rq].pid = call_sys_create_process("idle", rq, 0, PRIORITY1, FOREGROUND, NULL, 0, (main_function) idle_process2);
+			p_rqs[rq].pid = call_sys_create_process("idle", 0, PRIORITY1, FOREGROUND, NULL, 0, (main_function) idle_process2);
 
 			if (p_rqs[rq].pid == -1) {
 				call_sys_drawWord("test_processes: ERROR creating process");
