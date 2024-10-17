@@ -1,6 +1,5 @@
 #include <process.h>
 
-
 void process_function(main_function rip, char **argv, uint64_t argc) {
 	
     int ret = rip(argv, argc);
@@ -52,65 +51,6 @@ int64_t wait_children(unsigned int ppid) {
 					// wait
 				}
 			}
-		}
-	}
-	return 0;
-}
-
-uint8_t kill_process(unsigned int pid) {
-	SchedulerInfo scheduler = get_scheduler();
-	for (int i = 0; i < MAX_PROCESS; i++) {
-		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != DEAD) {
-			scheduler->processes[i].state = DEAD;
-			scheduler->amount_processes--;
-			free_memory(scheduler->processes[i].stack_base);
-			free_memory(scheduler->processes[i].argv);
-			return 1;
-		}
-	}
-	return 0;
-}
-
-void update_priority(unsigned int pid, Priority new_priority) {
-	SchedulerInfo scheduler = get_scheduler();
-	PCBT *process = NULL;
-
-	for (int i = 0; i < MAX_PROCESS; i++) {
-		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != DEAD) {
-			process = &(scheduler->processes[i]);
-			break;
-		}
-	}
-	if (process == NULL || process->priority == new_priority) {
-		return;
-	}
-
-	process->times_to_run = new_priority;
-
-	process->priority = new_priority;
-}
-
-uint16_t block_process(unsigned int pid) {
-	SchedulerInfo scheduler = get_scheduler();
-	for (int i = 0; i < MAX_PROCESS; i++) {
-		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != DEAD) {
-			if (scheduler->processes[i].state == ZOMBIE || scheduler->processes[i].state == BLOCKED) {
-				return 0;
-			}
-			scheduler->processes[i].state = BLOCKED;
-			return 1;
-		}
-	}
-	
-	return 0;
-}
-
-uint16_t unblock_process(unsigned int pid) {
-	SchedulerInfo scheduler = get_scheduler();
-	for (int i = 0; i < MAX_PROCESS; i++) {
-		if ( scheduler->processes[i].pid == pid && scheduler->processes[i].state == BLOCKED) {
-			scheduler->processes[i].state = READY;
-			return 1;
 		}
 	}
 	return 0;
@@ -179,4 +119,15 @@ void process_status(unsigned int pid) {
 		}
 	}
 	enter();
+}
+
+unsigned int get_pid() {
+	SchedulerInfo scheduler = get_scheduler();
+	return scheduler->current_pid;
+}
+
+unsigned int get_ppid() {
+	SchedulerInfo scheduler = get_scheduler();
+	PCBT *process = &(scheduler->processes[scheduler->index_rr]);
+	return process->ppid;
 }
