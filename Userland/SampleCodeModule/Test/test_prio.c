@@ -1,9 +1,9 @@
-#include "syscalls.h"
+#include <syscalls.h>
 #include "test_util.h"
 #include <stdint.h>
 #include <stdio.h>
 
-#define MINOR_WAIT 10 // TODO: Change this value to prevent a process from flooding the screen
+#define MINOR_WAIT 10000 // TODO: Change this value to prevent a process from flooding the screen
 #define WAIT 10		  // TODO: Change this value to make the wait long enough to see theese processes beeing run at least twice
 
 #define TOTAL_PROCESSES 3
@@ -24,11 +24,10 @@ void idle_process() {
 
 void test_prio() {
 	int64_t pids[TOTAL_PROCESSES];
-	char *argv[] = {0};
 	uint64_t i;
 
 	for (i = 0; i < TOTAL_PROCESSES; i++)
-		pids[i] = call_sys_create_process("idle", 0, LOWEST, FOREGROUND, NULL, 0, (main_function) idle_process);
+		pids[i] = call_sys_create_process("idle", LOWEST, FOREGROUND, NULL, 0, &idle_process);
 
 	call_sys_draw_int(call_sys_get_pid());
 	bussy_wait(WAIT);

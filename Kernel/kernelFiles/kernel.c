@@ -65,8 +65,7 @@ int main() {
 	load_idt();
 	initialize();
 
-	create_process("init", PRIORITY1, 1, NULL, 0, idle);
-	create_process("Shell", PRIORITY4, 1, NULL, 0, (main_function) sampleCodeModuleAddress);
+	create_process("init", PRIORITY1, 1, NULL, 0, &idle);
 	create_process("Shell", PRIORITY4, 1, NULL, 0, (main_function) sampleCodeModuleAddress);
 
 	_sti();

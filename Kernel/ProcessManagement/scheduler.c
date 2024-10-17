@@ -99,17 +99,16 @@ PCBT *update_quantum(void *stack_pointer) {
         if (current_process->state != BLOCKED && current_process->times_to_run > 0) {
             current_process->times_to_run--;
         }
+		current_process->stack_pointer = stack_pointer; // Save the stack pointer 
 
 		while (current_process->state != READY || current_process->times_to_run == 0){
 			scheduler->index_rr = (scheduler->index_rr + 1) % MAX_PROCESS; 
             current_process = &(scheduler->processes[scheduler->index_rr]);
 
-         
             if (current_process->times_to_run == 0 && current_process->state == READY) {
                 current_process->times_to_run = current_process->priority;
             }
 		}
-		current_process->stack_pointer = stack_pointer;  
 
         scheduler->quantum_remaining = QUANTUM;  
     } else {
@@ -123,31 +122,25 @@ PCBT *update_quantum(void *stack_pointer) {
 
 void *scheduler(void *stack_pointer) {
     SchedulerInfo scheduler = get_scheduler();
-
-    
+	
     if (!initialized) {
         return stack_pointer;
     }
-
     
     PCBT *current_process = &(scheduler->processes[scheduler->index_rr]);
-
     
     if (current_process->state == DEAD) {
         scheduler->index_rr = (scheduler->index_rr + 1) % MAX_PROCESS;
         return stack_pointer;  
     }
-
     
     if (scheduler->quantum_remaining <= QUANTUM) {
         current_process->stack_pointer = stack_pointer;
     }
-
     
     current_process = update_quantum(stack_pointer);
     scheduler->current_pid = current_process->pid;
     
-    drawInt(current_process->pid);
     return current_process->stack_pointer;
 }
 

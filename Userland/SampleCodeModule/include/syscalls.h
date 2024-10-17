@@ -1,10 +1,8 @@
-
 #ifndef SYSCALLS_H
 #define SYSCALLS_H
 
 #include <stdint.h>
 
-typedef int (*main_function)(char **argv, uint64_t argc);
 
 extern void call_sys_drawWord(char *word);
 extern void call_sys_read(unsigned char *buf, uint32_t count, uint32_t *size);
@@ -32,12 +30,15 @@ extern uint16_t call_sys_block_process(unsigned int pid);
 extern uint16_t call_sys_unblock_process(unsigned int pid);
 extern void call_sys_yield();
 extern void call_sys_process_status(unsigned int pid);
-extern uint16_t call_sys_create_process(char *name, uint16_t ppid, unsigned int priority, char foreground, char *argv[], int argc, main_function *rip);
+extern uint16_t call_sys_create_process(char *name, unsigned int priority, char foreground, char *argv[], int argc, void *rip);
 extern void call_sys_list_processes_state();
 
 extern int64_t call_sys_get_pid();
 extern int64_t call_sys_get_ppid();
 extern int64_t call_sys_wait_children(unsigned int ppid);
 extern void call_sys_halt();
+
+extern void *call_sys_alloc_memory(uint64_t size);
+extern void *call_sys_free_memory(void *ptr);
 
 #endif

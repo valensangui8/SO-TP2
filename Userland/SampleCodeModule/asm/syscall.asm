@@ -198,3 +198,13 @@ call_sys_halt:
     mov rax, 29
     int 80h
     ret
+
+call_sys_alloc_memory:
+    mov rax, 30
+    int 80h
+    ret
+
+call_sys_free_memory:
+    mov rax, 31
+    int 80h
+    ret

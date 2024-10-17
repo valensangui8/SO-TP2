@@ -33,7 +33,17 @@ static int64_t sys_get_ppid();
 static int64_t sys_wait_children(unsigned int ppid);
 static void sys_halt();
 
-void idtManager(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax) {
+static void *sys_alloc_memory(uint64_t size);
+static void *sys_free_memory(void *ptr);
+
+void idtManager(uint64_t rax, uint64_t *otherRegisters) {
+    uint64_t rdi, rsi, rdx, rcx, r8, r9;
+    rdi = otherRegisters[0];
+    rsi = otherRegisters[1];
+    rdx = otherRegisters[2];
+    rcx = otherRegisters[3];
+    r8 = otherRegisters[4];
+    r9 = otherRegisters[5];
 	switch (rax) {
 		case 0:															 // read
 			sys_Read((uint8_t *) rdi, (uint32_t) rsi, (uint32_t *) rdx); // rdi = buffer ; rsi = size , rdx = count
@@ -105,7 +115,7 @@ void idtManager(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 			sys_process_status((unsigned int) rdi);
 			break;
 		case 23:
-			//sys_create_process((char *) rdi, (Priority) rsi, (char) rdx, (char **) rcx, (int) r8, (main_function) r9);
+			sys_create_process((char *) rdi, (Priority) rsi, (char) rdx, (char **) rcx, (int) r8, (main_function) r9);
 			break;
 		case 24:
 			sys_list_processes_state();
@@ -124,6 +134,12 @@ void idtManager(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 			break;
 		case 29:
 			sys_halt();
+			break;
+		case 30:
+			sys_alloc_memory((uint64_t) rdi);
+			break;
+		case 31:
+			sys_free_memory((void *) rdi);
 			break;
 	}
 }
@@ -248,6 +264,10 @@ void sys_halt() {
 	_hlt();
 }
 
-// void *alloc_memory(uint64_t size);
+void *sys_alloc_memory(uint64_t size){
+	return alloc_memory(size);
+}
 
-// void free_memory(void *ptr);
+void *sys_free_memory(void *ptr){
+	free_memory(ptr);
+}

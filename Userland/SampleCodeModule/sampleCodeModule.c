@@ -2,6 +2,7 @@
 #include <myStdio.h>
 #include <shell.h>
 #include <syscalls.h>
+#include <test.h>
 
 #define CHARACTER_COLOR 0xB0CA07
 #define TAB_SIZE 4
@@ -14,7 +15,20 @@
 #define HEIGHT_FONT 16
 #define BUFFER_SIZE 256
 
+static void terminal();
+
 int main() {
+	terminal();
+	// //call_sys_yield();
+		
+	//test_processes(1, (char *[]){"2"});
+	//test_prio();
+	//test_mm(1, (char *[]){"1000000"});
+	
+	return 0;
+}
+
+void terminal(){
 	char c;
 	while (1) {
 		char buffer[BUFFER_SIZE] = {0};
@@ -39,15 +53,6 @@ int main() {
 		}
 		buffer[buffer_pos] = '\0';
 
-	
-        
         initialize_shell(buffer);
-
-		//call_sys_yield();
-		
-
-
-
-		// test_processes(1, (char *[]){"2"});
 	}
 }

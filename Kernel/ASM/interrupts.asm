@@ -218,9 +218,27 @@ picSlaveMask:
 
 
 _irq80Handler:
-	mov r9, rax
+	push rbp
+    mov rbp, rsp
+    pushState
+
+    ;parameters for systemcalls
+    push r9
+    push r8
+    push rcx
+    push rdx
+    push rsi
+    push rdi
+
+    mov rdi, rax
+    mov rsi, rsp   ; stack pointer is pointing towards first element in the stack
 	call idtManager
-	iretq
+	add rsp, 8*6    ; Restablezco el stack
+
+    popState
+    mov rsp, rbp
+    pop rbp
+    iretq
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
