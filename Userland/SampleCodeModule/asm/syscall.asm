@@ -32,7 +32,8 @@ GLOBAL call_sys_wait
 GLOBAL call_sys_draw_int
 
 GLOBAL call_sys_halt
-
+GLOBAL call_sys_alloc_memory
+GLOBAL call_sys_free_memory
 
 call_sys_read:
     mov rax, 0
