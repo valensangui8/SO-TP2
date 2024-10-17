@@ -2,9 +2,7 @@
 
 
 void process_function(main_function rip, char **argv, uint64_t argc) {
-	drawWord("Process function rip de : ");
-	drawHex(rip);
-	enter();
+	
     int ret = rip(argv, argc);
 
     kill_process(get_pid());
@@ -20,8 +18,8 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 	process->pid = pid;
 	process->ppid = ppid;
 	process->priority = priority;
-	process->state = READY;
 	process->foreground = foreground;
+	process->times_to_run = priority;
 	process->stack_base = alloc_memory(4096);
 	if (process->stack_base == NULL) {
         free_memory(process->stack_base);
@@ -31,8 +29,6 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 	my_strncpy(process->name, name, sizeof(process->name));
 	process->argv = argv;
 	process->argc = argc;
-	
-	
 	process->stack_pointer = _initialize_stack_frame(&process_function, rip, stackEnd,(void *) process->argv);
 
 }
@@ -40,7 +36,7 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 uint8_t has_children(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
 	for (int i = 0; i < MAX_PROCESS; i++) {
-		if (scheduler->processes[i].ppid == pid && scheduler->processes[i].is_active != 0) {
+		if (scheduler->processes[i].ppid == pid && scheduler->processes[i].state != DEAD) {
 			return 1;
 		}
 	}
@@ -51,7 +47,7 @@ int64_t wait_children(unsigned int ppid) {
 	if (has_children(ppid)) {
 		SchedulerInfo scheduler = get_scheduler();
 		for (int i = 0; i < MAX_PROCESS; i++) {
-			if (scheduler->processes[i].ppid == ppid && scheduler->processes[i].is_active == 1) {
+			if (scheduler->processes[i].ppid == ppid && scheduler->processes[i].state != DEAD) {
 				while (scheduler->processes[i].state != DEAD) {
 					// wait
 				}
@@ -64,10 +60,11 @@ int64_t wait_children(unsigned int ppid) {
 uint8_t kill_process(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
 	for (int i = 0; i < MAX_PROCESS; i++) {
-		if (scheduler->processes[i].pid == pid && scheduler->processes[i].is_active == 1) {
+		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != DEAD) {
 			scheduler->processes[i].state = DEAD;
-			scheduler->processes[i].is_active = 0;
 			scheduler->amount_processes--;
+			free_memory(scheduler->processes[i].stack_base);
+			free_memory(scheduler->processes[i].argv);
 			return 1;
 		}
 	}
@@ -79,7 +76,7 @@ void update_priority(unsigned int pid, Priority new_priority) {
 	PCBT *process = NULL;
 
 	for (int i = 0; i < MAX_PROCESS; i++) {
-		if (scheduler->processes[i].pid == pid && scheduler->processes[i].is_active == 1) {
+		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != DEAD) {
 			process = &(scheduler->processes[i]);
 			break;
 		}
@@ -88,30 +85,7 @@ void update_priority(unsigned int pid, Priority new_priority) {
 		return;
 	}
 
-	int old_priority = process->priority;
-
-	if (new_priority > old_priority) {
-		int additional_slots = new_priority - old_priority;
-		int inserted = 0;
-
-		for (int i = 0; i < MAX_PROCESS * PRIORITY4 && inserted < additional_slots; i++) {
-			if (scheduler->round_robin[i] == NULL) {
-				scheduler->round_robin[i] = process;
-				inserted++;
-			}
-		}
-	}
-	else if (new_priority < old_priority) {
-		int to_remove = old_priority - new_priority;
-		int removed = 0;
-
-		for (int i = 0; i < MAX_PROCESS * PRIORITY4 && removed < to_remove; i++) {
-			if (scheduler->round_robin[i] == process) {
-				scheduler->round_robin[i] = NULL;
-				removed++;
-			}
-		}
-	}
+	process->times_to_run = new_priority;
 
 	process->priority = new_priority;
 }
@@ -119,25 +93,22 @@ void update_priority(unsigned int pid, Priority new_priority) {
 uint16_t block_process(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
 	for (int i = 0; i < MAX_PROCESS; i++) {
-		if (scheduler->processes[i].pid == pid && scheduler->processes[i].is_active == 1) {
-			if (scheduler->processes[i].state == DEAD || scheduler->processes[i].state == BLOCKED) {
-				drawWord("block_process: Proceso en estado inválido para bloquear");
-				commandEnter();
+		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != DEAD) {
+			if (scheduler->processes[i].state == ZOMBIE || scheduler->processes[i].state == BLOCKED) {
 				return 0;
 			}
 			scheduler->processes[i].state = BLOCKED;
 			return 1;
 		}
 	}
-	drawWord("block_process: Proceso no encontrado");
-	commandEnter();
+	
 	return 0;
 }
 
 uint16_t unblock_process(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
 	for (int i = 0; i < MAX_PROCESS; i++) {
-		if (scheduler->processes[i].is_active == 1 && scheduler->processes[i].pid == pid) {
+		if ( scheduler->processes[i].pid == pid && scheduler->processes[i].state == BLOCKED) {
 			scheduler->processes[i].state = READY;
 			return 1;
 		}

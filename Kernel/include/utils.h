@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_PROCESS 20
+#define MAX_PROCESS 10
 #define MM_ADDRESS 0x50000
 #define SCHEDULER_ADDRESS 0x60000
 
@@ -36,11 +36,11 @@ typedef int (*main_function)(char **argv, uint64_t argc);
 
 
 typedef struct PCB {
-	char is_active;
 	char name[32];
 	uint16_t pid;
 	uint16_t ppid;
 	Priority priority;
+	int times_to_run; // contador de veces que se ejecuto
 	PCBState state;
 	void * stack_pointer;
 	void * stack_base;
@@ -51,7 +51,6 @@ typedef struct PCB {
 
 typedef struct Scheduler {
 	PCBT processes[MAX_PROCESS];
-	PCBT *round_robin[MAX_PROCESS * PRIORITY4];
 	uint16_t current_pid;
 	uint16_t index_p; // va a estar en un lugar libre, si esta lleno valdra -1
 	uint16_t index_rr;

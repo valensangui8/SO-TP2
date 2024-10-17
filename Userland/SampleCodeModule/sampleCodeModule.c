@@ -15,7 +15,6 @@
 #define BUFFER_SIZE 256
 
 int main() {
-	call_sys_drawWord("Welcome to the shelljaknflksbfkjsdhfo;dsjfnslajfdlsajn");
 	char c;
 	while (1) {
 		char buffer[BUFFER_SIZE] = {0};
@@ -43,6 +42,8 @@ int main() {
 	
         
         initialize_shell(buffer);
+
+		//call_sys_yield();
 		
 
 

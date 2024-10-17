@@ -33,7 +33,7 @@ static int64_t sys_get_ppid();
 static int64_t sys_wait_children(unsigned int ppid);
 static void sys_halt();
 
-void idtManager(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10, uint64_t r11, uint64_t rax) {
+void idtManager(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax) {
 	switch (rax) {
 		case 0:															 // read
 			sys_Read((uint8_t *) rdi, (uint32_t) rsi, (uint32_t *) rdx); // rdi = buffer ; rsi = size , rdx = count
@@ -105,7 +105,7 @@ void idtManager(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 			sys_process_status((unsigned int) rdi);
 			break;
 		case 23:
-			sys_create_process((char *) rdi, (uint16_t) rsi, (Priority) rdx, (char) rcx, (char **) r8, (int) r9, (main_function) r10);
+			//sys_create_process((char *) rdi, (uint16_t) rsi, (Priority) rdx, (char) rcx, (char **) r8, (int) r9, (main_function) r10);
 			break;
 		case 24:
 			sys_list_processes_state();

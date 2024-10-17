@@ -9,9 +9,9 @@ char getChar(){
     uint32_t size = 0;
     while(size == 0){
         call_sys_read(&c,1,&size);
-        if(size == 0){
-            call_sys_yield();  
-        }
+        // if(size == 0){
+        //     call_sys_yield();  
+        // }
     }
     return c;
 }
