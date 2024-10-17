@@ -3,7 +3,7 @@
 
 #include <utils.h>
 
-#define QUANTUM 4
+#define QUANTUM 1
 #define RR_INDEX(i) ((i + 1) % (MAX_PROCESS * PRIORITY4))
 
 #define PID_WIDTH 6
