@@ -75,6 +75,9 @@ void help(){
 
     call_sys_drawWithColor(" div0", 0x32a852);
     printf(" - Signals division by zero.");
+
+    call_sys_drawWithColor(" testprio", 0x32a852);
+    printf(" - Executes the memory manager test.");
     
 }
 
@@ -170,4 +173,8 @@ void date() {
 
     call_sys_drawWord("Current time: ");
     call_sys_drawWord(getTime());
+}
+
+void user_test_prio(){
+    test_prio();
 }

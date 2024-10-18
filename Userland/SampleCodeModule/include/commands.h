@@ -7,6 +7,7 @@
 #include <eliminator.h>
 #include <itba.h>
 #include <invOpcode.h>
+#include <test.h>
 
 #define SECONDS 0x0
 #define MINUTES 0x2
@@ -28,6 +29,8 @@ void div0();
 void help();
 
 void registers();
+
+void user_test_prio();
 
 
 
