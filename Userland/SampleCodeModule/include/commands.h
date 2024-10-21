@@ -30,14 +30,4 @@ void help();
 
 void registers();
 
-void user_test_prio();
-
-
-
-
-
-
-
-
-
 #endif

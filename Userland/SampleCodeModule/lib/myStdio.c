@@ -1,8 +1,4 @@
-#include <syscalls.h>
-#include <stdint.h>
-#include <stdarg.h>
 #include <myStdio.h>
-
 
 char getChar(){
     uint8_t c;
@@ -109,4 +105,25 @@ int intToString(int num, char *toPrint){
     toPrint[i] = '\0';
 
     return i;
+}
+
+char * strtok(char * str, const char * delim){
+    static char * last = NULL;
+    if(str != NULL){
+        last = str;
+    }
+    if(last == NULL){
+        return NULL;
+    }
+    char * ret = last;
+    while(*last != 0){
+        if(*last == *delim){
+            *last = 0;
+            last++;
+            return ret;
+        }
+        last++;
+    }
+    last = NULL;
+    return ret;
 }

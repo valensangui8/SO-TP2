@@ -1,29 +1,23 @@
-/* sampleCodeModule.c */
 #include <myStdio.h>
 #include <shell.h>
 #include <syscalls.h>
 #include <test.h>
+#include <stddef.h>
 
 #define CHARACTER_COLOR 0xB0CA07
 #define TAB_SIZE 4
 #define HEADER_SIZE 6
 #define MIN_X 8
 #define MIN_Y 8
-#define MAX_X 1008
-#define MAX_Y 1008
 #define WIDTH_FONT 8
 #define HEIGHT_FONT 16
 #define BUFFER_SIZE 256
+#define MAX_ARGS 10
 
 static void terminal();
 
 int main() {
 	terminal();
-	// //call_sys_yield();
-		
-	//test_processes(1, (char *[]){"2"});
-	//test_prio();
-	//test_mm(1, (char *[]){"1000000"});
 	
 	return 0;
 }
@@ -53,6 +47,18 @@ void terminal(){
 		}
 		buffer[buffer_pos] = '\0';
 
-        initialize_shell(buffer);
+		char *command = strtok(buffer, " ");
+		char *token;
+        
+        char *args[MAX_ARGS] = {NULL};  
+        int arg_count = 0;
+        
+        while (token != NULL) {
+            args[arg_count++] = token;
+            token = strtok(NULL, " ");
+        }
+        args[arg_count] = NULL;
+
+        initialize_shell(command, arg_count, args);
 	}
 }

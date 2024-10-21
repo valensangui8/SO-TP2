@@ -72,12 +72,19 @@ void help(){
     call_sys_drawWithColor(" invalidOpcode", 0x32a852);
     printf(" - Indicates an invalid operation.");
    
-
     call_sys_drawWithColor(" div0", 0x32a852);
     printf(" - Signals division by zero.");
 
+    printf(" TEST:");
+
     call_sys_drawWithColor(" testprio", 0x32a852);
     printf(" - Executes the memory manager test.");
+
+    call_sys_drawWithColor(" testmm", 0x32a852);
+    printf(" - Executes the memory manager test. Pass the max memory number as an argument.");
+
+    call_sys_drawWithColor(" testprocesses", 0x32a852);
+    printf(" - Executes the memory manager test. Pass the max number of processes as an argument.");
     
 }
 
@@ -173,8 +180,4 @@ void date() {
 
     call_sys_drawWord("Current time: ");
     call_sys_drawWord(getTime());
-}
-
-void user_test_prio(){
-    test_prio();
 }
