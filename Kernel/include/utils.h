@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_PROCESS 25
+#define MAX_PROCESS 50
 #define MM_ADDRESS 0x50000
 #define SCHEDULER_ADDRESS 0x60000
 

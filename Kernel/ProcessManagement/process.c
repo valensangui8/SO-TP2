@@ -10,7 +10,6 @@ static int argsLen(char **array) {
 void process_function(main_function rip, char **argv, uint64_t argc) {
 	
 	int new_argc = argsLen(argv);
-	drawInt(new_argc);
     int ret = rip(new_argc, argv);
 
     kill_process(get_pid());
