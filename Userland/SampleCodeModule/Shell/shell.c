@@ -22,7 +22,7 @@ int readCommand(char * command) {
     return -1;
 }
 
-void executeCommand(int index, char * flag, char * command, int argc, char **args) {
+void executeCommand(int index, char * flag, char * command, int argc, char **argv) {
     if (index == -1 ) {
         call_sys_drawError(command);
         *flag = 0;
@@ -34,12 +34,8 @@ void executeCommand(int index, char * flag, char * command, int argc, char **arg
     if(HeightPassed == 1){
         call_sys_clear();
     }
-    if(args == NULL){
-        commandsFunctions[index]();
-    }
-    else{
-        commandsFunctions[index](argc, args);
-    }
+
+    call_sys_create_process(commands[index],1,1,argv,argc, commandsFunctions[index]);
     
     call_sys_enter();
     *flag = 1;
