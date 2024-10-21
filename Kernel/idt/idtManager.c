@@ -19,13 +19,13 @@ static void sys_sound(uint32_t nFrequence, uint32_t time);
 static void sys_checkHeight(char *HeightPassed, int indexCommand);
 static void sys_draw_int(int number);
 
-static uint8_t sys_kill_process(unsigned int pid);
+static uint64_t sys_kill_process(unsigned int pid);
 static void sys_update_priority(unsigned int pid, Priority new_priority);
 static uint16_t sys_block_process(unsigned int pid);
 static uint16_t sys_unblock_process(unsigned int pid);
 static void sys_yield();
 static void sys_process_status(unsigned int pid);
-static uint16_t sys_create_process(char *name, Priority priority, char foreground, char *argv[], int argc, main_function rip);
+static uint64_t sys_create_process(char *name, Priority priority, char foreground, char *argv[], int argc, main_function rip);
 static void sys_list_processes_state();
 
 static int64_t sys_get_pid();
@@ -36,7 +36,7 @@ static void sys_halt();
 static void *sys_alloc_memory(uint64_t size);
 static void *sys_free_memory(void *ptr);
 
-void idtManager(uint64_t rax, uint64_t *otherRegisters) {
+uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
     uint64_t rdi, rsi, rdx, rcx, r8, r9;
     rdi = otherRegisters[0];
     rsi = otherRegisters[1];
@@ -97,17 +97,17 @@ void idtManager(uint64_t rax, uint64_t *otherRegisters) {
 			sys_checkHeight((char *) rdi, (uint32_t) rsi);
 			break;
 		case 17:
-			sys_kill_process((unsigned int) rdi);
-			break;
+			return sys_kill_process((unsigned int) rdi);
+			
 		case 18:
 			sys_update_priority((unsigned int) rdi, (Priority) rsi);
 			break;
 		case 19:
-			sys_block_process((unsigned int) rdi);
-			break;
+			return sys_block_process((unsigned int) rdi);
+			
 		case 20:
-			sys_unblock_process((unsigned int) rdi);
-			break;
+			return sys_unblock_process((unsigned int) rdi);
+			
 		case 21:
 			sys_yield();
 			break;
@@ -115,19 +115,19 @@ void idtManager(uint64_t rax, uint64_t *otherRegisters) {
 			sys_process_status((unsigned int) rdi);
 			break;
 		case 23:
-			sys_create_process((char *) rdi, (Priority) rsi, (char) rdx, (char **) rcx, (int) r8, (main_function) r9);
-			break;
+			return sys_create_process((char *) rdi, (Priority) rsi, (char) rdx, (char **) rcx, (int) r8, (main_function) r9);
+		
 		case 24:
 			sys_list_processes_state();
 			break;
 		case 25:
-			sys_get_pid();
+			return sys_get_pid();
 			break;
 		case 26:
-			sys_get_ppid();
-			break;
+			return sys_get_ppid();
+		
 		case 27:
-			sys_wait_children((unsigned int) rdi);
+			return sys_wait_children((unsigned int) rdi);
 			break;
 		case 28:
 			sys_draw_int((int) rdi);
@@ -136,12 +136,13 @@ void idtManager(uint64_t rax, uint64_t *otherRegisters) {
 			sys_halt();
 			break;
 		case 30:
-			sys_alloc_memory((uint64_t) rdi);
-			break;
+			return sys_alloc_memory((uint64_t) rdi);
+		
 		case 31:
 			sys_free_memory((void *) rdi);
 			break;
 	}
+	return 0;
 }
 
 void sys_Read(uint8_t *buf, uint32_t count, uint32_t *size) {
@@ -212,7 +213,7 @@ void sys_checkHeight(char *HeightPassed, int command) {
 	checkHeight(HeightPassed, command);
 }
 
-uint8_t sys_kill_process(unsigned int pid) {
+uint64_t sys_kill_process(unsigned int pid) {
 	return kill_process(pid);
 }
 
@@ -236,8 +237,10 @@ void sys_process_status(unsigned int pid) {
 	process_status(pid);
 }
 
-uint16_t sys_create_process(char *name, Priority priority, char foreground, char *argv[], int argc, main_function rip) {
-	return create_process(name, priority, foreground, argv, argc, rip);
+uint64_t sys_create_process(char *name, Priority priority, char foreground, char *argv[], int argc, main_function rip) {
+	uint64_t pid = create_process(name, priority, foreground, argv, argc, rip);
+	
+	return pid;
 }
 
 void sys_list_processes_state() {

@@ -9,6 +9,7 @@
 #include <utils.h>
 
 #define SESSION_LEADER 1
+#define STACK_SIZE 4096
 
 void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char **argv, int argc, main_function rip);
 uint8_t has_children(unsigned int pid);

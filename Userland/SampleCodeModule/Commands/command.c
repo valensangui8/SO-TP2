@@ -83,7 +83,7 @@ void help(){
     call_sys_drawWithColor(" testmm", 0x32a852);
     printf(" - Executes the memory manager test. Pass the max memory number as an argument.");
 
-    call_sys_drawWithColor(" testprocesses", 0x32a852);
+    call_sys_drawWithColor(" testprocess", 0x32a852);
     printf(" - Executes the memory manager test. Pass the max number of processes as an argument.");
     
 }
@@ -180,4 +180,23 @@ void date() {
 
     call_sys_drawWord("Current time: ");
     call_sys_drawWord(getTime());
+}
+
+void test_mm_user(int argc, char **argv){
+    call_sys_create_process("testmm", 1, 0, argv, argc, &test_mm);
+    
+}
+
+void test_process_user(int argc, char **argv){
+    call_sys_create_process("testprocess", 1, 0, argv, argc, &test_processes);
+}
+
+
+void test_prio_user(){
+    call_sys_create_process("testprio", 1, 0, NULL, 0, &test_prio);
+    
+}
+
+void ps(){
+    call_sys_list_processes_state();
 }

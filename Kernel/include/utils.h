@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_PROCESS 3
+#define MAX_PROCESS 25
 #define MM_ADDRESS 0x50000
 #define SCHEDULER_ADDRESS 0x60000
 
@@ -31,7 +31,7 @@ typedef enum { PRIORITY1 = 1,
 			   PRIORITY4
 } Priority;
 
-typedef int (*main_function)(char **argv, uint64_t argc);
+typedef int (*main_function)(uint64_t argc, char **argv);
 
 
 

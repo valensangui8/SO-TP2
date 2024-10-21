@@ -1,8 +1,17 @@
 #include <process.h>
 
+
+static int argsLen(char **array) {
+    int i = 0;
+    while (array[i] != NULL) i++;
+    return i;
+}
+
 void process_function(main_function rip, char **argv, uint64_t argc) {
 	
-    int ret = rip(argv, argc);
+	int new_argc = argsLen(argv);
+	drawInt(new_argc);
+    int ret = rip(new_argc, argv);
 
     kill_process(get_pid());
 
@@ -13,18 +22,20 @@ void process_function(main_function rip, char **argv, uint64_t argc) {
     }
 }
 
+
+
 void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char **argv, int argc, main_function rip) {
 	process->pid = pid;
 	process->ppid = ppid;
 	process->priority = priority;
 	process->foreground = foreground;
 	process->times_to_run = priority;
-	process->stack_base = alloc_memory(4096);
+	process->stack_base = alloc_memory(STACK_SIZE);
 	if (process->stack_base == NULL) {
         free_memory(process->stack_base);
         return NULL;
     }
-	void *stackEnd = (void *) ((uint64_t) process->stack_base + 4096);
+	void *stackEnd = (void *) ((uint64_t) process->stack_base + STACK_SIZE);
 	my_strncpy(process->name, name, sizeof(process->name));
 	process->argv = argv;
 	process->argc = argc;

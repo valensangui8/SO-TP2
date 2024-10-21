@@ -1,7 +1,7 @@
 #include <shell.h>
 
-char * commands[COMMANDS] = {"zoomIn", "zoomOut", "clear", "div0", "invalidOpcode", "help", "registers", "date", "eliminator", "itba", "testprio", "testmm", "testprocesses"};
-void (* commandsFunctions[])() = {zoomIn, zoomOut, clear, div0, invalidOpcode, help, registers, date, eliminator, printLogo, test_prio, test_mm, test_processes};
+char * commands[COMMANDS] = {"zoomIn", "zoomOut", "clear", "div0", "invalidOpcode", "help", "registers", "date", "eliminator", "itba", "testprio", "testmm", "testprocess", "ps"};
+void (* commandsFunctions[])(int argc, char **argv) = {zoomIn, zoomOut, clear, div0, invalidOpcode, help, registers, date, eliminator, printLogo, test_prio_user, test_mm_user, test_process_user, ps};
 
 void initialize_shell(char *command, int argc, char **argv) {
     if(*command == 0){
@@ -34,9 +34,11 @@ void executeCommand(int index, char * flag, char * command, int argc, char **arg
     if(HeightPassed == 1){
         call_sys_clear();
     }
-
-    call_sys_create_process(commands[index],1,1,argv,argc, commandsFunctions[index]);
-    
+    if(index == 12 || index == 11){
+        commandsFunctions[index](argc, argv);
+    }else{
+        commandsFunctions[index](0,NULL);
+    }
     call_sys_enter();
     *flag = 1;
 }

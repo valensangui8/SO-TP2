@@ -30,4 +30,13 @@ void help();
 
 void registers();
 
+void test_mm_user(int argc, char **argv);
+
+void test_process_user(int argc, char **argv);
+
+void test_prio_user();
+
+void ps();
+
+
 #endif

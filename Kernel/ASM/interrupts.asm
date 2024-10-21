@@ -51,6 +51,23 @@ SECTION .text
 	push r15
 %endmacro
 
+%macro pushStateNoRax 0
+	push rbx
+	push rcx
+	push rdx
+	push rbp
+	push rdi
+	push rsi
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
+%endmacro
+
 %macro dState 0
 	mov [registers.drbp], rbp
 	mov rbp, [rsp]
@@ -110,6 +127,23 @@ SECTION .text
 	pop rcx
 	pop rbx
 	pop rax
+%endmacro
+
+%macro popStateNoRax 0
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rsi
+	pop rdi
+	pop rbp
+	pop rdx
+	pop rcx
+	pop rbx
 %endmacro
 
 saveState:
@@ -220,7 +254,7 @@ picSlaveMask:
 _irq80Handler:
 	push rbp
     mov rbp, rsp
-    pushState
+    pushStateNoRax
 
     ;parameters for systemcalls
     push r9
@@ -235,7 +269,7 @@ _irq80Handler:
 	call idtManager
 	add rsp, 8*6    ; Restablezco el stack
 
-    popState
+    popStateNoRax
     mov rsp, rbp
     pop rbp
     iretq

@@ -27,18 +27,25 @@ void idle_process2() {
 	}
 }
 
-int64_t test_processes(uint64_t argc, char *argv[]) {
+int64_t test_processes(int argc, char **argv) {
+    //call_sys_draw_int(argc);
 	uint8_t rq;
 	uint8_t alive = 0;
 	uint8_t action;
 	uint64_t max_processes;
 	char *argvAux[] = {0};
 
-	if (argc != 1)
+	
+	if (argc == 1){
+		call_sys_drawWord("ENTREEE timo puto 1");
+		return -1;
+	}
+
+	if ((max_processes = satoi(argv[1])) <= 0)
+			call_sys_drawWord("ENTREEE timo puto 2");
 		return -1;
 
-	if ((max_processes = satoi(argv[0])) <= 0)
-		return -1;
+	call_sys_drawWord("holaaa");
 
 	p_rq p_rqs[max_processes];
 
@@ -127,4 +134,5 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
 		call_sys_drawWord("test_processes: All processes finished");
 	}
 	call_sys_drawWord("test_processes: THE END ");
+	return 1;
 }

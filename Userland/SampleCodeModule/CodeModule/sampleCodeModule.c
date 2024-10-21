@@ -47,22 +47,21 @@ void terminal(){
 		}
 		buffer[buffer_pos] = '\0';
 
-		char *command = strtok(buffer, " ");
-		char *token;
-        
-        char *args[MAX_ARGS] = {NULL};  
-        int arg_count = 0;
-        
-        while (token != NULL) {
-            args[arg_count++] = token;
-            token = strtok(NULL, " ");
+		char *argv[MAX_ARGS] = {NULL};  
+        int argc = 0;
+
+		argv[0]=strtok(buffer, " ");
+
+		char *token = argv[argc++];
+        while ((token = strtok(NULL, " ")) != NULL) {
+            argv[argc++] = token;
 			if(token == '|' || token == '&' || token == '<' || token == '>') {
 				//pipes, background and redirections processes
 				//llamar a la segunda funcion
 			}
 		}
-		args[arg_count] = NULL;
+		argv[argc] = NULL;
 
-        initialize_shell(command, arg_count, args);
+        initialize_shell(argv[0], argc, argv);
 	}
 }

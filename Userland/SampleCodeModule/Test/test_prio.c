@@ -6,7 +6,7 @@
 #define MINOR_WAIT 10000 // TODO: Change this value to prevent a process from flooding the screen
 #define WAIT 10		  // TODO: Change this value to make the wait long enough to see theese processes beeing run at least twice
 
-#define TOTAL_PROCESSES 3
+#define TOTAL_PROCESSES 10
 #define LOWEST 1  // TODO: Change as required
 #define MEDIUM 2  // TODO: Change as required
 #define HIGHEST 3 // TODO: Change as required
@@ -26,10 +26,14 @@ void test_prio() {
 	int64_t pids[TOTAL_PROCESSES];
 	uint64_t i;
 
-	for (i = 0; i < TOTAL_PROCESSES; i++)
+	for (i = 0; i < TOTAL_PROCESSES; i++){
 		pids[i] = call_sys_create_process("idle", LOWEST, FOREGROUND, NULL, 0, &idle_process);
+		call_sys_drawWord("proceso creado con exito y pid: ");
+		call_sys_draw_int(pids[i]);
+		call_sys_commandEnter();
+	}
 
-	call_sys_draw_int(call_sys_get_pid());
+	
 	bussy_wait(WAIT);
 	call_sys_drawWord("CHANGING PRIORITIES...");
 	call_sys_commandEnter();
@@ -60,8 +64,13 @@ void test_prio() {
 	call_sys_drawWord("KILLING...");
 	call_sys_commandEnter();
 
-	for (i = 0; i < TOTAL_PROCESSES; i++)
-		call_sys_kill_process(pids[i]);
+	for (i = 0; i < TOTAL_PROCESSES; i++){
+		call_sys_draw_int(pids[i]);
+		call_sys_commandEnter();
+		call_sys_draw_int(call_sys_kill_process(pids[i]));
+		call_sys_commandEnter();
+	}
 
 	call_sys_drawWord("FINISHED");
+	call_sys_enter();
 }

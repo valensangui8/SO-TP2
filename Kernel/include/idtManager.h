@@ -11,6 +11,6 @@
 #include <utils.h>
 #include <videoDriver.h>
 
-void idtManager(uint64_t rax, uint64_t *otherRegisters);
+uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters);
 
 #endif

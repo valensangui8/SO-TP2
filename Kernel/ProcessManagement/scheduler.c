@@ -45,7 +45,7 @@ int8_t get_state() {
 	return process->state;
 }
 
-uint16_t create_process(char *name, Priority priority, char foreground, char *argv[], int argc, main_function rip) {
+uint64_t create_process(char *name, Priority priority, char foreground, char *argv[], int argc, main_function rip) {
 	SchedulerInfo scheduler = get_scheduler();
 	scheduler->amount_processes++;
 
@@ -69,7 +69,7 @@ uint16_t create_process(char *name, Priority priority, char foreground, char *ar
 	}
 	
 	init_process(process, name, process->pid, ppid, priority, foreground, new_argv, argc, rip);
-	
+
 	return process->pid;
 }
 
@@ -149,22 +149,23 @@ void list_processes_state() {
 	commandEnter();
 	drawWord("PID        STAT          RSP           RBP         COMMAND");
 	commandEnter();
-	for (int i = 0; i < scheduler->amount_processes; i++) {
-		drawInt(scheduler->processes[i].pid);
-		drawWord("        ");
-		drawWord(process_state(scheduler->processes[i]));
-		drawWord("        ");
-		drawHex(scheduler->processes[i].stack_pointer);
-		drawWord("        ");
-		drawHex(scheduler->processes[i].stack_base);
-		drawWord("        ");
-		drawWord(scheduler->processes[i].name);
-		commandEnter();
+	for (int i = 0; i < MAX_PROCESS; i++) {
+		if(scheduler->processes[i].state != DEAD){
+			drawInt(scheduler->processes[i].pid);
+			drawWord("        ");
+			drawWord(process_state(scheduler->processes[i]));
+			drawWord("        ");
+			drawHex(scheduler->processes[i].stack_pointer);
+			drawWord("        ");
+			drawHex(scheduler->processes[i].stack_base);
+			drawWord("        ");
+			drawWord(scheduler->processes[i].name);
+			commandEnter();
+		}
 	}
-	enter();
 }
 
-uint8_t kill_process(unsigned int pid) {
+uint64_t kill_process(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
 	for (int i = 0; i < MAX_PROCESS; i++) {
 		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != DEAD) {
