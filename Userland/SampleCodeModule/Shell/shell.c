@@ -1,7 +1,27 @@
 #include <shell.h>
 
-char * commands[COMMANDS] = {"zoomIn", "zoomOut", "clear", "div0", "invalidOpcode", "help", "registers", "date", "eliminator", "itba", "testprio", "testmm", "testprocess", "ps"};
-void (* commandsFunctions[])(int argc, char **argv) = {zoomIn, zoomOut, clear, div0, invalidOpcode, help, registers, date, eliminator, printLogo, test_prio_user, test_mm_user, test_process_user, ps};
+typedef struct command {
+    char * name;
+    void (* function)(int argc, char **argv);
+    char has_params; 
+}Command;
+
+Command commandsList[COMMANDS] = {
+    {"zoomIn", zoomIn, 0},                          
+    {"zoomOut", zoomOut, 0},
+    {"clear", clear, 0},
+    {"div0", div0, 0},
+    {"invalidOpcode", invalidOpcode, 0},
+    {"help", help, 0},
+    {"registers", registers, 0},
+    {"date", date, 0},
+    {"eliminator", eliminator, 0},
+    {"itba", printLogo, 0},
+    {"testprio", test_prio_user, 1},              
+    {"testmm", test_mm_user, 1},
+    {"testprocess", test_process_user, 1},
+    {"ps", ps, 0}
+};
 
 void initialize_shell(char *command, int argc, char **argv) {
     if(*command == 0){
@@ -15,7 +35,7 @@ void initialize_shell(char *command, int argc, char **argv) {
 
 int readCommand(char * command) {
     for (int i = 0; i < COMMANDS; i++) {
-        if (strcmp(command, commands[i]) == 0) {
+        if (strcmp(command, commandsList[i].name) == 0) {
             return i;
         }
     }
@@ -34,11 +54,19 @@ void executeCommand(int index, char * flag, char * command, int argc, char **arg
     if(HeightPassed == 1){
         call_sys_clear();
     }
-    if(index == 12 || index == 11){
-        commandsFunctions[index](argc, argv);
+
+    if(commandsList[index].has_params != 0){
+        if(argc == 1){
+            printf("ERROR: Invalid number of arguments");
+            call_sys_enter();
+            *flag = 0;
+            return;
+        }
+        commandsList[index].function(argc, argv);
     }else{
-        commandsFunctions[index](0,NULL);
+        commandsList[index].function(0,NULL);
     }
+
     call_sys_enter();
     *flag = 1;
 }

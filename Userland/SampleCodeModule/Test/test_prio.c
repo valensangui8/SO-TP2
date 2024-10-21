@@ -28,9 +28,6 @@ void test_prio() {
 
 	for (i = 0; i < TOTAL_PROCESSES; i++){
 		pids[i] = call_sys_create_process("idle", LOWEST, FOREGROUND, NULL, 0, &idle_process);
-		call_sys_drawWord("proceso creado con exito y pid: ");
-		call_sys_draw_int(pids[i]);
-		call_sys_commandEnter();
 	}
 
 	
@@ -65,10 +62,7 @@ void test_prio() {
 	call_sys_commandEnter();
 
 	for (i = 0; i < TOTAL_PROCESSES; i++){
-		call_sys_draw_int(pids[i]);
-		call_sys_commandEnter();
-		call_sys_draw_int(call_sys_kill_process(pids[i]));
-		call_sys_commandEnter();
+		call_sys_kill_process(pids[i]);
 	}
 
 	call_sys_drawWord("FINISHED");
