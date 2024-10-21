@@ -56,6 +56,10 @@ void terminal(){
         while (token != NULL) {
             args[arg_count++] = token;
             token = strtok(NULL, " ");
+			if(token == '|' || token == '&' || token == '<' || token == '>'){ {
+				//pipes, background and redirections processes
+				//llamar a la segunda funcion
+			}
         }
         args[arg_count] = NULL;
 
