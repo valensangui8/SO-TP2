@@ -68,7 +68,9 @@ void endless_loop_print(uint64_t wait) {
 	int64_t pid = call_sys_get_pid();
 
 	while (1) {
-		// printf("%d ", pid);
-		bussy_wait(wait);
+		//printf("%d ", pid);
+		call_sys_draw_int(pid);
+		call_sys_drawChar(' ');
+		bussy_wait(30000000);
 	}
 }

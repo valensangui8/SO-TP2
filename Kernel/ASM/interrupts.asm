@@ -22,6 +22,8 @@ GLOBAL printRegAsm
 
 GLOBAL _initialize_stack_frame
 
+GLOBAL _yield
+
 EXTERN idtManager
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
@@ -145,6 +147,10 @@ SECTION .text
 	pop rcx
 	pop rbx
 %endmacro
+
+_yield:
+	int 20h
+	ret
 
 saveState:
 	pushState

@@ -173,9 +173,13 @@ uint64_t kill_process(unsigned int pid) {
 			scheduler->amount_processes--;
 			free_memory(scheduler->processes[i].stack_base);
 			free_memory(scheduler->processes[i].argv);
+			if(scheduler->current_pid == pid){
+				yield();
+			}
 			return 1;
 		}
 	}
+	
 	return 0;
 }
 

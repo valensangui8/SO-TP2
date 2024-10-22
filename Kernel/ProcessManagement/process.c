@@ -1,5 +1,6 @@
 #include <process.h>
 
+extern void _yield();
 
 static int argsLen(char **array) {
     int i = 0;
@@ -14,11 +15,7 @@ void process_function(main_function rip, char **argv, uint64_t argc) {
 
     kill_process(get_pid());
 
-    yield();
-
-    while (1) {
-        _hlt();
-    }
+ 
 }
 
 
@@ -67,8 +64,7 @@ int64_t wait_children(unsigned int ppid) {
 }
 
 void yield() {
-	SchedulerInfo scheduler = get_scheduler();
-	scheduler->quantum_remaining = 0;
+	_yield();
 }
 
 char *process_state(PCBT process) {

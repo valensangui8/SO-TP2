@@ -274,3 +274,4 @@ void *sys_alloc_memory(uint64_t size){
 void *sys_free_memory(void *ptr){
 	free_memory(ptr);
 }
+

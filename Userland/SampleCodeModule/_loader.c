@@ -11,8 +11,12 @@ void * memset(void * destiny, int32_t c, uint64_t length);
 int _start() {
 	//Clean BSS
 	memset(&bss, 0, &endOfBinary - &bss);
+	main();
 
-	return main();
+	call_sys_kill_process(call_sys_get_pid());
+
+
+	return 0;
 
 }
 
