@@ -18,7 +18,7 @@ static MemoryManagerADT get_memory_manager();
 void init_memory_info(MemoryInfo *memory_info, void *start) {
 	memory_info->current = 0;
 	for (int i = 0; i < TOTAL_BLOCKS - 1; i++) {
-		memory_info->free_blocks[i] = start + BLOCK_SIZE * i;
+		memory_info->free_blocks[i] = start + (BLOCK_SIZE * i);
 	}
 }
 
@@ -37,6 +37,8 @@ void *alloc_memory(uint64_t size) {
 	MemoryManagerADT memory = get_memory_manager();
 	int free_remaining = free_blocks_remaining(&(memory->info));
 	int needed_blocks;
+
+
 	if (free_remaining == 0 || (needed_blocks = (size + BLOCK_SIZE - 1) / BLOCK_SIZE) > free_remaining) {
 		return NULL;
 	}
@@ -50,18 +52,21 @@ void free_memory(void *ptr) {
 	MemoryManagerADT memory = get_memory_manager();
 	if (ptr > memory->size + memory->start_address || ptr < memory->start_address || memory->info.current == 0) {
 		// error no es válido el puntero
+		drawWord("Error: No es válido el puntero   ");
 		return;
 	}
-	if (check_already_free(ptr) == 1) {
+	if (check_already_free(ptr) == 1 || free_blocks_remaining(memory) == 0) {
+		drawWord("Error: Doble free   ");
 		// doble free
 		return;
 	}
 	memory->info.free_blocks[--(memory->info.current)] = ptr;
+	
 }
 
 static int check_already_free(void *ptr) {
 	MemoryManagerADT memory = get_memory_manager();
-	for (int i = 0; i < free_blocks_remaining(&(memory->info)); i++) {
+	for (int i = memory->info.current; i < free_blocks_remaining(&(memory->info)); i++) {
 		if (memory->info.free_blocks[i] == ptr) {
 			return 1;
 		}

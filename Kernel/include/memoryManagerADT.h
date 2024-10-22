@@ -9,7 +9,7 @@
 
 #define BLOCK_SIZE 4096
 #define HEAP_START 0x100000
-#define MM_SIZE 0x100000
+#define MM_SIZE 0x1000000
 #define TOTAL_BLOCKS (MM_SIZE / BLOCK_SIZE)
 
 #define FREE 0

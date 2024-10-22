@@ -15,7 +15,6 @@ void process_function(main_function rip, char **argv, uint64_t argc) {
 
     kill_process(get_pid());
 
- 
 }
 
 

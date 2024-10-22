@@ -200,3 +200,7 @@ void test_prio_user(){
 void ps(){
     call_sys_list_processes_state();
 }
+
+void kill_process(int argc, char **argv) {
+    call_sys_kill_process(satoi(argv[1]));
+}

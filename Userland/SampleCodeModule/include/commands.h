@@ -38,5 +38,6 @@ void test_prio_user();
 
 void ps();
 
+void kill_process(int argc, char **argv);
 
 #endif

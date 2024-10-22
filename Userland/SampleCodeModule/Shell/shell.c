@@ -17,10 +17,11 @@ Command commandsList[COMMANDS] = {
     {"date", date, 0},
     {"eliminator", eliminator, 0},
     {"itba", printLogo, 0},
-    {"testprio", test_prio_user, 1},              
+    {"testprio", test_prio_user, 0},              
     {"testmm", test_mm_user, 1},
     {"testprocess", test_process_user, 1},
-    {"ps", ps, 0}
+    {"ps", ps, 0},
+    {"kill", kill_process, 1}
 };
 
 void initialize_shell(char *command, int argc, char **argv) {

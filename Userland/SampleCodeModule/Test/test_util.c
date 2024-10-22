@@ -64,13 +64,15 @@ void endless_loop() {
 		;
 }
 
-void endless_loop_print(uint64_t wait) {
+void endless_loop_print(int argc, char **argv) {
+
+	
 	int64_t pid = call_sys_get_pid();
 
 	while (1) {
 		//printf("%d ", pid);
 		call_sys_draw_int(pid);
 		call_sys_drawChar(' ');
-		bussy_wait(30000000);
+		bussy_wait(argv[0]);
 	}
 }

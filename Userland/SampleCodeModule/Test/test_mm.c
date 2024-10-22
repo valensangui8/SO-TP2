@@ -13,50 +13,65 @@ typedef struct MM_rq {
 
 uint64_t test_mm(uint64_t argc, char *argv[]) {
 
+
   mm_rq mm_rqs[MAX_BLOCKS];
   uint8_t rq;
   uint32_t total;
   uint64_t max_memory;
 
-  if (argc != 1)
+  if (argc != 2) {
     return -1;
+  }
+  max_memory = satoi(argv[1]);
 
-  if ((max_memory = satoi(argv[0])) <= 0)
+  if ( max_memory <= 0) {
+   
     return -1;
+  }
+  
 
   while (1) {
     rq = 0;
     total = 0;
-
+    
     // Request as many blocks as we can
     while (rq < MAX_BLOCKS && total < max_memory) {
       mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
       mm_rqs[rq].address = call_sys_alloc_memory(mm_rqs[rq].size);
+      
 
       if (mm_rqs[rq].address) {
         total += mm_rqs[rq].size;
         rq++;
       }
+      
     }
 
     // Set
     uint32_t i;
-    for (i = 0; i < rq; i++)
-      if (mm_rqs[i].address)
+    for (i = 0; i < rq; i++){
+      if (mm_rqs[i].address){
         memset(mm_rqs[i].address, i, mm_rqs[i].size);
+      }
+    }
+      
 
     // Check
-    for (i = 0; i < rq; i++)
-      if (mm_rqs[i].address)
+    for (i = 0; i < rq; i++){
+      if (mm_rqs[i].address){
         if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size)) {
-          call_sys_drawWord("test_mm ERROR\n");
+          printf("test_mm ERROR");
           return -1;
         }
-
+      }
+    }
     // Free
-    for (i = 0; i < rq; i++)
-      if (mm_rqs[i].address)
+    for (i = 0; i < rq; i++){
+      if (mm_rqs[i].address){
         call_sys_free_memory(mm_rqs[i].address);
+      }
+    }
   }
+
   return 1;
 }

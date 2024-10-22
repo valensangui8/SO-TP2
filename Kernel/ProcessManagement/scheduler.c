@@ -47,12 +47,12 @@ int8_t get_state() {
 
 uint64_t create_process(char *name, Priority priority, char foreground, char *argv[], int argc, main_function rip) {
 	SchedulerInfo scheduler = get_scheduler();
-	scheduler->amount_processes++;
 
 	int free_spot = scheduler->index_p;
-	if (free_spot == -1) {
+	if (scheduler->amount_processes == MAX_PROCESS || free_spot == -1) {
 		return -1;
 	}
+	scheduler->amount_processes++;
 	PCBT *process = &(scheduler->processes[free_spot]);
 	process->state = READY;
 	
@@ -228,7 +228,6 @@ uint16_t unblock_process(unsigned int pid) {
 	return 0;
 }
 
-// https://github.com/avilamowski/TP2_SO/blob/master/Kernel/processes/process.c#L66
 static char **alloc_arguments(char **argv, uint64_t argc) {
 	int totalArgsLen = 0;
 	int argsLen[argc];

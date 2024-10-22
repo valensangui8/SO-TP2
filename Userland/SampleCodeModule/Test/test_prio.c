@@ -18,11 +18,6 @@
 
 int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM,MEDIUM_HIGH, HIGHEST};
 
-void idle_process() {
-	while (1) {
-		call_sys_halt();
-	}
-}
 
 void test_prio() {
 	int64_t pids[TOTAL_PROCESSES];
@@ -31,7 +26,7 @@ void test_prio() {
 
 	for (i = 0; i < TOTAL_PROCESSES; i++){
 
-		pids[i] = call_sys_create_process("idle", LOWEST, FOREGROUND, argvAux, 1, &endless_loop_print);
+		pids[i] = call_sys_create_process("endeless_loop_print", LOWEST, FOREGROUND, argvAux, 1, &endless_loop_print);
 		
 	}
 
@@ -72,4 +67,5 @@ void test_prio() {
 
 	call_sys_drawWord("FINISHED");
 	call_sys_enter();
+	call_sys_kill_process(call_sys_get_pid());
 }

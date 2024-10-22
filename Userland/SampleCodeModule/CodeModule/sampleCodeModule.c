@@ -17,6 +17,7 @@
 static void terminal();
 
 int main() {
+	
 	terminal();
 	
 	return 0;
