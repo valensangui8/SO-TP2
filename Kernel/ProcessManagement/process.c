@@ -17,8 +17,6 @@ void process_function(main_function rip, char **argv, uint64_t argc) {
 
 }
 
-
-
 void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char **argv, int argc, main_function rip) {
 	process->pid = pid;
 	process->ppid = ppid;
@@ -35,7 +33,7 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 	process->argv = argv;
 	process->argc = argc;
 	process->stack_pointer = _initialize_stack_frame(&process_function, rip, stackEnd,(void *) process->argv);
-
+	
 }
 
 uint8_t has_children(unsigned int pid) {
