@@ -36,5 +36,5 @@ make clean
 ### 4. Run project outside container
 To run the project from outside the container, execute:
 ```bash
-run.sh
+./run.sh
 ```
