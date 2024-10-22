@@ -5,7 +5,7 @@
 
 #define QUANTUM 1
 #define RR_INDEX(i) ((i + 1) % (MAX_PROCESS * PRIORITY4))
-#define IDLE_PID 0
+#define INIT_PID 0
 
 #define PID_WIDTH 6
 #define STAT_WIDTH 8

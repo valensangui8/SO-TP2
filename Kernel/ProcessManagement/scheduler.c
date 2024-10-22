@@ -59,8 +59,8 @@ uint64_t create_process(char *name, Priority priority, char foreground, char *ar
 	update_index_p(scheduler);
 	char **new_argv = alloc_arguments(argv, argc);
 	int ppid;
-	if(scheduler->next_pid == IDLE_PID) {
-		process->pid = IDLE_PID;
+	if(scheduler->next_pid == INIT_PID) {
+		process->pid = INIT_PID;
 		ppid = process->pid;
 		scheduler->next_pid++;
 	} else {
@@ -167,6 +167,10 @@ void list_processes_state() {
 
 uint64_t kill_process(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
+	if(pid == INIT_PID){
+		drawWord("ERROR: You can not kill the Init process");
+		return 0;
+	}
 	for (int i = 0; i < MAX_PROCESS; i++) {
 		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != DEAD) {
 			scheduler->processes[i].state = DEAD;
@@ -175,6 +179,11 @@ uint64_t kill_process(unsigned int pid) {
 			free_memory(scheduler->processes[i].argv);
 			if(scheduler->current_pid == pid){
 				yield();
+			}
+			for(int j = 0; j < scheduler->amount_processes; j++){
+				if(scheduler->processes[j].ppid == pid && scheduler->processes[j].state != DEAD){
+					scheduler->processes[j].ppid = INIT_PID;
+				}
 			}
 			return 1;
 		}

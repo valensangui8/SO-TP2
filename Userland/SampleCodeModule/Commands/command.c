@@ -26,12 +26,6 @@ void clear(){
 void help(){
     call_sys_commandEnter();
     
-    
-    printf("GNU bash, version 3.2.57(1)-release (arm64-apple-darwin23)");
-    printf("These shell commands are defined internally.  Type `help' to see this list.");
-    printf("A star (*) next to a name means that the command is disabled.");
-    
-
     printf("PROGRAMS AVAILABLE FOR USER: ");
     
     
@@ -85,6 +79,10 @@ void help(){
 
     call_sys_drawWithColor(" testprocess", 0x32a852);
     printf(" - Executes the memory manager test. Pass the max number of processes as an argument.");
+
+    call_sys_drawWithColor(" kill", 0x32a852);
+    printf(" - Kill process. Pass the PID as an argument.");
+
     
 }
 
@@ -202,5 +200,11 @@ void ps(){
 }
 
 void kill_process(int argc, char **argv) {
-    call_sys_kill_process(satoi(argv[1]));
+    if(call_sys_kill_process(satoi(argv[1])) == 1){
+        call_sys_drawWord("You killed the process: ");
+        call_sys_draw_int(satoi(argv[1]));
+    }
+    else{
+        call_sys_drawWord("Error killing the process");
+    }
 }
