@@ -1,4 +1,5 @@
 # TP2_SO
+Trabajo practico especial de la materia 72.11 - Sistemas Operativos. Desarrollado por Magdalena Cullen, Timoteo Feeney, y Valentino Sanguinetti.
 
 ## Environment Setup
 
