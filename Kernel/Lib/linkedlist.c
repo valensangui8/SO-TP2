@@ -29,13 +29,19 @@ TNode *append_element(LinkedListADT list, void *data) {
 	return append_node(list, newNode);
 }
 
-int delete_element(LinkedListADT list, void *data){
+int delete_element(LinkedListADT list, void *data) {
 	if(list == NULL){
 		return -1;
 	}
 	while(has_next(list)){
-		
+		TNode *current = list->current;
+        list->current = current->next;
+		if(current->data == data){
+			remove_node(list, current);
+			return 0;
+		}
 	}
+	return -1;
 }
 
 TNode *append_node(LinkedListADT list, TNode *node) {

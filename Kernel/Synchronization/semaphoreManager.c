@@ -113,7 +113,7 @@ int64_t sem_post(char *sem_id) {
         return -1;
     }
     MySem_t sem = semaphoresADT->semaphores[id];
-    remove_node(sem->waiting_processes, (void *) get_pid());
+    delete_element(sem->waiting_processes, (void *) get_pid());
     set_state(READY);
     acquire(&(sem->mutex));
     semaphoresADT->semaphores[id]->value += 1;

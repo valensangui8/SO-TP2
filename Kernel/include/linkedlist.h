@@ -13,6 +13,7 @@ typedef struct Node {
 
 LinkedListADT create_linked_list();
 TNode *append_element(LinkedListADT list, void *data);
+int delete_element(LinkedListADT list, void *data);
 TNode *append_node(LinkedListADT list, TNode *node);
 TNode *prepend_node(LinkedListADT list, TNode *node);
 TNode *get_first(LinkedListADT list);
