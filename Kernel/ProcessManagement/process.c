@@ -1,8 +1,5 @@
 #include <process.h>
 
-extern void _yield();
-extern void * _initialize_stack_frame(void *rip, void *function, void *stack, void *argv);
-
 static int argsLen(char **array) {
     int i = 0;
     while (array[i] != NULL) i++;

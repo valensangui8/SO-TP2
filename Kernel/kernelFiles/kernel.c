@@ -5,6 +5,7 @@
 #include <utils.h>
 #include <videoDriver.h>
 #include <scheduler.h>
+#include <semaphoreManager.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -44,6 +45,7 @@ void *initializeKernelBinary() {
 
 	init_memory_manager(MM_SIZE, sampleDataModuleAddress + userspace_mem);
 	create_scheduler();
+	create_semaphores();
 
 	return getStackBase();
 }

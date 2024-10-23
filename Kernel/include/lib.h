@@ -10,6 +10,7 @@ void my_strncpy(char *dest, const char *src, unsigned int n);
 unsigned int log(uint64_t n, int base);
 void my_strcpy(char *dest, const char *src);
 void my_strcat(char *dest, const char *src);
+uint64_t my_strcmp(const char *s1, const char *s2);
 
 char *cpuVendor(char *result);
 void outb(uint16_t port, uint8_t data);
@@ -17,5 +18,7 @@ uint8_t inb(uint16_t port);
 uint64_t get_key();
 void enter();
 void timer_tick();
+void acquire(uint8_t * lock);
+void release(uint8_t * lock);
 
 #endif

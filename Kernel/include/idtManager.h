@@ -11,6 +11,7 @@
 #include <utils.h>
 #include <videoDriver.h>
 #include <sound.h>
+#include <semaphoreManager.h>
 
 uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters);
 

@@ -35,7 +35,9 @@ void picSlaveMask(uint8_t mask);
 void saveState(void);
 void printRegAsm(void);
 
-// Termina la ejecución de la cpu.
 void haltcpu(void);
+
+void _yield();
+void * _initialize_stack_frame(void *rip, void *function, void *stack, void *argv);
 
 #endif /* _INTERRUPTS_H_ */

@@ -36,6 +36,12 @@ static void sys_halt();
 static void *sys_alloc_memory(uint64_t size);
 static void sys_free_memory(void *ptr);
 
+static int64_t sys_sem_open(char *sem_id, uint64_t initialValue);
+static int64_t sys_sem_wait(char *sem_id);
+static int64_t sys_sem_post(char *sem_id);
+static int64_t sys_sem_close(char *sem_id);
+
+
 uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
     uint64_t rdi, rsi, rdx, rcx, r8, r9;
     rdi = otherRegisters[0];
@@ -98,16 +104,16 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 			break;
 		case 17:
 			return sys_kill_process((unsigned int) rdi);
-			
+			break;
 		case 18:
 			sys_update_priority((unsigned int) rdi, (Priority) rsi);
 			break;
 		case 19:
 			return sys_block_process((unsigned int) rdi);
-			
+			break;
 		case 20:
 			return sys_unblock_process((unsigned int) rdi);
-			
+			break;
 		case 21:
 			sys_yield();
 			break;
@@ -125,7 +131,6 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 			break;
 		case 26:
 			return sys_get_ppid();
-		
 		case 27:
 			return sys_wait_children((unsigned int) rdi);
 			break;
@@ -137,9 +142,20 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 			break;
 		case 30:
 			return (uint64_t) sys_alloc_memory((uint64_t) rdi);
-		
 		case 31:
 			sys_free_memory((void *) rdi);
+			break;
+		case 32:
+			return sys_sem_open((char *) rdi, (uint64_t) rsi);
+			break;
+		case 33:
+			return sys_sem_wait((char *) rdi);
+			break;
+		case 34:
+			return sys_sem_post((char *) rdi);
+			break;
+		case 35:
+			return sys_sem_close((char *) rdi);
 			break;
 	}
 	return 0;
@@ -274,4 +290,21 @@ void *sys_alloc_memory(uint64_t size){
 void sys_free_memory(void *ptr){
 	free_memory(ptr);
 }
+
+int64_t sys_sem_open(char *sem_id, uint64_t initialValue){
+	return sem_open(sem_id, initialValue);
+}
+
+int64_t sys_sem_wait(char *sem_id){
+	return sem_wait(sem_id);
+}
+
+int64_t sys_sem_post(char *sem_id){
+	return sem_post(sem_id);
+}
+
+int64_t sys_sem_close(char *sem_id){
+	return sem_close(sem_id);
+}
+
 

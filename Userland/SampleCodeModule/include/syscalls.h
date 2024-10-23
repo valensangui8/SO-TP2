@@ -41,4 +41,10 @@ extern void call_sys_halt();
 extern void *call_sys_alloc_memory(uint64_t size);
 extern void *call_sys_free_memory(void *ptr);
 
+
+extern int64_t call_sys_sem_open(char *sem_id, uint64_t initialValue);
+extern int64_t call_sys_sem_wait(char *sem_id);
+extern int64_t call_sys_sem_post(char *sem_id);
+extern int64_t call_sys_sem_close(char *sem_id);
+
 #endif

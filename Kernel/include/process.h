@@ -2,6 +2,7 @@
 #define _PROCESS_H
 
 #include <scheduler.h>
+#include <interrupts.h>
 
 #include <stddef.h>
 #include <stdint.h>
