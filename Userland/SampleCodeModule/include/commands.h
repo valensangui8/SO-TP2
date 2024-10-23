@@ -8,6 +8,7 @@
 #include <itba.h>
 #include <invOpcode.h>
 #include <test.h>
+#include <test_util.h>
 
 #define SECONDS 0x0
 #define MINUTES 0x2

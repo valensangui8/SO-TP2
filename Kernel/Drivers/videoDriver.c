@@ -27,14 +27,14 @@ static uint64_t binaryToHex(uint64_t binaryNum);
 static void drawLine2(char letter);
 
 static uint32_t characterColor = 0xFFFFFF; // default color white
-static uint32_t colorVariable = 0;
+//static uint32_t colorVariable = 0;
 static uint32_t backgroundColor = 0x000000; // default color black
 
 static uint16_t x = 0;
 static uint16_t y = 0;
 static int scale;
 static int flag_enter = 1;
-static int flag_bottom_enter = 0;
+//static int flag_bottom_enter = 0;
 static int commands[10] = {0, 0, 0, 21, 21, 31, 23, 4, 0, 0};
 
 struct vbe_mode_info_structure {

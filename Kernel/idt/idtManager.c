@@ -34,7 +34,7 @@ static int64_t sys_wait_children(unsigned int ppid);
 static void sys_halt();
 
 static void *sys_alloc_memory(uint64_t size);
-static void *sys_free_memory(void *ptr);
+static void sys_free_memory(void *ptr);
 
 uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
     uint64_t rdi, rsi, rdx, rcx, r8, r9;
@@ -136,7 +136,7 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 			sys_halt();
 			break;
 		case 30:
-			return sys_alloc_memory((uint64_t) rdi);
+			return (uint64_t) sys_alloc_memory((uint64_t) rdi);
 		
 		case 31:
 			sys_free_memory((void *) rdi);
@@ -271,7 +271,7 @@ void *sys_alloc_memory(uint64_t size){
 	return alloc_memory(size);
 }
 
-void *sys_free_memory(void *ptr){
+void sys_free_memory(void *ptr){
 	free_memory(ptr);
 }
 

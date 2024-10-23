@@ -1,5 +1,5 @@
 #include "buf_kb.h"
-static struct buff_kb buffer = {0,0,{0}};
+static struct buff_kb buffer = {0,0,0};
 static buff pointer = &buffer;
 
 int getPos(){

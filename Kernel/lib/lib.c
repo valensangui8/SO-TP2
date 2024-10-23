@@ -73,7 +73,7 @@ unsigned int log(uint64_t n, int base) {
 }
 
 void my_strcpy(char *dest, const char *src) {
-	char *aux = dest;
+	//char *aux = dest;
 	while ((*dest++ = *src++))
 		;
 	return;

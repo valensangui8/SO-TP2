@@ -1,6 +1,7 @@
 #include <process.h>
 
 extern void _yield();
+extern void * _initialize_stack_frame(void *rip, void *function, void *stack, void *argv);
 
 static int argsLen(char **array) {
     int i = 0;
@@ -26,7 +27,7 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 	process->stack_base = alloc_memory(STACK_SIZE);
 	if (process->stack_base == NULL) {
         free_memory(process->stack_base);
-        return NULL;
+        return;
     }
 	void *stackEnd = (void *) ((uint64_t) process->stack_base + STACK_SIZE);
 	my_strncpy(process->name, name, sizeof(process->name));
@@ -113,9 +114,9 @@ void process_status(unsigned int pid) {
 			drawWord("        ");
 			drawWord(process_state(scheduler->processes[i]));
 			drawWord("        ");
-			drawHex(scheduler->processes[i].stack_pointer);
+			drawHex((uint64_t) scheduler->processes[i].stack_pointer);
 			drawWord("        ");
-			drawHex(scheduler->processes[i].stack_base);
+			drawHex((uint64_t) scheduler->processes[i].stack_base);
 			drawWord("        ");
 			drawWord(scheduler->processes[i].name);
 			commandEnter();

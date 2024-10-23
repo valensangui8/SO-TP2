@@ -55,7 +55,7 @@ void free_memory(void *ptr) {
 		drawWord("Error: No es válido el puntero   ");
 		return;
 	}
-	if (check_already_free(ptr) == 1 || free_blocks_remaining(memory) == 0) {
+	if (check_already_free(ptr) == 1 || free_blocks_remaining(&(memory->info)) == 0) { 
 		drawWord("Error: Doble free   ");
 		// doble free
 		return;

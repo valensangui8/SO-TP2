@@ -2,6 +2,7 @@
 #define _SCHEDULER_H
 
 #include <utils.h>
+#include <process.h>
 
 #define QUANTUM 1
 #define RR_INDEX(i) ((i + 1) % (MAX_PROCESS * PRIORITY4))

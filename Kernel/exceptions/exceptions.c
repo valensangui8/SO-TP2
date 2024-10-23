@@ -4,6 +4,7 @@
 
 
 static void zero_division();
+static void invalid_op();
 
 void exceptionDispatcher(int exception, registerStructT * registers) {
 	if (exception == ZERO_EXCEPTION_ID)
@@ -19,7 +20,6 @@ void zero_division() {
 	drawWord("ERROR: division by zero");
 	commandEnter();
 	flag_screenShot = 1;
-    
 }
 
 void invalid_op() {

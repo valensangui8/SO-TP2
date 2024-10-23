@@ -1,14 +1,10 @@
-#include <memoryManagerADT.h>
+
 #include <idtLoader.h>
-#include <lib.h>
 #include <moduleLoader.h>
-#include <naiveConsole.h>
-#include <stdint.h>
-#include <string.h>
 #include <time.h>
 #include <utils.h>
 #include <videoDriver.h>
-#include <interrupts.h>
+#include <scheduler.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -46,7 +42,7 @@ void *initializeKernelBinary() {
 
 	clearBSS(&bss, &endOfKernel - &bss);
 
-	MemoryManagerADT mm = init_memory_manager(MM_SIZE, sampleDataModuleAddress + userspace_mem);
+	init_memory_manager(MM_SIZE, sampleDataModuleAddress + userspace_mem);
 	create_scheduler();
 
 	return getStackBase();
@@ -65,7 +61,7 @@ int main() {
 	load_idt();
 	initialize();
 
-	create_process("init", PRIORITY1, 1, NULL, 0, &idle);
+	create_process("init", PRIORITY1, 1, NULL, 0,(main_function) &idle);
 	create_process("Shell", PRIORITY4, 1, NULL, 0, (main_function) sampleCodeModuleAddress);
 
 	_sti();

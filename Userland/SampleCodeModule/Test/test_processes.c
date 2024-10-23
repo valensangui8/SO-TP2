@@ -32,7 +32,7 @@ int64_t test_processes(int argc, char **argv) {
 	uint8_t alive = 0;
 	uint8_t action;
 	uint64_t max_processes;
-	char *argvAux[] = {0};
+	//char *argvAux[] = {0};
 
 	
 	if (argc == 1){

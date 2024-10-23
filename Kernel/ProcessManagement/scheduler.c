@@ -155,9 +155,9 @@ void list_processes_state() {
 			drawWord("        ");
 			drawWord(process_state(scheduler->processes[i]));
 			drawWord("        ");
-			drawHex(scheduler->processes[i].stack_pointer);
+			drawHex((uint64_t) scheduler->processes[i].stack_pointer);
 			drawWord("        ");
-			drawHex(scheduler->processes[i].stack_base);
+			drawHex((uint64_t) scheduler->processes[i].stack_base);
 			drawWord("        ");
 			drawWord(scheduler->processes[i].name);
 			commandEnter();
