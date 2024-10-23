@@ -28,7 +28,7 @@ GLOBAL call_sys_create_process
 GLOBAL call_sys_list_processes_state
 GLOBAL call_sys_get_pid
 GLOBAL call_sys_get_ppid
-GLOBAL call_sys_wait
+GLOBAL call_sys_wait_children
 GLOBAL call_sys_draw_int
 
 GLOBAL call_sys_halt
@@ -190,7 +190,7 @@ call_sys_get_ppid;
     int 80h
     ret
 
-call_sys_wait:
+call_sys_wait_children:
     mov rax, 27
     int 80h
     ret

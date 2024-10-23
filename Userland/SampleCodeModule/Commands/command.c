@@ -208,3 +208,7 @@ void kill_process(int argc, char **argv) {
         call_sys_drawWord("Error killing the process");
     }
 }
+
+void test_sync_user(int argc, char **argv){
+    call_sys_create_process("testsyncro", 1, 0, argv, argc, &test_sync);
+}

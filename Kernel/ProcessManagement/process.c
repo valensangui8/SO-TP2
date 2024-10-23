@@ -45,17 +45,15 @@ uint8_t has_children(unsigned int pid) {
 }
 
 int64_t wait_children(unsigned int ppid) {
-	if (has_children(ppid)) {
-		SchedulerInfo scheduler = get_scheduler();
-		for (int i = 0; i < MAX_PROCESS; i++) {
-			if (scheduler->processes[i].ppid == ppid && scheduler->processes[i].state != DEAD) {
-				while (scheduler->processes[i].state != DEAD) {
-					// wait
-				}
-			}
-		}
-	}
-	return 0;
+    SchedulerInfo scheduler = get_scheduler();
+    while (has_children(ppid)) {	
+        for (int i = 0; i < MAX_PROCESS; i++) {
+            if (scheduler->processes[i].ppid == ppid && scheduler->processes[i].state == DEAD) {
+                return scheduler->processes[i].pid;
+            }
+        }
+        yield();
+    }
 }
 
 void yield() {

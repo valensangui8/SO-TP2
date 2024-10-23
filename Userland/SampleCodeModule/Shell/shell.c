@@ -21,7 +21,8 @@ Command commandsList[COMMANDS] = {
     {"testmm", test_mm_user, 1},
     {"testprocess", test_process_user, 1},
     {"ps", ps, 0},
-    {"kill", kill_process, 1}
+    {"kill", kill_process, 1},
+    {"testsync", test_sync_user, 1}
 };
 
 void initialize_shell(char *command, int argc, char **argv) {
