@@ -80,7 +80,7 @@ uint64_t create_process(char *name, Priority priority, char foreground, char *ar
 	init_process(process, name, process->pid, ppid, priority, foreground, new_argv, argc, rip);
 
 	PCBT * parent = find_process(ppid);
-	parent->waiting_pid = process->pid;
+	parent->waiting_pid++;
 
 	return process->pid;
 }
@@ -197,7 +197,7 @@ uint64_t kill_process(unsigned int pid) {
 			for(int j = 0; j < MAX_PROCESS; j++){
 				if(scheduler->processes[j].ppid == pid && scheduler->processes[j].state != DEAD){
 					scheduler->processes[j].ppid = INIT_PID;
-					
+					wait_children(scheduler->processes[j].pid); // If child is zombie is killed directly
 				}
 			}
 			return 1;

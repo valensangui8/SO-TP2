@@ -19,7 +19,7 @@
 #define FOREGROUND 1
 #define BACKGROUND !FOREGROUND
 
-#define NO_PID -1 
+#define NO_CHILDREN 0 
 
 typedef enum { BLOCKED = 0,
 			   READY,

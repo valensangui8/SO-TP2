@@ -17,14 +17,15 @@ void exit_process(int ret, unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
 	PCBT *process = find_process(pid);
 	process->ret = ret;
-	kill_process(get_pid());	
+	kill_process(get_pid());
+	wait_children(pid);	
 	yield();
 }
 
 void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char **argv, int argc, main_function rip) {
 	process->pid = pid;
 	process->ppid = ppid;
-	process->waiting_pid = NO_PID;
+	process->waiting_pid = NO_CHILDREN;
 	process->priority = priority;
 	process->foreground = foreground;
 	process->times_to_run = priority;
@@ -42,18 +43,20 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 }
 
 int64_t wait_children(unsigned int pid) {
-    SchedulerInfo scheduler = get_scheduler();
-	PCBT *parent = find_process(pid);
-	if(parent->waiting_pid == NO_PID){
+	if(pid == INIT_PID){ // Has no father
 		return -1;
 	}
-	PCBT *child = find_process(parent->waiting_pid);
+    SchedulerInfo scheduler = get_scheduler();
+	PCBT *child = find_process(pid);
+	PCBT *parent = find_process(child->ppid);
+	
 	if(child->state != ZOMBIE) {
 		block_process(parent->pid);
 		yield();
 	} 
 	
 	child->state = DEAD;
+	parent->waiting_pid--;
 
 	return child->ret;
 }
