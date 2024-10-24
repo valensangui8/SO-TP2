@@ -27,6 +27,7 @@ static void sys_yield();
 static void sys_process_status(unsigned int pid);
 static uint64_t sys_create_process(char *name, Priority priority, char foreground, char *argv[], int argc, main_function rip);
 static void sys_list_processes_state();
+static uint8_t sys_set_pid_state(unsigned int pid, uint8_t state);
 
 static int64_t sys_get_pid();
 static int64_t sys_get_ppid();
@@ -40,6 +41,7 @@ static int64_t sys_sem_open(char *sem_id, uint64_t initialValue);
 static int64_t sys_sem_wait(char *sem_id);
 static int64_t sys_sem_post(char *sem_id);
 static int64_t sys_sem_close(char *sem_id);
+
 
 
 uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
@@ -157,6 +159,8 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 		case 35:
 			return sys_sem_close((char *) rdi);
 			break;
+		case 36:
+			sys_set_pid_state((unsigned int) rdi, (uint8_t) rsi );
 	}
 	return 0;
 }
@@ -307,4 +311,6 @@ int64_t sys_sem_close(char *sem_id){
 	return sem_close(sem_id);
 }
 
-
+static uint8_t sys_set_pid_state(unsigned int pid, uint8_t state){
+	set_pid_state(pid, state);
+}

@@ -17,9 +17,7 @@
 static void terminal();
 
 int main() {
-	
 	terminal();
-	
 	return 0;
 }
 
@@ -65,4 +63,5 @@ void terminal(){
 
         initialize_shell(argv[0], argc, argv);
 	}
+
 }

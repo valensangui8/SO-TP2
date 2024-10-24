@@ -7,17 +7,24 @@ static int argsLen(char **array) {
 }
 
 void process_function(main_function rip, char **argv, uint64_t argc) {
-	
 	int new_argc = argsLen(argv);
     int ret = rip(new_argc, argv);
+	exit_process(ret, get_pid());
 
-    kill_process(get_pid());
+}
 
+void exit_process(int ret, unsigned int pid) {
+	SchedulerInfo scheduler = get_scheduler();
+	PCBT *process = find_process(pid);
+	process->ret = ret;
+	kill_process(get_pid());	
+	yield();
 }
 
 void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char **argv, int argc, main_function rip) {
 	process->pid = pid;
 	process->ppid = ppid;
+	process->waiting_pid = NO_PID;
 	process->priority = priority;
 	process->foreground = foreground;
 	process->times_to_run = priority;
@@ -34,26 +41,21 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 	
 }
 
-uint8_t has_children(unsigned int pid) {
-	SchedulerInfo scheduler = get_scheduler();
-	for (int i = 0; i < MAX_PROCESS; i++) {
-		if (scheduler->processes[i].ppid == pid && scheduler->processes[i].state != DEAD) {
-			return 1;
-		}
-	}
-	return 0;
-}
-
-int64_t wait_children(unsigned int ppid) {
+int64_t wait_children(unsigned int pid) {
     SchedulerInfo scheduler = get_scheduler();
-    while (has_children(ppid)) {	
-        for (int i = 0; i < MAX_PROCESS; i++) {
-            if (scheduler->processes[i].ppid == ppid && scheduler->processes[i].state == DEAD) {
-                return scheduler->processes[i].pid;
-            }
-        }
-        yield();
-    }
+	PCBT *parent = find_process(pid);
+	if(parent->waiting_pid == NO_PID){
+		return -1;
+	}
+	PCBT *child = find_process(parent->waiting_pid);
+	if(child->state != ZOMBIE) {
+		block_process(parent->pid);
+		yield();
+	} 
+	
+	child->state = DEAD;
+
+	return child->ret;
 }
 
 void yield() {
@@ -64,7 +66,6 @@ char *process_state(PCBT process) {
 	static char status[10];
 	my_strcpy(status, "");
 
-	
 	switch (process.state) {
 		case BLOCKED:
 			my_strcat(status, "T");

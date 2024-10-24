@@ -19,6 +19,7 @@
 #define FOREGROUND 1
 #define BACKGROUND !FOREGROUND
 
+#define NO_PID -1 
 
 typedef enum { BLOCKED = 0,
 			   READY,
@@ -41,6 +42,7 @@ typedef struct PCB {
 	char name[32];
 	uint16_t pid;
 	uint16_t ppid;
+	uint16_t waiting_pid;
 	Priority priority;
 	int times_to_run; // contador de veces que se ejecuto
 	PCBState state;
@@ -49,6 +51,7 @@ typedef struct PCB {
 	char foreground;
 	char **argv;
 	int argc;
+	int ret;
 } PCBT;
 
 typedef struct Scheduler {

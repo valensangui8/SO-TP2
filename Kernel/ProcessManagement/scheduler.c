@@ -25,7 +25,9 @@ SchedulerInfo get_scheduler() {
 	return (SchedulerInfo) SCHEDULER_ADDRESS;
 }
 
-int8_t set_state(uint8_t new_state) {
+
+
+uint8_t set_state(uint8_t new_state) {
 	SchedulerInfo scheduler = get_scheduler();
 	PCBT *process = &(scheduler->processes[scheduler->index_rr]);
 	PCBState old_state = process->state;
@@ -39,7 +41,14 @@ int8_t set_state(uint8_t new_state) {
 	return new_state;
 }
 
-int8_t get_state() {
+uint8_t set_pid_state(unsigned int pid, PCBState new_state) {
+	SchedulerInfo scheduler = get_scheduler();
+	PCBT *process = find_process(pid);
+	process->state = new_state;
+	return new_state;
+}
+
+uint8_t get_state() {
 	SchedulerInfo scheduler = get_scheduler();
 	PCBT *process = &(scheduler->processes[scheduler->index_rr]);
 	return process->state;
@@ -69,6 +78,9 @@ uint64_t create_process(char *name, Priority priority, char foreground, char *ar
 	}
 	
 	init_process(process, name, process->pid, ppid, priority, foreground, new_argv, argc, rip);
+
+	PCBT * parent = find_process(ppid);
+	parent->waiting_pid = process->pid;
 
 	return process->pid;
 }
@@ -141,6 +153,8 @@ void *scheduler(void *stack_pointer) {
     current_process = update_quantum(stack_pointer);
     scheduler->current_pid = current_process->pid;
     
+	// drawInt(current_process->pid);
+	// drawWord(" - ");
     return current_process->stack_pointer;
 }
 
@@ -172,17 +186,18 @@ uint64_t kill_process(unsigned int pid) {
 		return 0;
 	}
 	for (int i = 0; i < MAX_PROCESS; i++) {
-		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != DEAD) {
-			scheduler->processes[i].state = DEAD;
+		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != ZOMBIE  && scheduler->processes[i].state != DEAD) {
+			scheduler->processes[i].state = ZOMBIE; // Father process is in charge of changing process to DEAD 
 			scheduler->amount_processes--;
 			free_memory(scheduler->processes[i].stack_base);
 			free_memory(scheduler->processes[i].argv);
 			if(scheduler->current_pid == pid){
 				yield();
 			}
-			for(int j = 0; j < scheduler->amount_processes; j++){
+			for(int j = 0; j < MAX_PROCESS; j++){
 				if(scheduler->processes[j].ppid == pid && scheduler->processes[j].state != DEAD){
 					scheduler->processes[j].ppid = INIT_PID;
+					
 				}
 			}
 			return 1;
@@ -253,4 +268,14 @@ static char **alloc_arguments(char **argv, uint64_t argc) {
 	}
 	newArgsArray[argc] = NULL;
 	return newArgsArray;
+}
+
+PCBT * find_process(unsigned int pid){
+	SchedulerInfo scheduler = get_scheduler();
+	for (int i = 0; i < MAX_PROCESS; i++) {
+		if (scheduler->processes[i].pid == pid) {
+			return &(scheduler->processes[i]);
+		}
+	}
+	return NULL;
 }

@@ -39,13 +39,14 @@ int64_t test_processes(int argc, char **argv) {
 		return -1;
 	}
 
-	 max_processes = satoi(argv[1]);
+	max_processes = satoi(argv[1]);
 
   	if ( max_processes <= 0) {
    		return -1;
 	}
 
-	//call_sys_draw_int(max_processes);
+	// call_sys_draw_int(max_processes);
+	// call_sys_drawWord("  ");
 
 	p_rq p_rqs[max_processes];
 
@@ -53,6 +54,8 @@ int64_t test_processes(int argc, char **argv) {
 		// Create max_processes processes
 		for (rq = 0; rq < max_processes; rq++) {
 			p_rqs[rq].pid = call_sys_create_process("endless_loop", PRIORITY1, FOREGROUND, NULL, 0, &endless_loop);
+			// call_sys_draw_int(p_rqs[rq].pid);
+			// call_sys_drawWord(" - ");
 			
 			if (p_rqs[rq].pid == -1) {
 				call_sys_drawWord("test_processes: ERROR creating process");
@@ -71,12 +74,12 @@ int64_t test_processes(int argc, char **argv) {
 				switch (action) {
 					case 0:
 						if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == BLOCKED || p_rqs[rq].state == READY) {
-							
 							if (call_sys_kill_process(p_rqs[rq].pid) == 0) {
 								call_sys_drawWord("test_processes: ERROR Killing process");
 								return -1;
 							}
 							p_rqs[rq].state = DEAD;
+							call_sys_set_pid_state(p_rqs[rq].pid, DEAD);
 							
 							alive--;
 						}

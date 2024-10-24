@@ -20,7 +20,7 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
   int8_t inc;
   int8_t use_sem;
 
-  call_sys_list_processes_state();
+  //call_sys_list_processes_state();
 
   if (argc != 3){
     return -1;
@@ -44,14 +44,10 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
 
   uint64_t i;
   for (i = 0; i < n; i++) {
-    call_sys_drawWord("Agodio plis necesitamos aprobar esta entrega");
     if (use_sem){
       call_sys_sem_wait(SEM_ID);
     }
     slowInc(&global, inc);
-    call_sys_drawWord(" - ");
-    call_sys_draw_int(global);
-    call_sys_drawWord(" - ");
     if (use_sem){
       call_sys_sem_post(SEM_ID);
     }
@@ -85,15 +81,13 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
     
     pids[i] = call_sys_create_process("my_process_inc", 1, 0, argvDec, 3, &my_process_inc);
    
-    pids[i + TOTAL_PAIR_PROCESSES] = call_sys_create_process("my_process_inc 2", 1, 0, argvInc, 3, &my_process_inc);
+    pids[i + TOTAL_PAIR_PROCESSES] = call_sys_create_process("my_process_inc", 1, 0, argvInc, 3, &my_process_inc);
    
   }
 
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-    call_sys_drawWord("test_sync: Waiting for children to finish  ");
-    call_sys_wait_children(2);
-    call_sys_drawWord("salten putos");
-    // call_sys_wait_children(pids[i + TOTAL_PAIR_PROCESSES]);
+    call_sys_wait_children(pids[i]);
+    call_sys_wait_children(pids[i + TOTAL_PAIR_PROCESSES]);
   }
 
   printf("Final value: %d", global);
