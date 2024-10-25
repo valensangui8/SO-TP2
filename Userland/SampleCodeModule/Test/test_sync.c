@@ -20,7 +20,6 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
   int8_t inc;
   int8_t use_sem;
 
-  //call_sys_list_processes_state();
 
   if (argc != 3){
     return -1;
@@ -29,6 +28,7 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
   if ((n = satoi(argv[1])) <= 0){
     return -1;
   }
+  
   if ((inc = satoi(argv[2])) == 0){
     return -1;
   }
@@ -63,6 +63,8 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
 
 uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
   
+  
+
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
 
   if (argc != 3){
@@ -70,8 +72,8 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
   }
   
 
-  char *argvDec[] = {argv[0], "-1", argv[1], NULL};
-  char *argvInc[] = {argv[0], "1", argv[1], NULL};
+  char *argvDec[] = {argv[1], "-1", argv[2], NULL};
+  char *argvInc[] = {argv[1], "1", argv[2], NULL};
 
   global = 0;
 

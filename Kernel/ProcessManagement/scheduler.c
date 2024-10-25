@@ -99,11 +99,23 @@ static void update_index_p(SchedulerInfo scheduler) {
 	scheduler->index_p = -1;
 }
 
+static void collect_zombies(){
+	SchedulerInfo scheduler = get_scheduler();
+	for (int i = 0; i < MAX_PROCESS; i++) {
+		if (scheduler->processes[i].state == ZOMBIE && scheduler->processes[i].ppid == INIT_PID) {
+			wait_children(scheduler->processes[i].pid);
+		}
+	}
+}
+
 PCBT *update_quantum(void *stack_pointer) {
     SchedulerInfo scheduler = get_scheduler();
     PCBT *current_process = &(scheduler->processes[scheduler->index_rr]);
 
     if (scheduler->quantum_remaining == 0 || current_process->state == BLOCKED || current_process->times_to_run == 0) {
+		if(scheduler->quantum_remaining == 0){
+			collect_zombies();
+		}
         if (current_process->state == RUNNING) {
             current_process->state = READY;
         }
@@ -153,13 +165,13 @@ void *scheduler(void *stack_pointer) {
     current_process = update_quantum(stack_pointer);
     scheduler->current_pid = current_process->pid;
     
-	// drawInt(current_process->pid);
-	// drawWord(" - ");
     return current_process->stack_pointer;
 }
 
 void list_processes_state() {
 	SchedulerInfo scheduler = get_scheduler();
+	drawWord("STAT - T: Blocked - S: Seady  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Foreground - s: Session leader");
+	commandEnter();
 	commandEnter();
 	drawWord("PID        STAT          RSP           RBP         COMMAND");
 	commandEnter();
@@ -187,7 +199,7 @@ uint64_t kill_process(unsigned int pid) {
 	}
 	for (int i = 0; i < MAX_PROCESS; i++) {
 		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != ZOMBIE  && scheduler->processes[i].state != DEAD) {
-			scheduler->processes[i].state = ZOMBIE; // Father process is in charge of changing process to DEAD 
+			scheduler->processes[i].state = ZOMBIE; // Father process is in charge of changing process to DEAD with wait_children
 			scheduler->amount_processes--;
 			free_memory(scheduler->processes[i].stack_base);
 			free_memory(scheduler->processes[i].argv);
@@ -197,7 +209,9 @@ uint64_t kill_process(unsigned int pid) {
 			for(int j = 0; j < MAX_PROCESS; j++){
 				if(scheduler->processes[j].ppid == pid && scheduler->processes[j].state != DEAD){
 					scheduler->processes[j].ppid = INIT_PID;
-					wait_children(scheduler->processes[j].pid); // If child is zombie is killed directly
+					if(scheduler->processes[j].state == ZOMBIE){
+						wait_children(scheduler->processes[j].pid);
+					}
 				}
 			}
 			return 1;

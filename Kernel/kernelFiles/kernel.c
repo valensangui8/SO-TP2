@@ -63,7 +63,7 @@ int main() {
 	load_idt();
 	
 	start();
-	sleep(10);
+	sleep(50);
 	clear();
 
 	create_process("init", PRIORITY1, 1, NULL, 0,(main_function) &idle);

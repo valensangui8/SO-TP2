@@ -105,6 +105,8 @@ char *process_state(PCBT process) {
 void process_status(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
 	commandEnter();
+	drawWord("STAT - T: Blocked - S: Ready  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Foreground - s: Session leader");
+	commandEnter();
 	drawWord("PID        STAT          RSP           RBP         COMMAND");
 	commandEnter();
 	for (int i = 0; i < scheduler->amount_processes; i++) {
