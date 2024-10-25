@@ -67,8 +67,9 @@ int is_created(char *sem_id) {
 }
 
 int64_t sem_open(char *sem_id, uint64_t initial_value) {
+    drawWord("adentro de semopen  ");
     if ( is_created(sem_id) != -1 ) {
-        return 0;
+        return 1;
     }
 
     MySem_t sem = (MySem_t ) alloc_memory((sizeof(MySem_t)));
@@ -82,9 +83,9 @@ int64_t sem_open(char *sem_id, uint64_t initial_value) {
     if ( (id = add_semaphore(sem)) != -1 ) {
         sem->id = id;
     } else {
-        return -1;
+        return 0;
     }
-    return 0;
+    return 1;
 }
 
 int64_t sem_wait(char *sem_id) {

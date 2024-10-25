@@ -17,8 +17,7 @@ void exit_process(int ret, unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
 	PCBT *process = find_process(pid);
 	process->ret = ret;
-	kill_process(get_pid());
-	wait_children(pid);	
+	kill_process(pid);
 	yield();
 }
 

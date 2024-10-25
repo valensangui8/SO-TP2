@@ -25,14 +25,15 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
     return -1;
   }
 
-  if ((n = satoi(argv[1])) <= 0){
+  if ((n = satoi(argv[0])) <= 0){
     return -1;
   }
   
-  if ((inc = satoi(argv[2])) == 0){
+  if ((inc = satoi(argv[1])) == 0){
     return -1;
   }
-  if ((use_sem = satoi(argv[3])) < 0){
+
+  if ((use_sem = satoi(argv[2])) < 0){
     return -1;
   }
 
@@ -46,6 +47,7 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
   for (i = 0; i < n; i++) {
     if (use_sem){
       call_sys_sem_wait(SEM_ID);
+      call_sys_drawWord("desps del wait ");
     }
     slowInc(&global, inc);
     if (use_sem){
@@ -57,21 +59,16 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
     call_sys_sem_close(SEM_ID);
   }
 
-
   return 0;
 }
 
 uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
-  
-  
-
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
 
   if (argc != 3){
     return -1;
   }
   
-
   char *argvDec[] = {argv[1], "-1", argv[2], NULL};
   char *argvInc[] = {argv[1], "1", argv[2], NULL};
 
@@ -88,6 +85,7 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
   }
 
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
+    call_sys_drawWord("Adentro del for ");
     call_sys_wait_children(pids[i]);
     call_sys_wait_children(pids[i + TOTAL_PAIR_PROCESSES]);
   }
