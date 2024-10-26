@@ -48,12 +48,13 @@ int64_t wait_children(unsigned int pid) {
 	PCBT *parent = find_process(child->ppid);
 	
 	if(child->state != ZOMBIE) {
+		parent->waiting_pid = pid;
 		block_process(parent->pid);
 		yield();
 	} 
 	
 	child->state = DEAD;
-	parent->waiting_pid--;
+	
 
 	return child->ret;
 }

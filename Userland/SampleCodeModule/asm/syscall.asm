@@ -38,8 +38,6 @@ GLOBAL call_sys_sem_open
 GLOBAL call_sys_sem_wait
 GLOBAL call_sys_sem_post
 GLOBAL call_sys_sem_close
-GLOBAL call_sys_set_pid_state
-
 
 call_sys_read:
     mov rax, 0
@@ -233,10 +231,5 @@ call_sys_sem_post:
 
 call_sys_sem_close:
     mov rax, 35
-    int 80h
-    ret
-
-call_sys_set_pid_state:
-    mov rax, 36
     int 80h
     ret

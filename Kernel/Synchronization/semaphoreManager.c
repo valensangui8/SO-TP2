@@ -124,10 +124,7 @@ int64_t sem_post(char *sem_id) {
     semaphoresADT->semaphores[sem->id]->value += 1;
     TNode * next_process = get_first(sem->waiting_processes);
     if(next_process != NULL){
-        drawWord("TE TOCA A VOS AHORA!! ");
-        drawInt(next_process->data);
         delete_element(sem->waiting_processes, (void *) get_pid());
-        drawWord("Despues de borrar");
         unblock_process(next_process->data);
     }
     release(&(sem->mutex));

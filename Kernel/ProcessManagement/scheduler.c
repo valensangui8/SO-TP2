@@ -41,12 +41,6 @@ uint8_t set_state(uint8_t new_state) {
 	return new_state;
 }
 
-uint8_t set_pid_state(unsigned int pid, PCBState new_state) {
-	PCBT *process = find_process(pid);
-	process->state = new_state;
-	return new_state;
-}
-
 uint8_t get_state() {
 	SchedulerInfo scheduler = get_scheduler();
 	PCBT *process = &(scheduler->processes[scheduler->index_rr]);
@@ -199,6 +193,10 @@ uint64_t kill_process(unsigned int pid) {
 	for (int i = 0; i < MAX_PROCESS; i++) {
 		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != ZOMBIE  && scheduler->processes[i].state != DEAD) {
 			scheduler->processes[i].state = ZOMBIE; // Father process is in charge of changing process to DEAD with wait_children
+			PCBT * parent = find_process(scheduler->processes[i].ppid);
+			if(parent->waiting_pid == pid){
+				unblock_process(parent->pid);
+			}
 			scheduler->amount_processes--;
 			free_memory(scheduler->processes[i].stack_base);
 			free_memory(scheduler->processes[i].argv);

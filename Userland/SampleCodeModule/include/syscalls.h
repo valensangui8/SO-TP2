@@ -47,6 +47,5 @@ extern int64_t call_sys_sem_open(char *sem_id, uint64_t initialValue);
 extern int64_t call_sys_sem_wait(char *sem_id);
 extern int64_t call_sys_sem_post(char *sem_id);
 extern int64_t call_sys_sem_close(char *sem_id);
-extern uint16_t call_sys_set_pid_state(unsigned int pid, int state);
 
 #endif

@@ -47,26 +47,17 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
   for (i = 0; i < n; i++) {
     if (use_sem){
       call_sys_sem_wait(SEM_ID);
-      call_sys_drawWord("Yo soy: ");
-      call_sys_draw_int(call_sys_get_pid());
-      call_sys_drawWord("  ");
-      // call_sys_list_processes_state();
     }
     slowInc(&global, inc);
     if (use_sem){
       call_sys_sem_post(SEM_ID);
-      //call_sys_list_processes_state();
 
     }
   }
   int closed;
   if (use_sem){
-    closed = call_sys_sem_close(SEM_ID);
+    call_sys_sem_close(SEM_ID);
   }
-  if(closed == 0){
-    //call_sys_list_processes_state();
-  }
-  call_sys_list_processes_state();
   return 0;
 }
 
@@ -93,7 +84,6 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
   }
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
     call_sys_wait_children(pids[i]);
-    call_sys_list_processes_state();
     call_sys_wait_children(pids[i + TOTAL_PAIR_PROCESSES]);
   }
 
