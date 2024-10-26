@@ -51,7 +51,6 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
     slowInc(&global, inc);
     if (use_sem){
       call_sys_sem_post(SEM_ID);
-
     }
   }
   int closed;

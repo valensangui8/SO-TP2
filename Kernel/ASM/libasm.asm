@@ -69,17 +69,15 @@ timer_tick:
 	ret
 
 acquire:
-	mov rsi, rdi
 	mov al, 0
 .retry:
-	xchg [rsi], al
+	xchg [rdi], al
 	test al, al
 	jz .retry
 	ret
 
 release:
-	mov rsi, rdi
-	mov byte [rsi], 1
+	mov byte [rdi], 1
 	ret
 
 section .data

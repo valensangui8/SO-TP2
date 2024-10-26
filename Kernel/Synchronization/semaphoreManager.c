@@ -102,10 +102,10 @@ int64_t sem_wait(char *sem_id) {
         return -1;
     }
     acquire(&(sem->mutex));
-    if(sem->value == 0){
-        release(&(sem->mutex));
+    while(sem->value <= 0){
         append_element(sem->waiting_processes, (void *) get_pid());
         block_process(get_pid());
+        release(&(sem->mutex));
         yield();
         acquire(&(sem->mutex));
     }
