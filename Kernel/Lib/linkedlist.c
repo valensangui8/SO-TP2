@@ -31,12 +31,16 @@ TNode *append_element(LinkedListADT list, void *data) {
 
 int delete_element(LinkedListADT list, void *data) {
 	if(list == NULL){
+		drawWord("Voy a 1111 ");
 		return -1;
 	}
+	begin(list);
 	while(has_next(list)){
+		drawWord("Voy a remover un elem ");
 		TNode *current = list->current;
         list->current = current->next;
 		if(current->data == data){
+			drawWord("Elemento eliminado");
 			remove_node(list, current);
 			return 0;
 		}

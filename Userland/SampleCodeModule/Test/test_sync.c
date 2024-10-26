@@ -38,7 +38,7 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
   }
 
   if (use_sem)
-    if (!call_sys_sem_open(SEM_ID, 1)) {
+    if (call_sys_sem_open(SEM_ID, 1) == -1) {
       printf("test_sync: ERROR opening semaphore\n");
       return -1;
     }
@@ -47,18 +47,26 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
   for (i = 0; i < n; i++) {
     if (use_sem){
       call_sys_sem_wait(SEM_ID);
-      call_sys_drawWord("desps del wait ");
+      call_sys_drawWord("Yo soy: ");
+      call_sys_draw_int(call_sys_get_pid());
+      call_sys_drawWord("  ");
+      // call_sys_list_processes_state();
     }
     slowInc(&global, inc);
     if (use_sem){
       call_sys_sem_post(SEM_ID);
+      //call_sys_list_processes_state();
+
     }
   }
-
+  int closed;
   if (use_sem){
-    call_sys_sem_close(SEM_ID);
+    closed = call_sys_sem_close(SEM_ID);
   }
-
+  if(closed == 0){
+    //call_sys_list_processes_state();
+  }
+  call_sys_list_processes_state();
   return 0;
 }
 
@@ -81,12 +89,11 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
     pids[i] = call_sys_create_process("my_process_inc", 1, 0, argvDec, 3, &my_process_inc);
    
     pids[i + TOTAL_PAIR_PROCESSES] = call_sys_create_process("my_process_inc", 1, 0, argvInc, 3, &my_process_inc);
-   
-  }
 
+  }
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-    call_sys_drawWord("Adentro del for ");
     call_sys_wait_children(pids[i]);
+    call_sys_list_processes_state();
     call_sys_wait_children(pids[i + TOTAL_PAIR_PROCESSES]);
   }
 

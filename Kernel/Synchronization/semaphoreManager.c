@@ -13,7 +13,7 @@ struct SemaphoresCDT {
     int size;
 };
 
-SemaphoresADT create_semaphores() {
+SemaphoresADT create_semaphoreADT() {
     SemaphoresADT semaphores = (SemaphoresADT) SEMAPHORE_MANAGER_ADDRESS;
     for (int i = 0; i < MAX_SEMAPHORE; i++) {
         semaphores->semaphores[i] = NULL;
@@ -49,57 +49,64 @@ int add_semaphore(MySem_t sem) {
     return -1;
 }
 
-int delete_semaphore(MySem_t sem) {
+static void delete_semaphore(MySem_t sem) {
     SemaphoresADT semaphoreADT = get_semaphoresADT();
     semaphoreADT->semaphores[sem->id] = NULL;
     semaphoreADT->size--;
-    return 0;
+    free_memory(sem->name);
+    free_linked_list(sem->waiting_processes);
+    free_memory(sem);
 }
 
-int is_created(char *sem_id) {
-    SemaphoresADT semaphoreADT = get_semaphoresADT();
-    for(int i = 0; i < MAX_SEMAPHORE; i++){
-        if(my_strcmp(semaphoreADT->semaphores[i]->name, sem_id) == 0){
-            return i;
-        }
-    }
-    return -1;
-}
-
-int64_t sem_open(char *sem_id, uint64_t initial_value) {
-    drawWord("adentro de semopen  ");
-    if ( is_created(sem_id) != -1 ) {
-        return 1;
+int create_sem(char *sem_id, uint64_t initial_value) {
+    MySem_t sem = (MySem_t) alloc_memory(sizeof(MySem_t));
+    if (sem == NULL) {
+        return -1; 
     }
 
-    MySem_t sem = (MySem_t ) alloc_memory((sizeof(MySem_t)));
     sem->mutex = 1;
-    acquire(&(sem->mutex));
     sem->name = (char *) alloc_memory(my_strlen(sem_id) + 1);
-	my_strcpy(sem->name, sem_id);
-    sem->value = initial_value;
-    release(&(sem->mutex));
-    int id;
-    if ( (id = add_semaphore(sem)) != -1 ) {
-        sem->id = id;
-    } else {
-        return 0;
+    if (sem->name == NULL) {
+        free_memory(sem);
+        return -1;
     }
-    return 1;
+    my_strcpy(sem->name, sem_id);
+    sem->value = initial_value;
+
+    int id = add_semaphore(sem);
+    if (id == -1) {
+        free_memory(sem->name);
+        free_memory(sem);
+        return -1;
+    }
+    sem->id = id;
+
+    return id;
 }
+
+int64_t sem_open(char *sem_id, uint64_t initial_value) {    
+    MySem_t existing= get_semaphore(sem_id);
+    if (existing != NULL) {
+        return existing->id;
+    }
+
+    int id = create_sem(sem_id, initial_value);
+    return id;
+}
+
 
 int64_t sem_wait(char *sem_id) {
     SemaphoresADT semaphoresADT = get_semaphoresADT();
-    int id = is_created(sem_id);
-    if(id == -1){
+    MySem_t sem = get_semaphore(sem_id);
+    if(sem == NULL){
         return -1;
     }
-    MySem_t sem = semaphoresADT->semaphores[id];
-    sem->waiting_processes = append_element(sem->waiting_processes, (void *) get_pid());
-    set_state(BLOCKED);
     acquire(&(sem->mutex));
-    while(sem->value <= 0){
+    if(sem->value == 0){
         release(&(sem->mutex));
+        append_element(sem->waiting_processes, (void *) get_pid());
+        block_process(get_pid());
+        yield();
         acquire(&(sem->mutex));
     }
     sem->value -= 1;
@@ -109,30 +116,35 @@ int64_t sem_wait(char *sem_id) {
 
 int64_t sem_post(char *sem_id) {
     SemaphoresADT semaphoresADT = get_semaphoresADT();
-     int id = is_created(sem_id);
-    if(id == -1){
+    MySem_t sem = get_semaphore(sem_id);
+    if(sem == NULL){
         return -1;
     }
-    MySem_t sem = semaphoresADT->semaphores[id];
-    delete_element(sem->waiting_processes, (void *) get_pid());
-    set_state(READY);
     acquire(&(sem->mutex));
-    semaphoresADT->semaphores[id]->value += 1;
+    semaphoresADT->semaphores[sem->id]->value += 1;
+    TNode * next_process = get_first(sem->waiting_processes);
+    if(next_process != NULL){
+        drawWord("TE TOCA A VOS AHORA!! ");
+        drawInt(next_process->data);
+        delete_element(sem->waiting_processes, (void *) get_pid());
+        drawWord("Despues de borrar");
+        unblock_process(next_process->data);
+    }
     release(&(sem->mutex));
     return 0;
 }
 
 int64_t sem_close(char *sem_id) {
     SemaphoresADT semaphoresADT = get_semaphoresADT();
-    int id = is_created(sem_id);
-    if ( id == -1 ) {
-        return -1;
+    MySem_t sem = get_semaphore(sem_id);
+    if ( sem == NULL ) {
+        return 2;
     }
-    MySem_t sem = semaphoresADT->semaphores[id];
+    if(!is_empty(sem->waiting_processes)){
+        return 1;
+    }
     acquire(&(sem->mutex));
     delete_semaphore(sem);
-    free_memory(sem->name);
-    free_memory(sem);
     return 0;
 }
 

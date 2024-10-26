@@ -6,19 +6,18 @@ static int argsLen(char **array) {
     return i;
 }
 
+static void exit_process(int ret, unsigned int pid) {
+	PCBT *process = find_process(pid);
+	process->ret = ret;
+	kill_process(pid);
+	yield();
+}
+
 void process_function(main_function rip, char **argv, uint64_t argc) {
 	int new_argc = argsLen(argv);
     int ret = rip(new_argc, argv);
 	exit_process(ret, get_pid());
 
-}
-
-void exit_process(int ret, unsigned int pid) {
-	SchedulerInfo scheduler = get_scheduler();
-	PCBT *process = find_process(pid);
-	process->ret = ret;
-	kill_process(pid);
-	yield();
 }
 
 void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char **argv, int argc, main_function rip) {
@@ -45,7 +44,6 @@ int64_t wait_children(unsigned int pid) {
 	if(pid == INIT_PID){ // Has no father
 		return -1;
 	}
-    SchedulerInfo scheduler = get_scheduler();
 	PCBT *child = find_process(pid);
 	PCBT *parent = find_process(child->ppid);
 	
@@ -101,6 +99,7 @@ char *process_state(PCBT process) {
 	return status;
 }
 
+// change to find_process
 void process_status(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
 	commandEnter();

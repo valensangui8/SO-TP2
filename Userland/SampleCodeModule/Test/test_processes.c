@@ -79,7 +79,7 @@ int64_t test_processes(int argc, char **argv) {
 								return -1;
 							}
 							p_rqs[rq].state = DEAD;
-							call_sys_set_pid_state(p_rqs[rq].pid, DEAD);
+							call_sys_wait_children(p_rqs[rq].pid);
 							
 							alive--;
 						}
@@ -95,6 +95,7 @@ int64_t test_processes(int argc, char **argv) {
 								return -1;
 							}
 							p_rqs[rq].state = BLOCKED;
+							call_sys_yield();
 							
 						}
 						break;

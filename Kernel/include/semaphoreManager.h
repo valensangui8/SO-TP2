@@ -12,13 +12,11 @@
 typedef struct SemaphoresCDT * SemaphoresADT;
 typedef struct MySem * MySem_t;
 
-SemaphoresADT create_semaphores();
+SemaphoresADT create_semaphoreADT();
 SemaphoresADT get_semaphoresADT();
 
 MySem_t get_semaphore(char *sem_id);
 int add_semaphore(MySem_t sem);
-int delete_semaphore(MySem_t sem);
-int is_created(char *sem_id);
 
 int64_t sem_open(char *sem_id, uint64_t initial_value);
 int64_t sem_wait(char *sem_id);

@@ -25,8 +25,6 @@ SchedulerInfo get_scheduler() {
 	return (SchedulerInfo) SCHEDULER_ADDRESS;
 }
 
-
-
 uint8_t set_state(uint8_t new_state) {
 	SchedulerInfo scheduler = get_scheduler();
 	PCBT *process = &(scheduler->processes[scheduler->index_rr]);
@@ -37,12 +35,13 @@ uint8_t set_state(uint8_t new_state) {
 	process->state = new_state;
 	if (new_state == old_state) {
 		return old_state;
+	}else if(new_state == BLOCKED){
+		block_process(get_pid());
 	}
 	return new_state;
 }
 
 uint8_t set_pid_state(unsigned int pid, PCBState new_state) {
-	SchedulerInfo scheduler = get_scheduler();
 	PCBT *process = find_process(pid);
 	process->state = new_state;
 	return new_state;
@@ -112,7 +111,7 @@ PCBT *update_quantum(void *stack_pointer) {
     SchedulerInfo scheduler = get_scheduler();
     PCBT *current_process = &(scheduler->processes[scheduler->index_rr]);
 
-    if (scheduler->quantum_remaining == 0 || current_process->state == BLOCKED || current_process->times_to_run == 0) {
+    if (scheduler->quantum_remaining == 0 || current_process->state == BLOCKED || current_process->state == ZOMBIE || current_process->times_to_run == 0) {
 		if(scheduler->quantum_remaining == 0){
 			collect_zombies();
 		}
@@ -203,9 +202,6 @@ uint64_t kill_process(unsigned int pid) {
 			scheduler->amount_processes--;
 			free_memory(scheduler->processes[i].stack_base);
 			free_memory(scheduler->processes[i].argv);
-			if(scheduler->current_pid == pid){
-				yield();
-			}
 			for(int j = 0; j < MAX_PROCESS; j++){
 				if(scheduler->processes[j].ppid == pid && scheduler->processes[j].state != DEAD){
 					scheduler->processes[j].ppid = INIT_PID;
@@ -213,6 +209,9 @@ uint64_t kill_process(unsigned int pid) {
 						wait_children(scheduler->processes[j].pid);
 					}
 				}
+			}
+			if(scheduler->current_pid == pid){
+				yield();
 			}
 			return 1;
 		}

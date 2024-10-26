@@ -45,7 +45,7 @@ void *initializeKernelBinary() {
 
 	init_memory_manager(MM_SIZE, sampleDataModuleAddress + userspace_mem);
 	create_scheduler();
-	create_semaphores();
+	create_semaphoreADT();
 
 	return getStackBase();
 }
