@@ -61,13 +61,13 @@ void idle() {
 int main() {
 	_cli();
 	load_idt();
-	
-	start();
-	sleep(50);
-	clear();
-
 	create_process("init", PRIORITY1, 1, NULL, 0,(main_function) &idle);
 	create_process("Shell", PRIORITY4, 1, NULL, 0, (main_function) sampleCodeModuleAddress);
+
+	start();
+	sleep(500);
+	clear();
+
 
 	_sti();
 	initialize();

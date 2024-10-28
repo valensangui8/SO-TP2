@@ -53,7 +53,9 @@ void terminal(){
 
 		char *token = argv[argc++];
         while ((token = strtok(NULL, " ")) != NULL) {
+	
             argv[argc++] = token;
+			
 			// if(token == '|' || token == '&' || token == '<' || token == '>') {
 			// 	//pipes, background and redirections processes
 			// 	//llamar a la segunda funcion

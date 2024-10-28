@@ -32,7 +32,7 @@ int64_t test_processes(int argc, char **argv) {
 	uint8_t alive = 0;
 	uint8_t action;
 	uint64_t max_processes;
-	//char *argvAux[] = {0};
+	
 
 	
 	if (argc == 1){
@@ -45,8 +45,6 @@ int64_t test_processes(int argc, char **argv) {
    		return -1;
 	}
 
-	// call_sys_draw_int(max_processes);
-	// call_sys_drawWord("  ");
 
 	p_rq p_rqs[max_processes];
 
@@ -54,8 +52,7 @@ int64_t test_processes(int argc, char **argv) {
 		// Create max_processes processes
 		for (rq = 0; rq < max_processes; rq++) {
 			p_rqs[rq].pid = call_sys_create_process("endless_loop", PRIORITY1, FOREGROUND, NULL, 0, &endless_loop);
-			// call_sys_draw_int(p_rqs[rq].pid);
-			// call_sys_drawWord(" - ");
+		
 			
 			if (p_rqs[rq].pid == -1) {
 				call_sys_drawWord("test_processes: ERROR creating process");
@@ -107,7 +104,6 @@ int64_t test_processes(int argc, char **argv) {
 				if (p_rqs[rq].state == BLOCKED && GetUniform(100) % 2) {
 					if (call_sys_unblock_process(p_rqs[rq].pid) == 0) {
 						call_sys_drawWord("test_processes: ERROR unblocking process ");
-						// call_sys_draw_int(p_rqs[rq].pid);
 						return -1;
 					}
 					p_rqs[rq].state = RUNNING;
