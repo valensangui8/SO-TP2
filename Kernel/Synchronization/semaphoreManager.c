@@ -96,7 +96,6 @@ int64_t sem_open(char *sem_id, uint64_t initial_value) {
 
 
 int64_t sem_wait(char *sem_id) {
-    SemaphoresADT semaphoresADT = get_semaphoresADT();
     MySem_t sem = get_semaphore(sem_id);
     if(sem == NULL){
         return -1;
@@ -125,14 +124,13 @@ int64_t sem_post(char *sem_id) {
     TNode * next_process = get_first(sem->waiting_processes);
     if(next_process != NULL){
         delete_element(sem->waiting_processes, (void *) get_pid());
-        unblock_process(next_process->data);
+        unblock_process( next_process->data);
     }
     release(&(sem->mutex));
     return 0;
 }
 
 int64_t sem_close(char *sem_id) {
-    SemaphoresADT semaphoresADT = get_semaphoresADT();
     MySem_t sem = get_semaphore(sem_id);
     if ( sem == NULL ) {
         return 2;

@@ -6,6 +6,7 @@
 #include <lib.h>
 #include <linkedlist.h>
 #include <utils.h>
+#include <process.h>
 
 #define MAX_SEMAPHORE 20
 
