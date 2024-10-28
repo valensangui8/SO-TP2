@@ -25,7 +25,7 @@ SchedulerInfo get_scheduler() {
 	return (SchedulerInfo) SCHEDULER_ADDRESS;
 }
 
-int8_t set_state(uint8_t new_state) {
+uint8_t set_state(uint8_t new_state) {
 	SchedulerInfo scheduler = get_scheduler();
 	PCBT *process = &(scheduler->processes[scheduler->index_rr]);
 	PCBState old_state = process->state;
@@ -35,11 +35,13 @@ int8_t set_state(uint8_t new_state) {
 	process->state = new_state;
 	if (new_state == old_state) {
 		return old_state;
+	}else if(new_state == BLOCKED){
+		block_process(get_pid());
 	}
 	return new_state;
 }
 
-int8_t get_state() {
+uint8_t get_state() {
 	SchedulerInfo scheduler = get_scheduler();
 	PCBT *process = &(scheduler->processes[scheduler->index_rr]);
 	return process->state;
@@ -70,6 +72,9 @@ uint64_t create_process(char *name, Priority priority, char foreground, char *ar
 	
 	init_process(process, name, process->pid, ppid, priority, foreground, new_argv, argc, rip);
 
+	PCBT * parent = find_process(ppid);
+	parent->waiting_pid++;
+
 	return process->pid;
 }
 
@@ -87,11 +92,23 @@ static void update_index_p(SchedulerInfo scheduler) {
 	scheduler->index_p = -1;
 }
 
+static void collect_zombies(){
+	SchedulerInfo scheduler = get_scheduler();
+	for (int i = 0; i < MAX_PROCESS; i++) {
+		if (scheduler->processes[i].state == ZOMBIE && scheduler->processes[i].ppid == INIT_PID) {
+			wait_children(scheduler->processes[i].pid);
+		}
+	}
+}
+
 PCBT *update_quantum(void *stack_pointer) {
     SchedulerInfo scheduler = get_scheduler();
     PCBT *current_process = &(scheduler->processes[scheduler->index_rr]);
 
-    if (scheduler->quantum_remaining == 0 || current_process->state == BLOCKED || current_process->times_to_run == 0) {
+    if (scheduler->quantum_remaining == 0 || current_process->state == BLOCKED || current_process->state == ZOMBIE || current_process->times_to_run == 0) {
+		if(scheduler->quantum_remaining == 0){
+			collect_zombies();
+		}
         if (current_process->state == RUNNING) {
             current_process->state = READY;
         }
@@ -146,6 +163,8 @@ void *scheduler(void *stack_pointer) {
 
 void list_processes_state() {
 	SchedulerInfo scheduler = get_scheduler();
+	drawWord("STAT - T: Blocked - S: Seady  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Foreground - s: Session leader");
+	commandEnter();
 	commandEnter();
 	drawWord("PID        STAT          RSP           RBP         COMMAND");
 	commandEnter();
@@ -172,18 +191,25 @@ uint64_t kill_process(unsigned int pid) {
 		return 0;
 	}
 	for (int i = 0; i < MAX_PROCESS; i++) {
-		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != DEAD) {
-			scheduler->processes[i].state = DEAD;
+		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != ZOMBIE  && scheduler->processes[i].state != DEAD) {
+			scheduler->processes[i].state = ZOMBIE; // Father process is in charge of changing process to DEAD with wait_children
+			PCBT * parent = find_process(scheduler->processes[i].ppid);
+			if(parent->waiting_pid == pid){
+				unblock_process(parent->pid);
+			}
 			scheduler->amount_processes--;
 			free_memory(scheduler->processes[i].stack_base);
 			free_memory(scheduler->processes[i].argv);
-			if(scheduler->current_pid == pid){
-				yield();
-			}
-			for(int j = 0; j < scheduler->amount_processes; j++){
+			for(int j = 0; j < MAX_PROCESS; j++){
 				if(scheduler->processes[j].ppid == pid && scheduler->processes[j].state != DEAD){
 					scheduler->processes[j].ppid = INIT_PID;
+					if(scheduler->processes[j].state == ZOMBIE){
+						wait_children(scheduler->processes[j].pid);
+					}
 				}
+			}
+			if(scheduler->current_pid == pid){
+				yield();
 			}
 			return 1;
 		}
@@ -253,4 +279,14 @@ static char **alloc_arguments(char **argv, uint64_t argc) {
 	}
 	newArgsArray[argc] = NULL;
 	return newArgsArray;
+}
+
+PCBT * find_process(unsigned int pid){
+	SchedulerInfo scheduler = get_scheduler();
+	for (int i = 0; i < MAX_PROCESS; i++) {
+		if (scheduler->processes[i].pid == pid) {
+			return &(scheduler->processes[i]);
+		}
+	}
+	return NULL;
 }

@@ -33,6 +33,7 @@ extern void call_sys_process_status(unsigned int pid);
 extern uint64_t call_sys_create_process(char *name, unsigned int priority, char foreground, char *argv[], int argc, void *rip);
 extern void call_sys_list_processes_state();
 
+
 extern int64_t call_sys_get_pid();
 extern int64_t call_sys_get_ppid();
 extern int64_t call_sys_wait_children(unsigned int ppid);
@@ -40,5 +41,11 @@ extern void call_sys_halt();
 
 extern void *call_sys_alloc_memory(uint64_t size);
 extern void *call_sys_free_memory(void *ptr);
+
+
+extern int64_t call_sys_sem_open(char *sem_id, uint64_t initialValue);
+extern int64_t call_sys_sem_wait(char *sem_id);
+extern int64_t call_sys_sem_post(char *sem_id);
+extern int64_t call_sys_sem_close(char *sem_id);
 
 #endif

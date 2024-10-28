@@ -14,10 +14,12 @@
 #define MAX_PROCESS 20
 #define MM_ADDRESS 0x50000
 #define SCHEDULER_ADDRESS 0x60000
+#define SEMAPHORE_MANAGER_ADDRESS 0x70000
 
 #define FOREGROUND 1
 #define BACKGROUND !FOREGROUND
 
+#define NO_CHILDREN 0 
 
 typedef enum { BLOCKED = 0,
 			   READY,
@@ -40,6 +42,7 @@ typedef struct PCB {
 	char name[32];
 	uint16_t pid;
 	uint16_t ppid;
+	uint16_t waiting_pid;
 	Priority priority;
 	int times_to_run; // contador de veces que se ejecuto
 	PCBState state;
@@ -48,6 +51,7 @@ typedef struct PCB {
 	char foreground;
 	char **argv;
 	int argc;
+	int ret;
 } PCBT;
 
 typedef struct Scheduler {

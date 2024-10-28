@@ -28,12 +28,16 @@ GLOBAL call_sys_create_process
 GLOBAL call_sys_list_processes_state
 GLOBAL call_sys_get_pid
 GLOBAL call_sys_get_ppid
-GLOBAL call_sys_wait
+GLOBAL call_sys_wait_children
 GLOBAL call_sys_draw_int
 
 GLOBAL call_sys_halt
 GLOBAL call_sys_alloc_memory
 GLOBAL call_sys_free_memory
+GLOBAL call_sys_sem_open
+GLOBAL call_sys_sem_wait
+GLOBAL call_sys_sem_post
+GLOBAL call_sys_sem_close
 
 call_sys_read:
     mov rax, 0
@@ -185,7 +189,7 @@ call_sys_get_ppid;
     int 80h
     ret
 
-call_sys_wait:
+call_sys_wait_children:
     mov rax, 27
     int 80h
     ret
@@ -207,5 +211,25 @@ call_sys_alloc_memory:
 
 call_sys_free_memory:
     mov rax, 31
+    int 80h
+    ret
+
+call_sys_sem_open:
+    mov rax, 32
+    int 80h
+    ret
+
+call_sys_sem_wait:
+    mov rax, 33
+    int 80h
+    ret
+
+call_sys_sem_post:
+    mov rax, 34
+    int 80h
+    ret
+
+call_sys_sem_close:
+    mov rax, 35
     int 80h
     ret

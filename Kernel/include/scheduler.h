@@ -15,11 +15,12 @@
 #define COMMAND_WIDTH 20
 
 SchedulerInfo create_scheduler();
-int8_t set_state(uint8_t new_state);
+uint8_t set_state(uint8_t new_state);
 SchedulerInfo get_scheduler();
-int8_t get_state();
+uint8_t get_state();
 void* scheduler(void *stack_pointer);
 PCBT *update_quantum(void *stack_pointer);
+PCBT * find_process(unsigned int pid);
 
 uint64_t create_process(char *name, Priority priority, char foreground, char *argv[], int argc, main_function rip);
 void list_processes_state();
@@ -27,5 +28,6 @@ uint64_t kill_process(unsigned int pid);
 uint16_t unblock_process(unsigned int pid);
 uint16_t block_process(unsigned int pid);
 void update_priority(unsigned int pid, Priority new_priority);
+PCBT * find_process(unsigned int pid);
 
 #endif

@@ -5,7 +5,7 @@
 #include <commands.h>
 #include <stddef.h>
 
-#define COMMANDS 15
+#define COMMANDS 16
 
 // shell manager
 void initialize_shell(char *command, int argc, char **argv);

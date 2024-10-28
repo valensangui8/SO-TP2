@@ -1,7 +1,7 @@
 #ifndef _BUFKB_H
 #define _BUFKB_H
 
-#define SIZE 4096
+#define SIZE 256
 
 typedef struct buff_kb *buff;
 

@@ -37,6 +37,8 @@ void test_process_user(int argc, char **argv);
 
 void test_prio_user();
 
+void test_sync_user(int argc, char **argv);
+
 void ps();
 
 void kill_process(int argc, char **argv);

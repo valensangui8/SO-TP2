@@ -3,6 +3,8 @@ GLOBAL get_key
 GLOBAL outb
 GLOBAL inb
 GLOBAL timer_tick
+GLOBAL acquire
+GLOBAL release
 
 section .text
 	
@@ -64,6 +66,18 @@ outb:
 
 timer_tick:
 	int 0x20
+	ret
+
+acquire:
+	mov al, 0
+.retry:
+	xchg [rdi], al
+	test al, al
+	jz .retry
+	ret
+
+release:
+	mov byte [rdi], 1
 	ret
 
 section .data

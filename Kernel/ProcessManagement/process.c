@@ -1,26 +1,29 @@
 #include <process.h>
 
-extern void _yield();
-extern void * _initialize_stack_frame(void *rip, void *function, void *stack, void *argv);
-
 static int argsLen(char **array) {
     int i = 0;
     while (array[i] != NULL) i++;
     return i;
 }
 
+static void exit_process(int ret, unsigned int pid) {
+	PCBT *process = find_process(pid);
+	process->ret = ret;
+	kill_process(pid);
+	yield();
+}
+
 void process_function(main_function rip, char **argv, uint64_t argc) {
-	
 	int new_argc = argsLen(argv);
     int ret = rip(new_argc, argv);
-
-    kill_process(get_pid());
+	exit_process(ret, get_pid());
 
 }
 
 void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char **argv, int argc, main_function rip) {
 	process->pid = pid;
 	process->ppid = ppid;
+	process->waiting_pid = NO_CHILDREN;
 	process->priority = priority;
 	process->foreground = foreground;
 	process->times_to_run = priority;
@@ -37,28 +40,23 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 	
 }
 
-uint8_t has_children(unsigned int pid) {
-	SchedulerInfo scheduler = get_scheduler();
-	for (int i = 0; i < MAX_PROCESS; i++) {
-		if (scheduler->processes[i].ppid == pid && scheduler->processes[i].state != DEAD) {
-			return 1;
-		}
+int64_t wait_children(unsigned int pid) {
+	if(pid == INIT_PID){ // Has no father
+		return -1;
 	}
-	return 0;
-}
+	PCBT *child = find_process(pid);
+	PCBT *parent = find_process(child->ppid);
+	
+	if(child->state != ZOMBIE) {
+		parent->waiting_pid = pid;
+		block_process(parent->pid);
+		yield();
+	} 
+	
+	child->state = DEAD;
+	
 
-int64_t wait_children(unsigned int ppid) {
-	if (has_children(ppid)) {
-		SchedulerInfo scheduler = get_scheduler();
-		for (int i = 0; i < MAX_PROCESS; i++) {
-			if (scheduler->processes[i].ppid == ppid && scheduler->processes[i].state != DEAD) {
-				while (scheduler->processes[i].state != DEAD) {
-					// wait
-				}
-			}
-		}
-	}
-	return 0;
+	return child->ret;
 }
 
 void yield() {
@@ -69,7 +67,6 @@ char *process_state(PCBT process) {
 	static char status[10];
 	my_strcpy(status, "");
 
-	
 	switch (process.state) {
 		case BLOCKED:
 			my_strcat(status, "T");
@@ -103,8 +100,11 @@ char *process_state(PCBT process) {
 	return status;
 }
 
+// change to find_process
 void process_status(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
+	commandEnter();
+	drawWord("STAT - T: Blocked - S: Ready  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Foreground - s: Session leader");
 	commandEnter();
 	drawWord("PID        STAT          RSP           RBP         COMMAND");
 	commandEnter();
