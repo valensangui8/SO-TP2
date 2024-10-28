@@ -80,6 +80,13 @@ void help(){
     call_sys_drawWithColor(" testprocess", 0x32a852);
     printf(" - Executes the memory manager test. Pass the max number of processes as an argument.");
 
+    call_sys_drawWithColor(" testsync", 0x32a852);
+    printf(" - Executes the synchronization test. Pass the max number of iterations as the first argument and set the use of semaphores as the second.");
+
+
+    call_sys_drawWithColor(" ps", 0x32a852);
+    printf(" - Lists all active processes and their statuses.");
+
     call_sys_drawWithColor(" kill", 0x32a852);
     printf(" - Kill process. Pass the PID as an argument.");
 
