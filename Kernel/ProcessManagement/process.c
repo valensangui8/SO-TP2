@@ -20,13 +20,22 @@ void process_function(main_function rip, char **argv, uint64_t argc) {
 
 }
 
-void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char **argv, int argc, main_function rip) {
+static void assign_fd(PCBT *process, int16_t fds[]){
+	for(int i=0; i<AMOUNT_OF_FD; i++){
+		process->fds[i]= fds[i];
+		if(fds[i]>=AMOUNT_OF_FD){
+			//open pipe
+		}
+	}
+}
+
+void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char **argv, int argc, main_function rip, int16_t fds[]) {
 	process->pid = pid;
 	process->ppid = ppid;
 	process->waiting_pid = NO_CHILDREN;
 	process->priority = priority;
-	process->foreground = foreground;
 	process->times_to_run = priority;
+	assign_fds(process, fds);
 	process->stack_base = alloc_memory(STACK_SIZE);
 	if (process->stack_base == NULL) {
         free_memory(process->stack_base);

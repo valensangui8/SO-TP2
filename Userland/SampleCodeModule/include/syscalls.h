@@ -30,7 +30,7 @@ extern uint16_t call_sys_block_process(unsigned int pid);
 extern uint16_t call_sys_unblock_process(unsigned int pid);
 extern void call_sys_yield();
 extern void call_sys_process_status(unsigned int pid);
-extern uint64_t call_sys_create_process(char *name, unsigned int priority, char foreground, char *argv[], int argc, void *rip);
+extern uint64_t call_sys_create_process(char *name, unsigned int priority, int file_descriptors[], char *argv[], int argc, void *rip);
 extern void call_sys_list_processes_state();
 
 

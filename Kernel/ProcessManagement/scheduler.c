@@ -47,7 +47,7 @@ uint8_t get_state() {
 	return process->state;
 }
 
-uint64_t create_process(char *name, Priority priority, char foreground, char *argv[], int argc, main_function rip) {
+uint64_t create_process(char *name, Priority priority, char *argv[], int argc, main_function rip, int16_t fds[]) {
 	SchedulerInfo scheduler = get_scheduler();
 
 	int free_spot = scheduler->index_p;
@@ -70,7 +70,7 @@ uint64_t create_process(char *name, Priority priority, char foreground, char *ar
 		ppid = get_pid();
 	}
 	
-	init_process(process, name, process->pid, ppid, priority, foreground, new_argv, argc, rip);
+	init_process(process, name, process->pid, ppid, priority, new_argv, argc, rip, fds);
 
 	PCBT * parent = find_process(ppid);
 	parent->waiting_pid++;

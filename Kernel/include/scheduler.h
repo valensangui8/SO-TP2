@@ -22,7 +22,7 @@ void* scheduler(void *stack_pointer);
 PCBT *update_quantum(void *stack_pointer);
 PCBT * find_process(unsigned int pid);
 
-uint64_t create_process(char *name, Priority priority, char foreground, char *argv[], int argc, main_function rip);
+uint64_t create_process(char *name, Priority priority, char *argv[], int argc, main_function rip, int16_t fds[]);
 void list_processes_state();
 uint64_t kill_process(unsigned int pid);
 uint16_t unblock_process(unsigned int pid);

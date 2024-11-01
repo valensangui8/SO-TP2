@@ -254,8 +254,8 @@ void sys_process_status(unsigned int pid) {
 	process_status(pid);
 }
 
-uint64_t sys_create_process(char *name, Priority priority, char foreground, char *argv[], int argc, main_function rip) {
-	uint64_t pid = create_process(name, priority, foreground, argv, argc, rip);
+uint64_t sys_create_process(char *name, Priority priority, int file_descriptors[], char *argv[], int argc, main_function rip) {
+	uint64_t pid = create_process(name, priority, file_descriptors, argv, argc, rip);
 	
 	return pid;
 }

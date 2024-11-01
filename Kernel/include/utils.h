@@ -16,8 +16,10 @@
 #define SCHEDULER_ADDRESS 0x60000
 #define SEMAPHORE_MANAGER_ADDRESS 0x70000
 
-#define FOREGROUND 1
-#define BACKGROUND !FOREGROUND
+#define AMOUNT_OF_FD 3
+#define STDIN 0 
+#define STDOUT 1
+#define STDERR 2
 
 #define NO_CHILDREN 0 
 
@@ -48,7 +50,7 @@ typedef struct PCB {
 	PCBState state;
 	void * stack_pointer;
 	void * stack_base;
-	char foreground;
+	int16_t fds[AMOUNT_OF_FD];
 	char **argv;
 	int argc;
 	int ret;

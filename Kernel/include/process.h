@@ -12,7 +12,8 @@
 #define SESSION_LEADER 1
 #define STACK_SIZE 4096
 
-void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char **argv, int argc, main_function rip);
+
+void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char **argv, int argc, main_function rip, int16_t fds[]);
 int64_t wait_children(unsigned int pid);
 void yield();
 void run_process(PCBT *process);
