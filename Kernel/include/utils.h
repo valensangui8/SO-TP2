@@ -15,8 +15,9 @@
 #define MM_ADDRESS 0x50000
 #define SCHEDULER_ADDRESS 0x60000
 #define SEMAPHORE_MANAGER_ADDRESS 0x70000
+#define PIPE_MANAGER_ADDRESS 0x80000
 
-#define AMOUNT_OF_FD 3
+#define BUILT_IN_FD 3
 #define STDIN 0 
 #define STDOUT 1
 #define STDERR 2
@@ -50,7 +51,7 @@ typedef struct PCB {
 	PCBState state;
 	void * stack_pointer;
 	void * stack_base;
-	int16_t fds[AMOUNT_OF_FD];
+	int16_t fds[BUILT_IN_FD];
 	char **argv;
 	int argc;
 	int ret;

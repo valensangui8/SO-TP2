@@ -21,10 +21,10 @@ void process_function(main_function rip, char **argv, uint64_t argc) {
 }
 
 static void assign_fd(PCBT *process, int16_t fds[]){
-	for(int i=0; i<AMOUNT_OF_FD; i++){
+	for(int i=0; i<BUILT_IN_FD; i++){
 		process->fds[i]= fds[i];
-		if(fds[i]>=AMOUNT_OF_FD){
-			//open pipe
+		if(fds[i]>=BUILT_IN_FD){
+			open_pipe(fds[i], process->pid);
 		}
 	}
 }

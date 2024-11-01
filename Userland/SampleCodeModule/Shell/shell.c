@@ -23,12 +23,12 @@ Command commandsList[COMMANDS] = {
     {"date", .function_void = date, VOID},
     {"eliminator", .function_void = eliminator, VOID},
     {"itba", .function_void = printLogo, VOID},
-    {"testprio", .function_no_params = test_prio_user, PROCESS_NO_PARAMS},              
-    {"testmm", .function_with_params = test_mm_user, PROCESS_PARAMS},
-    {"testprocess", .function_with_params = test_process_user, PROCESS_PARAMS},
-    {"ps", .function_no_params = ps, PROCESS_NO_PARAMS},
-    {"kill", .function_args = kill_process, FUNC_PARAMS},
-    {"testsync", .function_with_params = test_sync_user, PROCESS_PARAMS}
+    {"testprio", .process_no_params = test_prio_user, PROCESS_NO_PARAMS},              
+    {"testmm", .process_params = test_mm_user, PROCESS_PARAMS},
+    {"testprocess", .process_params = test_process_user, PROCESS_PARAMS},
+    {"ps", .process_no_params = ps, PROCESS_NO_PARAMS},
+    {"kill", .function_params = kill_process, FUNC_PARAMS},
+    {"testsync", .process_params = test_sync_user, PROCESS_PARAMS}
 };
 
 static int run_command(char *command, int argc, char **argv, char *flag, int16_t fds[]);
@@ -38,13 +38,13 @@ void initialize_shell(char *command, int argc, char **argv, char *command2, int 
     int16_t fds1[3], fds2[3];
     if(argc2 == 0){ // one process
         if(background){
-            fds1[0] = DEV_NULL;
-            fds1[1]= STDOUT; 
-            fds1[2] = STDERR;
+            fds1[STDIN] = DEV_NULL;
+            fds1[STDOUT]= STDOUT; 
+            fds1[STDERR] = STDERR;
         }else{
-            fds1[0] = STDIN;
-            fds1[1]= STDOUT; 
-            fds1[2]= STDERR;
+            fds1[STDIN] = STDIN;
+            fds1[STDOUT] = STDOUT; 
+            fds1[STDERR] = STDERR;
         }
         run_command(command, argc, argv, &flag, fds1);
         return;
@@ -57,13 +57,13 @@ void initialize_shell(char *command, int argc, char **argv, char *command2, int 
 		return;
 	}
 
-    fds1[0] =  (background)? DEV_NULL : STDIN;
-    fds1[1] = pipe_fd;
-    fds1[2] = STDERR;
+    fds1[STDIN] =  (background)? DEV_NULL : STDIN;
+    fds1[STDOUT] = pipe_fd;
+    fds1[STDERR] = STDERR;
 
-    fds2[0] = pipe_fd;
-    fds2[1] = STDOUT;
-    fds2[2] = STDERR;
+    fds2[STDIN] = pipe_fd;
+    fds2[STDOUT] = STDOUT;
+    fds2[STDERR] = STDERR;
 
     int pid = run_command(command, argc, argv, &flag, fds1);
     if(flag == 0 || argc2 == 0){
@@ -72,7 +72,7 @@ void initialize_shell(char *command, int argc, char **argv, char *command2, int 
         run_command(command2, argc2, argv2, &flag, fds2);
     }
     if(!background){
-        waitpid();
+        wait_children(pid);
     }
 }
 
