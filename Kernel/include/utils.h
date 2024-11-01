@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "memory.h"
 
 #define MAX_PROCESS 20
 #define MM_ADDRESS 0x50000

@@ -17,7 +17,11 @@ $(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM)
 	$(LD) $(LDFLAGS) -T kernel.ld --oformat=elf64-x86-64 -o kernel.elf $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM)
 
 %.o: %.c
+ifeq ($(MM), BUDDY_SYSTEM)
+	$(GCC) $(GCCFLAGS) -DBUDDY_SYSTEM -I./include -c $< -o $@
+else
 	$(GCC) $(GCCFLAGS) -I./include -c $< -o $@
+endif
 
 %.o : %.asm
 	$(ASM) $(ASMFLAGS) $< -o $@

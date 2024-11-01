@@ -1,11 +1,16 @@
 
+MM? = MEMORY_MANAGER_ADT
+
 all:  bootloader kernel userland image
 
 bootloader:
 	cd Bootloader; make all
 
 kernel:
-	cd Kernel; make all
+	cd Kernel; make MM=$(MM) all 
+
+buddy:
+	cd Kernel; make buddy;
 
 userland:
 	cd Userland; make all

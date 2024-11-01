@@ -1,3 +1,5 @@
+#ifndef BUDDY_SYSTEM  // Compila solo si BUDDY_SYSTEM no está definido
+
 #include "memoryManagerADT.h"
 
 typedef struct MemoryInfo {
@@ -22,18 +24,19 @@ void init_memory_info(MemoryInfo *memory_info, void *start) {
 	}
 }
 
-MemoryManagerADT init_memory_manager(uint64_t size, void *start_address) {
+void init_memory_manager_ADT(uint64_t size, void *start_address) {
 	if ((uintptr_t) start_address < HEAP_START) {
 		return NULL;
 	}
 	MemoryManagerADT new_memory = (MemoryManagerADT) MM_ADDRESS;
 	new_memory->start_address = start_address;
 	new_memory->size = size;
+	
 	init_memory_info(&(new_memory->info), start_address);
-	return new_memory;
+	
 }
 
-void *alloc_memory(uint64_t size) {
+void *alloc_memory_ADT(uint64_t size) {
 	MemoryManagerADT memory = get_memory_manager();
 	int free_remaining = free_blocks_remaining(&(memory->info));
 	int needed_blocks;
@@ -48,7 +51,7 @@ void *alloc_memory(uint64_t size) {
 	return ret_ptr;
 }
 
-void free_memory(void *ptr) {
+void free_memory_ADT(void *ptr) {
 	MemoryManagerADT memory = get_memory_manager();
 	if (ptr > memory->size + memory->start_address || ptr < memory->start_address || memory->info.current == 0) {
 		// error no es válido el puntero
@@ -81,3 +84,5 @@ static int free_blocks_remaining(MemoryInfo *memory_info) {
 static MemoryManagerADT get_memory_manager() {
 	return (MemoryManagerADT) MM_ADDRESS;
 }
+
+#endif
