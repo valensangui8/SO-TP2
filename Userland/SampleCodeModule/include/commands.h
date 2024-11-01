@@ -17,30 +17,30 @@
 #define MONTH   0x8
 #define YEAR    0x9
 
-void date(int background);
+void date();
 
-void zoomIn(int background);
+void zoomIn();
 
-void zoomOut(int background);
+void zoomOut();
 
-void clear(int background);
+void clear();
 
-void div0(int background);
+void div0();
 
-void help(int background);
+void help();
 
-void registers(int background);
+void registers();
 
-void test_mm_user(int background, int argc, char **argv);
+int test_mm_user(int16_t fds[], int argc, char **argv);
 
-void test_process_user(int background,int argc, char **argv);
+int test_process_user(int16_t fds[],int argc, char **argv);
 
-void test_prio_user(int background);
+int test_prio_user(int16_t fds[]);
 
-void test_sync_user(int background,int argc, char **argv);
+int test_sync_user(int16_t fds[],int argc, char **argv);
 
-void ps(int background);
+int ps(int16_t fds[]);
 
-void kill_process(int background,int argc, char **argv);
+void kill_process(int argc, char **argv);
 
 #endif

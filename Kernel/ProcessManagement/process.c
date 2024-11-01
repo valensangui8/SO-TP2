@@ -99,9 +99,9 @@ char *process_state(PCBT process) {
 	else if (process.priority == PRIORITY1) {
 		my_strcat(status, "N"); 
 	}
-	if (process.foreground) {
-		my_strcat(status, "+"); 
-	}
+	// if (process.foreground) { --> ver como mostrar ahora 
+	// 	my_strcat(status, "+"); 
+	// }
 	else if (process.pid == SESSION_LEADER) {
 		my_strcat(status, "s"); 
 	}

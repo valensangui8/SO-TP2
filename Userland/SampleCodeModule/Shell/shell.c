@@ -3,57 +3,88 @@
 typedef struct command {
     char * name;
     union {
-        void (*function_with_params)(int background, int argc, char **argv);
-        void (*function_no_params)(int background);
+        int (*process_params)(int16_t fds[], int argc, char **argv);
+        int (*process_no_params)(int16_t fds[]);
+        void (*function_void)();
+        void (*function_params)(int argc, char **argv);
     };
-    char has_params;
+    type type;
 } Command;
 
 // Define si BACKGROUND es 0 o 1 según tu sistema
 Command commandsList[COMMANDS] = {
-    {"zoomIn", .function_no_params = zoomIn, 0},                          
-    {"zoomOut", .function_no_params = zoomOut, 0},
-    {"clear", .function_no_params = clear, 0},
-    {"div0", .function_no_params = div0, 0},
-    {"invalidOpcode", .function_no_params = invalidOpcode, 0},
-    {"help", .function_no_params = help, 0},
-    {"registers", .function_no_params = registers, 0},
-    {"date", .function_no_params = date, 0},
-    {"eliminator", .function_no_params = eliminator, 0},
-    {"itba", .function_no_params = printLogo, 0},
-    {"testprio", .function_no_params = test_prio_user, 0},              
-    {"testmm", .function_with_params = test_mm_user, 1},
-    {"testprocess", .function_with_params = test_process_user, 1},
-    {"ps", .function_no_params = ps, 0},
-    {"kill", .function_with_params = kill_process, 1},
-    {"testsync", .function_with_params = test_sync_user, 1}
+    {"zoomIn", .function_void = zoomIn, VOID},                          
+    {"zoomOut", .function_void = zoomOut, VOID},
+    {"clear", .function_void = clear, VOID},
+    {"div0", .function_void = div0, VOID},
+    {"invalidOpcode", .function_void = invalidOpcode, VOID},
+    {"help", .function_void = help, VOID},
+    {"registers", .function_void = registers, VOID},
+    {"date", .function_void = date, VOID},
+    {"eliminator", .function_void = eliminator, VOID},
+    {"itba", .function_void = printLogo, VOID},
+    {"testprio", .function_no_params = test_prio_user, PROCESS_NO_PARAMS},              
+    {"testmm", .function_with_params = test_mm_user, PROCESS_PARAMS},
+    {"testprocess", .function_with_params = test_process_user, PROCESS_PARAMS},
+    {"ps", .function_no_params = ps, PROCESS_NO_PARAMS},
+    {"kill", .function_args = kill_process, FUNC_PARAMS},
+    {"testsync", .function_with_params = test_sync_user, PROCESS_PARAMS}
 };
 
-static void run_command(char *command, int argc, char **argv, char *flag, int background);
+static int run_command(char *command, int argc, char **argv, char *flag, int16_t fds[]);
 
 void initialize_shell(char *command, int argc, char **argv, char *command2, int argc2, char **argv2, int background) {
     char flag = 0;
+    int16_t fds1[3], fds2[3];
     if(argc2 == 0){ // one process
-        run_command(command, argc, argv, &flag, background);
+        if(background){
+            fds1[0] = DEV_NULL;
+            fds1[1]= STDOUT; 
+            fds1[2] = STDERR;
+        }else{
+            fds1[0] = STDIN;
+            fds1[1]= STDOUT; 
+            fds1[2]= STDERR;
+        }
+        run_command(command, argc, argv, &flag, fds1);
         return;
     }
 
-    run_command(command, argc, argv, &flag, background);
+    int16_t pipe_fd = pipe();
+	if (pipe_fd == -1) {
+		printf("Error: Pipe failed");
+        call_sys_enter();
+		return;
+	}
+
+    fds1[0] =  (background)? DEV_NULL : STDIN;
+    fds1[1] = pipe_fd;
+    fds1[2] = STDERR;
+
+    fds2[0] = pipe_fd;
+    fds2[1] = STDOUT;
+    fds2[2] = STDERR;
+
+    int pid = run_command(command, argc, argv, &flag, fds1);
     if(flag == 0 || argc2 == 0){
         return;
     } else{
-        run_command(command2, argc2, argv2, &flag, background);
+        run_command(command2, argc2, argv2, &flag, fds2);
     }
-    
+    if(!background){
+        waitpid();
+    }
 }
 
-void run_command(char *command, int argc, char **argv, char *flag, int background){
+int run_command(char *command, int argc, char **argv, char *flag, int16_t fds[]){
     if(*command == 0){
         call_sys_enter();
         return;
     }
     int id = readCommand(command);
-    executeCommand(id, flag, command, argc, argv, background);
+    int pid = 0;
+    executeCommand(id, flag, command, argc, argv, fds, &pid);
+    return pid;
 }
 
 int readCommand(char * command) {
@@ -65,7 +96,7 @@ int readCommand(char * command) {
     return -1;
 }
 
-void executeCommand(int index, char * flag, char * command, int argc, char **argv, int background) {
+void executeCommand(int index, char * flag, char * command, int argc, char **argv, int16_t fds[], int *pid) {
     if (index == -1 ) {
         call_sys_drawError(command);
         *flag = 0;
@@ -78,22 +109,25 @@ void executeCommand(int index, char * flag, char * command, int argc, char **arg
         call_sys_clear();
     }
 
-    if(commandsList[index].has_params != 0){
-        if(argc == 1){
-            printf("ERROR: Invalid number of arguments");
-            call_sys_enter();
-            *flag = 0;
-            return;
-        }
-        commandsList[index].function_with_params(background, argc, argv);
-    }else{
-        commandsList[index].function_no_params(background);
+    switch(commandsList[index].type){
+        case PROCESS_PARAMS:
+            if(argc == 1){
+                printf("ERROR: Invalid number of arguments");
+                call_sys_enter();
+                *flag = 0;
+                return;
+            }
+            *pid = commandsList[index].process_params(fds, argc, argv);
+        case PROCESS_NO_PARAMS:
+            *pid = commandsList[index].process_no_params(fds);
+        case FUNC_PARAMS:
+            commandsList[index].function_params(argc, argv);
+        case VOID:
+            commandsList[index].function_void();
     }
-
     call_sys_enter();
     
     *flag = 1;
-   
 }
 
 
