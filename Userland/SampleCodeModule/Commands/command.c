@@ -1,6 +1,6 @@
 #include <commands.h>
 
-void zoomIn(){
+void zoomIn(int background){
     int scale;
     call_sys_getScale(&scale);
     if(scale == 4){
@@ -9,7 +9,7 @@ void zoomIn(){
         call_sys_zoomIn();
     }
 }
-void zoomOut(){
+void zoomOut(int background){
     int scale;
     call_sys_getScale(&scale);
     if(scale == 1){
@@ -19,11 +19,11 @@ void zoomOut(){
     }
 }
 
-void clear(){
+void clear(int background){
     call_sys_clear();
 }
 
-void help(){
+void help(int background){
     call_sys_commandEnter();
     
     printf("PROGRAMS AVAILABLE FOR USER: ");
@@ -93,7 +93,7 @@ void help(){
     
 }
 
-void div0() {
+void div0(int background) {
     int a, b, c;
     a = 0;
     b = 1;
@@ -101,7 +101,7 @@ void div0() {
     a = c;
 }
 
-void registers(){
+void registers(int background){
     call_sys_drawRegisters();
 }
 
@@ -177,7 +177,7 @@ char * getDay() {
     return dayBuffer;
 }
 
-void date() {
+void date(int background) {
     call_sys_drawWord("Current day: ");
     call_sys_drawWord(getDay());
 
@@ -187,26 +187,26 @@ void date() {
     call_sys_drawWord(getTime());
 }
 
-void test_mm_user(int argc, char **argv){
+void test_mm_user(int background, int argc, char **argv){
     call_sys_create_process("testmm", 1, 0, argv, argc, &test_mm);
     
+} 
+
+void test_process_user(int background, int argc, char **argv){
+    call_sys_create_process("testprocess", 1, background, argv, argc, &test_processes);
 }
 
-void test_process_user(int argc, char **argv){
-    call_sys_create_process("testprocess", 1, 0, argv, argc, &test_processes);
-}
 
-
-void test_prio_user(){
-    call_sys_create_process("testprio", 1, 0, NULL, 0, &test_prio);
+void test_prio_user(int background){
+    call_sys_create_process("testprio", 1, background, NULL, 0, &test_prio);
     
 }
 
-void ps(){
+void ps(int background){
     call_sys_list_processes_state();
 }
 
-void kill_process(int argc, char **argv) {
+void kill_process(int background, int argc, char **argv) {
     if(call_sys_kill_process(satoi(argv[1])) == 1){
         call_sys_drawWord("You killed the process: ");
         call_sys_draw_int(satoi(argv[1]));
@@ -216,6 +216,6 @@ void kill_process(int argc, char **argv) {
     }
 }
 
-void test_sync_user(int argc, char **argv){
-    call_sys_create_process("testsyncro", 1, 0, argv, argc, &test_sync);
+void test_sync_user(int background, int argc, char **argv){
+    call_sys_create_process("testsyncro", 1, background, argv, argc, &test_sync);
 }

@@ -46,24 +46,44 @@ void terminal(){
 		}
 		buffer[buffer_pos] = '\0';
 
-		char *argv[MAX_ARGS] = {NULL};  
-        int argc = 0;
+		char *argv1[MAX_ARGS] = {NULL};
+		char *argv2[MAX_ARGS] = {NULL};   
+        int argc1 = 0, argc2 = 0, one_process = 1, background = 0;
 
-		argv[0]=strtok(buffer, " ");
+		char not_valid = 0;
+        char *token = strtok(buffer, " ");
+		while (token != NULL) {
+			if (strcmp(token, "|") == 0) {
+				one_process = 0;
+				token = strtok(NULL, " ");
+				continue;
+			}
+			 if (strcmp(token, "&") == 0) {
+        		if (strtok(NULL, " ") == NULL) {
+					background = 1;
+					break;
+				} else {
+					call_sys_commandEnter();
+					call_sys_drawWord("Parse error: near '&'");
+					call_sys_enter();
+					not_valid = 1; 
+					break;
+				}
+    		}
 
-		char *token = argv[argc++];
-        while ((token = strtok(NULL, " ")) != NULL) {
-	
-            argv[argc++] = token;
-			
-			// if(token == '|' || token == '&' || token == '<' || token == '>') {
-			// 	//pipes, background and redirections processes
-			// 	//llamar a la segunda funcion
-			// }
+			if (one_process == 1) {
+				argv1[argc1++] = token;
+			} else {
+				argv2[argc2++] = token;
+			}
+
+			token = strtok(NULL, " ");
 		}
-		argv[argc] = NULL;
-
-        initialize_shell(argv[0], argc, argv);
+		argv1[argc1] = NULL;
+		argv2[argc2] = NULL;
+		if(!not_valid){
+			initialize_shell(argv1[0], argc1, argv1, argv2[0], argc2, argv2, background);
+		}
 	}
 
 }
