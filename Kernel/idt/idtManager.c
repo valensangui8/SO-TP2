@@ -41,6 +41,11 @@ static int64_t sys_sem_wait(char *sem_id);
 static int64_t sys_sem_post(char *sem_id);
 static int64_t sys_sem_close(char *sem_id);
 
+static int16_t sys_get_pipe_fd();
+static int16_t sys_open_pipe(int id, char mode);
+static int16_t sys_close_pipe(uint16_t fd);
+static int16_t sys_write_pipe(uint16_t fd, char *buffer, uint16_t *count);
+static int16_t sys_read_pipe(uint16_t fd, char *buffer, uint16_t *count);
 
 
 uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
@@ -158,20 +163,52 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 		case 35:
 			return sys_sem_close((char *) rdi);
 			break;
+		case 36:
+			return sys_get_pipe_fd();
+			break;
+		case 37:
+			return sys_open_pipe((int) rdi, (char) rsi);
+			break;
+		case 38:
+			return sys_close_pipe((uint16_t) rdi);
+			break;
+		case 39:
+			return sys_write_pipe((uint16_t) rdi, (char *) rsi, (uint16_t *) rdx);
+			break;
+		case 40:
+			return sys_read_pipe((uint16_t) rdi, (char *) rsi, (uint16_t *) rdx);
+			break;
 	}
 	return 0;
 }
 
 void sys_Read(uint8_t *buf, uint32_t count, uint32_t *size) {
-	readChar(buf, count, size);
+	int fd = get_current_file_descriptor_read();
+	if(fd == STDIN){
+		readChar(buf, count, size);
+	}else if(fd != DEV_NULL){
+		read_pipe(fd, buf, size);
+	}
 }
 
 void sys_DrawWord(char *word) {
-	drawWord(word);
+	int fd = get_current_file_descriptor_write();
+	int bytes = 0;
+	if(fd == STDOUT){
+		drawWord(word);
+	}else if(fd != DEV_NULL){
+		write_pipe(fd, word, &bytes);
+	}
 }
 
 void sys_DrawChar(char letter) {
-	drawLine(letter);
+	int fd = get_current_file_descriptor_write();
+	int bytes = 0;
+	if(fd == STDOUT){
+		drawLine(letter);
+	}else if(fd != DEV_NULL){
+		write_pipe(fd, &letter, &bytes);
+	}
 }
 
 void sys_enter() {
@@ -306,4 +343,24 @@ int64_t sys_sem_post(char *sem_id){
 
 int64_t sys_sem_close(char *sem_id){
 	return sem_close(sem_id);
+}
+
+int16_t sys_get_pipe_fd(){
+	return get_pipe_fd();
+}
+
+int16_t sys_open_pipe(int id, char mode){
+	return open_pipe(id, mode);
+}
+
+int16_t sys_close_pipe(uint16_t fd){
+	return close_pipe(fd);
+}
+
+int16_t sys_write_pipe(uint16_t fd, char *buffer, uint16_t *count){
+	return write_pipe(fd, buffer, count);
+}
+
+int16_t sys_read_pipe(uint16_t fd, char *buffer, uint16_t *count){
+	return read_pipe(fd, buffer, count);
 }

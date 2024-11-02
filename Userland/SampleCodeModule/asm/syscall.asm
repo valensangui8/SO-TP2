@@ -39,6 +39,12 @@ GLOBAL call_sys_sem_wait
 GLOBAL call_sys_sem_post
 GLOBAL call_sys_sem_close
 
+GLOBAL call_sys_get_pipe_fd
+GLOBAL call_sys_open_pipe
+GLOBAL call_sys_close_pipe
+GLOBAL call_sys_write_pipe
+GLOBAL call_sys_read_pipe
+
 call_sys_read:
     mov rax, 0
     int 80h
@@ -231,5 +237,30 @@ call_sys_sem_post:
 
 call_sys_sem_close:
     mov rax, 35
+    int 80h
+    ret
+
+call_sys_get_pipe_fd:
+    mov rax, 36
+    int 80h
+    ret
+
+call_sys_open_pipe:
+    mov rax, 37
+    int 80h
+    ret
+
+call_sys_close_pipe:
+    mov rax, 38
+    int 80h
+    ret
+
+call_sys_write_pipe:
+    mov rax, 39
+    int 80h
+    ret
+
+call_sys_read_pipe:
+    mov rax, 40
     int 80h
     ret

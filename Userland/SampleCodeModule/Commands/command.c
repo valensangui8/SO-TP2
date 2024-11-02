@@ -215,6 +215,6 @@ void kill_process(int argc, char **argv) {
     }
 }
 
-void test_sync_user(int16_t fds[], int argc, char **argv){
+int test_sync_user(int16_t fds[], int argc, char **argv){
     return call_sys_create_process("testsyncro", 1, argv, argc, &test_sync, fds);
 }

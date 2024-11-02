@@ -47,7 +47,7 @@ uint8_t get_state() {
 	return process->state;
 }
 
-uint64_t create_process(char *name, Priority priority, char *argv[], int argc, main_function rip, int16_t fds[]) {
+uint64_t create_process(char *name, Priority priority, char *argv[], int argc, main_function rip, const int16_t fds[]) {
 	SchedulerInfo scheduler = get_scheduler();
 
 	int free_spot = scheduler->index_p;
@@ -289,4 +289,22 @@ PCBT * find_process(unsigned int pid){
 		}
 	}
 	return NULL;
+}
+
+int get_current_file_descriptor_read(){
+	SchedulerInfo scheduler = get_scheduler();
+	PCBT *process = &(scheduler->processes[scheduler->index_rr]);
+	return process->fds[STDIN];
+}
+
+int get_current_file_descriptor_write(){
+	SchedulerInfo scheduler = get_scheduler();
+	PCBT *process = &(scheduler->processes[scheduler->index_rr]);
+	return process->fds[STDOUT];
+}
+
+int get_current_file_descriptor_error(){
+	SchedulerInfo scheduler = get_scheduler();
+	PCBT *process = &(scheduler->processes[scheduler->index_rr]);
+	return process->fds[STDERR];
 }

@@ -50,7 +50,7 @@ void initialize_shell(char *command, int argc, char **argv, char *command2, int 
         return;
     }
 
-    int16_t pipe_fd = pipe();
+    int16_t pipe_fd = call_sys_get_pipe_fd();
 	if (pipe_fd == -1) {
 		printf("Error: Pipe failed");
         call_sys_enter();
@@ -72,7 +72,7 @@ void initialize_shell(char *command, int argc, char **argv, char *command2, int 
         run_command(command2, argc2, argv2, &flag, fds2);
     }
     if(!background){
-        wait_children(pid);
+        call_sys_wait_children(pid);
     }
 }
 

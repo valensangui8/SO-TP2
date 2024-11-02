@@ -10,6 +10,9 @@ static void exit_process(int ret, unsigned int pid) {
 	PCBT *process = find_process(pid);
 	process->ret = ret;
 	kill_process(pid);
+	close_pipe(process->fds[STDIN], process->pid);
+	close_pipe(process->fds[STDOUT], process->pid);
+	close_pipe(process->fds[STDERR], process->pid);
 	yield();
 }
 
@@ -20,12 +23,10 @@ void process_function(main_function rip, char **argv, uint64_t argc) {
 
 }
 
-static void assign_fd(PCBT *process, int16_t fds[]){
-	for(int i=0; i<BUILT_IN_FD; i++){
-		process->fds[i]= fds[i];
-		if(fds[i]>=BUILT_IN_FD){
-			open_pipe(fds[i], process->pid);
-		}
+static void assign_fd(PCBT *process, int16_t index, int16_t fd, char mode){
+	process->fds[index]= fd;
+	if(fd>=BUILT_IN_FD){
+		open_pipe(fd, mode);
 	}
 }
 
@@ -35,7 +36,10 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 	process->waiting_pid = NO_CHILDREN;
 	process->priority = priority;
 	process->times_to_run = priority;
-	assign_fds(process, fds);
+	assign_fd(process, STDIN, fds[STDIN], 'r');
+	assign_fd(process, STDOUT, fds[STDOUT], 'w');
+	assign_fd(process, STDERR, fds[STDERR], 'w');
+
 	process->stack_base = alloc_memory(STACK_SIZE);
 	if (process->stack_base == NULL) {
         free_memory(process->stack_base);
@@ -102,9 +106,6 @@ char *process_state(PCBT process) {
 	// if (process.foreground) { --> ver como mostrar ahora 
 	// 	my_strcat(status, "+"); 
 	// }
-	else if (process.pid == SESSION_LEADER) {
-		my_strcat(status, "s"); 
-	}
 	my_strcat(status, "\0");
 	return status;
 }
