@@ -86,7 +86,12 @@ int16_t get_pipe_fd() {
     }
     for (int i = 0; i < MAX_PIPES; i++) {
         if (pipe_manager->pipes[i] == NULL) {
-            pipe_manager->pipes[i] = create_pipe(i + BUILT_IN_FD);
+            Pipe *pipe = create_pipe(i + BUILT_IN_FD);
+            if (pipe == NULL) {
+                return -1;
+            }
+            pipe_manager->pipes[i] = pipe;
+            pipe_manager->pipes_used++;
             return i + BUILT_IN_FD;
         }
     }
@@ -163,7 +168,7 @@ int16_t write_pipe(uint16_t fd, char *buffer, uint16_t *count) {
     if (pipe == NULL) {
         return -1;
     }
-    if (pipe->output_pid != get_pid()) {
+    if (pipe->output_pid != get_pid() || pipe->input_pid == -1) {
         return -1;
     }
     for (int i = 0; i < len; i++) {
@@ -183,7 +188,7 @@ int16_t read_pipe(uint16_t fd, char *buffer, uint16_t *count) {
     if (pipe == NULL) {
         return -1;
     }
-    if (pipe->input_pid != get_pid()) {
+    if (pipe->input_pid != get_pid() || pipe->output_pid == -1) {
         return -1;
     }
     for (int i = 0; pipe->read_index != pipe->read_index; i++) {

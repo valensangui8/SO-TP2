@@ -9,7 +9,7 @@
 #include <string.h>
 #include <utils.h>
 
-#define SESSION_LEADER 1
+#define SESSION_LEADER 2 // shell
 #define STACK_SIZE 4096
 
 

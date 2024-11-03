@@ -10,12 +10,12 @@ SchedulerInfo create_scheduler() {
 	for (int i = 0; i < MAX_PROCESS; i++) {
 		scheduler->processes[i].state = DEAD;
 	}
-	scheduler->current_pid = 0;
+	scheduler->current_pid = 1;
 	scheduler->index_p = 0;
 	scheduler->index_rr = 0;
 	scheduler->quantum_remaining = QUANTUM;
 	scheduler->amount_processes = 0;
-	scheduler->next_pid = 0;
+	scheduler->next_pid = 1;
 	initialized = 1;
 	
 	return scheduler;
@@ -163,7 +163,7 @@ void *scheduler(void *stack_pointer) {
 
 void list_processes_state() {
 	SchedulerInfo scheduler = get_scheduler();
-	drawWord("STAT - T: Blocked - S: Seady  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Foreground - s: Session leader");
+	drawWord("STAT - T: Blocked - S: Seady  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Background - s: Session leader");
 	commandEnter();
 	commandEnter();
 	drawWord("PID        STAT          RSP           RBP         COMMAND");

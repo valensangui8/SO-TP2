@@ -103,9 +103,12 @@ char *process_state(PCBT process) {
 	else if (process.priority == PRIORITY1) {
 		my_strcat(status, "N"); 
 	}
-	// if (process.foreground) { --> ver como mostrar ahora 
-	// 	my_strcat(status, "+"); 
-	// }
+	if (process.fds[STDIN] == DEV_NULL) { // Background
+		my_strcat(status, "+"); 
+	}
+	if (process.pid == SESSION_LEADER) { // Session leader
+		my_strcat(status, "s"); 
+	}
 	my_strcat(status, "\0");
 	return status;
 }
@@ -114,7 +117,7 @@ char *process_state(PCBT process) {
 void process_status(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
 	commandEnter();
-	drawWord("STAT - T: Blocked - S: Ready  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Foreground - s: Session leader");
+	drawWord("STAT - T: Blocked - S: Ready  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Background - s: Session leader");
 	commandEnter();
 	drawWord("PID        STAT          RSP           RBP         COMMAND");
 	commandEnter();
