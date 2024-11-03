@@ -16,6 +16,7 @@ SchedulerInfo create_scheduler() {
 	scheduler->quantum_remaining = QUANTUM;
 	scheduler->amount_processes = 0;
 	scheduler->next_pid = 1;
+	scheduler->kill_foreground = 0;
 	initialized = 1;
 	
 	return scheduler;
@@ -126,13 +127,17 @@ PCBT *update_quantum(void *stack_pointer) {
                 current_process->times_to_run = current_process->priority;
             }
 		}
-
         scheduler->quantum_remaining = QUANTUM;  
     } else {
         scheduler->quantum_remaining--;  
     }
 
     current_process->state = RUNNING;
+	
+	if(scheduler->kill_foreground && current_process->foreground){
+		scheduler->kill_foreground = 0;
+		kill_process(current_process->pid);
+	}
 
     return current_process;  
 }
@@ -220,8 +225,8 @@ uint64_t kill_process(unsigned int pid) {
 
 void kill_foreground_process(){
 	SchedulerInfo scheduler = get_scheduler();
-	PCBT *process = &(scheduler->processes[scheduler->index_rr]);
-	kill_process(process->pid);
+	scheduler->quantum_remaining = 0;
+	scheduler->kill_foreground = 1;
 }
 
 void update_priority(unsigned int pid, Priority new_priority) {

@@ -50,7 +50,11 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 	process->argv = argv;
 	process->argc = argc;
 	process->stack_pointer = _initialize_stack_frame(&process_function, rip, stackEnd,(void *) process->argv);
-	
+	if(fds[STDIN] == DEV_NULL){
+		process->foreground = 0;
+	} else {
+		process->foreground = 1;
+	}
 }
 
 int64_t wait_children(unsigned int pid) {

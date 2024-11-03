@@ -91,13 +91,13 @@ uint8_t getKeyMapping(uint64_t number) {
 		return keyMap[number][1];
 	}
 
-	if(ctrlPressed && number == C_KEY){
-		kill_process(get_pid());
+	if(ctrlPressed && number == C_KEY){ // kill process foreground
+		kill_foreground_process();
         return 0;
 	}
 
-    if(ctrlPressed && number == D_KEY){
-        return 0;
+    if(ctrlPressed && number == D_KEY){ // send EOF
+        return EOF;
     }
 
 	return keyMap[number][0];
