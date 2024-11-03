@@ -109,7 +109,7 @@ char *my_itoa(int num) {
 	}
 	while (num != 0) {
 		int rem = num % 10;
-		str[i++] = (rem > 9)? (rem-10) + 'a' : rem + '0';
+		str[i++] = rem + '0';
 		num = num/10;
 	}
 	if (isNegative) {

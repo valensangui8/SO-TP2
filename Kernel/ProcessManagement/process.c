@@ -30,7 +30,7 @@ static void assign_fd(PCBT *process, int16_t index, int16_t fd, char mode){
 	}
 }
 
-void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char **argv, int argc, main_function rip, int16_t fds[]) {
+void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char **argv, int argc, main_function rip, const int16_t fds[]) {
 	process->pid = pid;
 	process->ppid = ppid;
 	process->waiting_pid = NO_CHILDREN;

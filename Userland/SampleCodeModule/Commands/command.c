@@ -22,7 +22,6 @@ void zoomOut(){
 
 void clear(){
     call_sys_clear();
-    return call_sys_get_pid();
 }
 
 void help(){
@@ -76,20 +75,20 @@ void help(){
     call_sys_drawWithColor(" testprio", 0x32a852);
     printf(" - Executes the memory manager test.");
 
-    call_sys_drawWithColor(" testmm", 0x32a852);
+    call_sys_drawWithColor(" testmm <MAX_MERMORY>", 0x32a852);
     printf(" - Executes the memory manager test. Pass the max memory number as an argument.");
 
-    call_sys_drawWithColor(" testprocess", 0x32a852);
+    call_sys_drawWithColor(" testprocess <MAX_PROCESSES>", 0x32a852);
     printf(" - Executes the memory manager test. Pass the max number of processes as an argument.");
 
-    call_sys_drawWithColor(" testsync", 0x32a852);
+    call_sys_drawWithColor(" testsync <ITERATIONS> <SEM_VALUE>", 0x32a852);
     printf(" - Executes the synchronization test. Pass the max number of iterations as the first argument and set the use of semaphores as the second.");
 
 
     call_sys_drawWithColor(" ps", 0x32a852);
     printf(" - Lists all active processes and their statuses.");
 
-    call_sys_drawWithColor(" kill", 0x32a852);
+    call_sys_drawWithColor(" kill <PID>", 0x32a852);
     printf(" - Kill process. Pass the PID as an argument.");
 }
 
@@ -104,8 +103,6 @@ void div0() {
 void registers(){
     call_sys_drawRegisters();
 }
-
-
 
 
 /*DATE*/
@@ -216,4 +213,68 @@ void kill_process(int argc, char **argv) {
 
 int test_sync_user(int16_t fds[], int argc, char **argv){
     return call_sys_create_process("testsyncro", 1, argv, argc, &test_sync, fds);
+}
+
+static void cat_process(int argc, char **argv) {
+    char c;
+    while ((c = getChar()) != EOF) { 
+        putchar(c);
+    }
+}
+
+void cat(int16_t fds[], int argc, char **argv){
+    call_sys_create_process("cat", 1, argv, argc, &cat_process, fds); 
+}
+
+static void wc_process(int argc, char **argv) {
+    char c;
+    int line_count = 0;
+    
+    while ((c = getChar()) != EOF) {
+        if (c == '\n') {
+            line_count++;
+        }
+    }
+
+    printf("Lines: %d\n", line_count);
+}
+
+void wc(int16_t fds[], int argc, char **argv){
+    call_sys_create_process("wc", 1, argv, argc, &wc_process, fds);
+}
+
+static void filter_process(int argc, char **argv) {
+    char c;
+    while ((c = getChar()) != EOF) {
+        if (c != 'a' && c != 'e' && c != 'i' && c != 'o' && c != 'u' &&
+            c != 'A' && c != 'E' && c != 'I' && c != 'O' && c != 'U') {
+            putchar(c);
+        }
+    }
+}
+
+void filter(int16_t fds[], int argc, char **argv){
+    call_sys_create_process("filter", 1, argv, argc, &filter_process, fds);
+}
+
+static void loop_process(int argc, char **argv) {
+    if(argc != 2){
+        call_sys_drawWord("Invalid number of arguments");
+        return;
+    }
+    int pid = call_sys_get_pid();
+    while(1){
+        call_sys_sleep(my_atoi(argv[1]));
+        printf("Hey! I'm the process with PID: %d", pid);
+        call_sys_commandEnter();
+    }
+}
+
+void loop(int16_t fds[], int argc, char **argv){
+    call_sys_create_process("loop", 1, argv, argc, &loop_process, fds);
+}
+
+void nice(int argc, char **argv){
+    call_sys_draw_int(my_atoi(argv[1]));
+    call_sys_update_priority(my_atoi(argv[1]), my_atoi(argv[2]));
 }

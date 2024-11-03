@@ -47,13 +47,13 @@ int64_t test_processes(int argc, char **argv) {
 
 
 	p_rq p_rqs[max_processes];
+	int16_t fds[3] = {0, 1, 1};
 
 	while (1) {
 		// Create max_processes processes
 		for (rq = 0; rq < max_processes; rq++) {
-			p_rqs[rq].pid = call_sys_create_process("endless_loop", PRIORITY1, FOREGROUND, NULL, 0, &endless_loop);
+			p_rqs[rq].pid = call_sys_create_process("endless_loop", PRIORITY1, NULL, 0, &endless_loop, fds);
 		
-			
 			if (p_rqs[rq].pid == -1) {
 				call_sys_drawWord("test_processes: ERROR creating process");
 				call_sys_commandEnter();

@@ -23,14 +23,12 @@ void test_prio() {
 	int64_t pids[TOTAL_PROCESSES];
 	uint64_t i;
 	char * argvAux[] = {WAIT_STR};
-
+	int16_t fds[3] = {0, 1, 1};
 	for (i = 0; i < TOTAL_PROCESSES; i++){
-
-		pids[i] = call_sys_create_process("endeless_loop_print", LOWEST, FOREGROUND, argvAux, 1, &endless_loop_print);
+		pids[i] = call_sys_create_process("endeless_loop_print", LOWEST, argvAux, 1, &endless_loop_print, fds);
 		
 	}
 
-	
 	bussy_wait(WAIT);
 	call_sys_drawWord("CHANGING PRIORITIES...");
 	call_sys_commandEnter();
@@ -66,6 +64,6 @@ void test_prio() {
 	}
 
 	call_sys_drawWord("FINISHED");
-	call_sys_enter();
+	call_sys_commandEnter();
 	call_sys_kill_process(call_sys_get_pid());
 }

@@ -28,7 +28,14 @@ Command commandsList[COMMANDS] = {
     {"testprocess", .process_params = test_process_user, PROCESS_PARAMS},
     {"ps", .process_no_params = ps, VOID},
     {"kill", .function_params = kill_process, FUNC_PARAMS},
-    {"testsync", .process_params = test_sync_user, PROCESS_PARAMS}
+    {"testsync", .process_params = test_sync_user, PROCESS_PARAMS},
+    {"cat", .process_params = cat, PROCESS_PARAMS},
+    {"filter", .process_params = filter, PROCESS_PARAMS},
+    {"wc", .process_params = wc, PROCESS_PARAMS},
+    {"loop", .process_params = loop, PROCESS_PARAMS},
+    //{"phylo", .process_params = phylo, PROCESS_PARAMS}
+    {"nice", .process_params = nice, PROCESS_PARAMS}
+    //{"block", .process_params = block, PROCESS_PARAMS}
 };
 
 static int run_command(char *command, int argc, char **argv, char *flag, int16_t fds[]);
@@ -109,9 +116,6 @@ void executeCommand(int index, char * flag, char * command, int argc, char **arg
         call_sys_clear();
     }
 
-    call_sys_draw_int(commandsList[index].type);
-    call_sys_commandEnter();
-
     switch(commandsList[index].type){
         case PROCESS_PARAMS:
             if(argc == 1){
@@ -123,15 +127,12 @@ void executeCommand(int index, char * flag, char * command, int argc, char **arg
             *pid = commandsList[index].process_params(fds, argc, argv);
             break;
         case PROCESS_NO_PARAMS:
-            call_sys_draw_int(1);
             *pid = commandsList[index].process_no_params(fds);
             break;
         case FUNC_PARAMS:
-            call_sys_draw_int(2);
             commandsList[index].function_params(argc, argv);
             break;
         case VOID:
-            call_sys_draw_int(3);
             commandsList[index].function_void();
             break;
     }

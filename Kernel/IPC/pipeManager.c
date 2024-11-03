@@ -3,14 +3,12 @@
 #define MAX_PIPES 12
 #define bufferPosition(pipe) (((pipe)->startPosition + (pipe)->currentSize) % PIPE_SIZE)
 
-
 typedef struct Pipe {
     char buffer[PIPE_SIZE];
     uint16_t write_index;
     uint16_t read_index;
     int16_t input_pid, output_pid;
-    int64_t sem_write;
-    int64_t sem_read;
+    int64_t mutex;
 } Pipe;
 
 struct PipeManagerCDT {
@@ -33,7 +31,7 @@ PipeManagerADT create_pipe_manager() {
     return pipe_manager;
 }
 
-static char *name_pipe_sem(int fd, char mode) {
+static char *name_pipe_sem(int fd) {
     char *name = (char *) alloc_memory(10); // CAMBIAR DESPUES
     if (name == NULL) {
         return NULL;
@@ -61,8 +59,7 @@ static Pipe *create_pipe(uint64_t id) {
         pipe->buffer[i] = 0;
     }
 
-    pipe->sem_write = sem_open(name_pipe_sem(id,'w'), 0);
-    pipe->sem_read = sem_open(name_pipe_sem(id,'r'), 0);
+    pipe->mutex = sem_open(name_pipe_sem(id), 0);
 
     return pipe;
 }
@@ -124,8 +121,7 @@ int16_t open_pipe(int id, char mode) {
 }
 
 static void free_pipe(Pipe *pipe) {
-    sem_close(pipe->sem_write);
-    sem_close(pipe->sem_read);
+    sem_close(pipe->mutex);
     free_memory(pipe);
 
     PipeManagerADT pipe_manager = get_pipe_manager();
@@ -172,11 +168,10 @@ int16_t write_pipe(uint16_t fd, char *buffer, uint16_t *count) {
         return -1;
     }
     for (int i = 0; i < len; i++) {
-        sem_wait(pipe->sem_write);
         pipe->buffer[pipe->write_index] = buffer[i];
         pipe->write_index = (pipe->write_index + 1) % PIPE_SIZE;
         *count++;
-        sem_post(pipe->sem_read);
+        sem_post(pipe->mutex);
     }
     
     return count;
@@ -192,11 +187,10 @@ int16_t read_pipe(uint16_t fd, char *buffer, uint16_t *count) {
         return -1;
     }
     for (int i = 0; pipe->read_index != pipe->read_index; i++) {
-        sem_wait(pipe->sem_read);
+        sem_wait(pipe->mutex);
         buffer[i] = pipe->buffer[pipe->read_index];
         pipe->read_index = (pipe->read_index + 1) % PIPE_SIZE;
         *count++;
-        sem_post(pipe->sem_write);
     }
     return count;
 }
