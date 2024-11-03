@@ -39,7 +39,7 @@ int test_prio_user(int16_t fds[]);
 
 int test_sync_user(int16_t fds[],int argc, char **argv);
 
-int ps(int16_t fds[]);
+void ps();
 
 void kill_process(int argc, char **argv);
 

@@ -8,7 +8,7 @@ typedef struct command {
         void (*function_void)();
         void (*function_params)(int argc, char **argv);
     };
-    type type;
+    Type_t type;
 } Command;
 
 // Define si BACKGROUND es 0 o 1 según tu sistema
@@ -26,7 +26,7 @@ Command commandsList[COMMANDS] = {
     {"testprio", .process_no_params = test_prio_user, PROCESS_NO_PARAMS},              
     {"testmm", .process_params = test_mm_user, PROCESS_PARAMS},
     {"testprocess", .process_params = test_process_user, PROCESS_PARAMS},
-    {"ps", .process_no_params = ps, PROCESS_NO_PARAMS},
+    {"ps", .process_no_params = ps, VOID},
     {"kill", .function_params = kill_process, FUNC_PARAMS},
     {"testsync", .process_params = test_sync_user, PROCESS_PARAMS}
 };
@@ -109,6 +109,9 @@ void executeCommand(int index, char * flag, char * command, int argc, char **arg
         call_sys_clear();
     }
 
+    call_sys_draw_int(commandsList[index].type);
+    call_sys_commandEnter();
+
     switch(commandsList[index].type){
         case PROCESS_PARAMS:
             if(argc == 1){
@@ -118,12 +121,19 @@ void executeCommand(int index, char * flag, char * command, int argc, char **arg
                 return;
             }
             *pid = commandsList[index].process_params(fds, argc, argv);
+            break;
         case PROCESS_NO_PARAMS:
+            call_sys_draw_int(1);
             *pid = commandsList[index].process_no_params(fds);
+            break;
         case FUNC_PARAMS:
+            call_sys_draw_int(2);
             commandsList[index].function_params(argc, argv);
+            break;
         case VOID:
+            call_sys_draw_int(3);
             commandsList[index].function_void();
+            break;
     }
     call_sys_enter();
     

@@ -200,9 +200,8 @@ int test_prio_user(int16_t fds[]){
     return call_sys_create_process("testprio", 1, NULL, 0, &test_prio, fds); 
 }
 
-int ps(int16_t fds[]){
+void ps(){
     call_sys_list_processes_state();
-    return 0; 
 }
 
 void kill_process(int argc, char **argv) {

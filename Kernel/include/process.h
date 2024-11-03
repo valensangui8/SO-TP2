@@ -3,6 +3,7 @@
 
 #include <scheduler.h>
 #include <interrupts.h>
+#include <pipeManager.h>
 
 #include <stddef.h>
 #include <stdint.h>
