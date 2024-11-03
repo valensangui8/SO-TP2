@@ -50,7 +50,7 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 	process->argv = argv;
 	process->argc = argc;
 	process->stack_pointer = _initialize_stack_frame(&process_function, rip, stackEnd,(void *) process->argv);
-	if(fds[STDIN] == DEV_NULL){
+	if(fds[STDIN] == DEV_NULL || pid == SESSION_LEADER){
 		process->foreground = 0;
 	} else {
 		process->foreground = 1;
