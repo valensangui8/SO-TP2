@@ -26,7 +26,7 @@ void init_memory_info(MemoryInfo *memory_info, void *start) {
 
 void init_memory_manager_ADT(uint64_t size, void *start_address) {
 	if ((uintptr_t) start_address < HEAP_START) {
-		return NULL;
+		return;
 	}
 	MemoryManagerADT new_memory = (MemoryManagerADT) MM_ADDRESS;
 	new_memory->start_address = start_address;
@@ -37,6 +37,7 @@ void init_memory_manager_ADT(uint64_t size, void *start_address) {
 }
 
 void *alloc_memory_ADT(uint64_t size) {
+	 drawWord("mem System");
 	MemoryManagerADT memory = get_memory_manager();
 	int free_remaining = free_blocks_remaining(&(memory->info));
 	int needed_blocks;
