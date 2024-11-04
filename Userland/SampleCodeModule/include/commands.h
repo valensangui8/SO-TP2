@@ -45,7 +45,7 @@ void kill_process(int argc, char **argv);
 
 void cat(int16_t fds[], int argc, char **argv);
 
-void wc(int16_t fds[], int argc, char **argv);
+void wc(int16_t fds[]);
 
 void filter(int16_t fds[], int argc, char **argv);
 
@@ -53,5 +53,6 @@ void loop(int16_t fds[], int argc, char **argv);
 
 void nice(int argc, char **argv);
 
+void block_process(int argc, char **argv);
 
 #endif

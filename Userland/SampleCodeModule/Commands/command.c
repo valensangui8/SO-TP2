@@ -226,21 +226,19 @@ void cat(int16_t fds[], int argc, char **argv){
     call_sys_create_process("cat", 1, argv, argc, &cat_process, fds); 
 }
 
-static void wc_process(int argc, char **argv) {
+static void wc_process() {
     char c;
     int line_count = 0;
-    
-    while ((c = getChar()) != EOF) {
-        if (c == '\n') {
+    while((c = getChar()) != EOF){
+        if((c = getChar()) != '\n'){
             line_count++;
         }
     }
-
-    printf("Lines: %d\n", line_count);
+    printf("Lines: %d", line_count);
 }
 
-void wc(int16_t fds[], int argc, char **argv){
-    call_sys_create_process("wc", 1, argv, argc, &wc_process, fds);
+void wc(int16_t fds[]){
+    call_sys_create_process("wc", 1, NULL, 0, &wc_process, fds);
 }
 
 static void filter_process(int argc, char **argv) {
@@ -264,9 +262,8 @@ static void loop_process(int argc, char **argv) {
     }
     int pid = call_sys_get_pid();
     while(1){
-        call_sys_sleep(my_atoi(argv[1]));
-        printf("Hey! I'm the process with PID: %d", pid);
-        call_sys_commandEnter();
+        call_sys_sleep(my_atoi(argv[1]) * 1000);
+        call_sys_draw_int(pid);
     }
 }
 
@@ -275,6 +272,9 @@ void loop(int16_t fds[], int argc, char **argv){
 }
 
 void nice(int argc, char **argv){
-    call_sys_draw_int(my_atoi(argv[1]));
     call_sys_update_priority(my_atoi(argv[1]), my_atoi(argv[2]));
+}
+
+void block_process(int argc, char **argv) {
+    call_sys_block_process(my_atoi(argv[1]));
 }

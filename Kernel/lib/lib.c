@@ -127,3 +127,35 @@ char *my_itoa(int num) {
 	}
 	return str;
 }
+
+char *hexToChar(uint64_t num) {
+	static char str[12];
+	int i = 0;
+	str[i++] = '0';
+	str[i++] = 'x';
+	if (num == 0) {
+		str[i++] = '0';
+		str[i] = '\0';
+		return str;
+	}
+	while (num != 0) {
+		int rem = num % 16;
+		if (rem < 10) {
+			str[i++] = rem + '0';
+		} else {
+			str[i++] = rem - 10 + 'A';
+		}
+		num = num/16;
+	}
+	str[i] = '\0';
+	int start = 2;
+	int end = i - 1;
+	while (start < end) {
+		char temp = str[start];
+		str[start] = str[end];
+		str[end] = temp;
+		start++;
+		end--;
+	}
+	return str;
+}

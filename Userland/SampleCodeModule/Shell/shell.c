@@ -31,11 +31,11 @@ Command commandsList[COMMANDS] = {
     {"testsync", .process_params = test_sync_user, PROCESS_PARAMS},
     {"cat", .process_params = cat, PROCESS_PARAMS},
     {"filter", .process_params = filter, PROCESS_PARAMS},
-    {"wc", .process_params = wc, PROCESS_PARAMS},
+    {"wc", .process_no_params = wc, PROCESS_NO_PARAMS},
     {"loop", .process_params = loop, PROCESS_PARAMS},
     //{"phylo", .process_params = phylo, PROCESS_PARAMS}
-    {"nice", .process_params = nice, PROCESS_PARAMS}
-    //{"block", .process_params = block, PROCESS_PARAMS}
+    {"nice", .function_params = nice, FUNC_PARAMS},
+    {"block", .function_params = block_process, FUNC_PARAMS}
 };
 
 static int run_command(char *command, int argc, char **argv, char *flag, int16_t fds[]);
@@ -59,7 +59,7 @@ void initialize_shell(char *command, int argc, char **argv, char *command2, int 
 
     int16_t pipe_fd = call_sys_get_pipe_fd();
 	if (pipe_fd == -1) {
-		printf("Error: Pipe failed");
+		call_sys_error("Error: Pipe failed", STDERR);
         call_sys_enter();
 		return;
 	}
@@ -105,7 +105,9 @@ int readCommand(char * command) {
 
 void executeCommand(int index, char * flag, char * command, int argc, char **argv, int16_t fds[], int *pid) {
     if (index == -1 ) {
-        call_sys_drawError(command);
+        call_sys_commandEnter();
+        call_sys_error("ERROR: Command not found", STDERR);
+        call_sys_enter();
         *flag = 0;
         return;
     }
@@ -119,7 +121,7 @@ void executeCommand(int index, char * flag, char * command, int argc, char **arg
     switch(commandsList[index].type){
         case PROCESS_PARAMS:
             if(argc == 1){
-                printf("ERROR: Invalid number of arguments");
+                call_sys_error("ERROR: Invalid number of arguments", STDERR);
                 call_sys_enter();
                 *flag = 0;
                 return;

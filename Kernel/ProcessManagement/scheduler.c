@@ -192,7 +192,7 @@ void list_processes_state() {
 uint64_t kill_process(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
 	if(pid == INIT_PID){
-		drawWord("ERROR: You can not kill the Init process");
+		drawWithColor("ERROR: You can not kill the Init process", 0xFF0000);
 		return 0;
 	}
 	for (int i = 0; i < MAX_PROCESS; i++) {
@@ -227,6 +227,7 @@ void kill_foreground_process(){
 	SchedulerInfo scheduler = get_scheduler();
 	scheduler->quantum_remaining = 0;
 	scheduler->kill_foreground = 1;
+	yield();
 }
 
 void update_priority(unsigned int pid, Priority new_priority) {

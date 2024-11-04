@@ -1,5 +1,6 @@
 section .text
 GLOBAL call_sys_drawWord
+GLOBAL call_sys_error
 GLOBAL call_sys_read
 GLOBAL call_sys_drawChar
 GLOBAL call_sys_enter
@@ -51,6 +52,11 @@ call_sys_read:
     int 80h
     ret
 call_sys_drawWord:
+    mov rax, 1
+    int 80h
+    ret
+
+call_sys_error:
     mov rax, 1
     int 80h
     ret

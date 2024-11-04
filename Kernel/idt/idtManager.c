@@ -1,7 +1,7 @@
 #include <idtManager.h>
 
 static void sys_Read(uint8_t *buf, uint32_t count, uint32_t *size);
-static void sys_DrawWord(char *word);
+static void sys_DrawWord(char *word, int fd_user);
 static void sys_DrawChar(char letter);
 static void sys_delete();
 static void sys_enter();
@@ -61,7 +61,7 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 			sys_Read((uint8_t *) rdi, (uint32_t) rsi, (uint32_t *) rdx); // rdi = buffer ; rsi = size , rdx = count
 			break;
 		case 1:							// write
-			sys_DrawWord((char *) rdi); // rdi = palabra
+			sys_DrawWord((char *) rdi, (int) rsi); // rdi = palabra
 			break;
 		case 2:
 			sys_DrawChar((char) rdi); // rdi = letra
@@ -187,13 +187,18 @@ void sys_Read(uint8_t *buf, uint32_t count, uint32_t *size) {
 	if(fd == STDIN){
 		readChar(buf, count, size);
 	}else if(fd != DEV_NULL){
-		read_pipe(fd, buf, size);
+		read_pipe(fd, &buf, size);
 	}
 }
 
-void sys_DrawWord(char *word) {
+void sys_DrawWord(char *word, int fd_user) {
 	int fd = get_current_file_descriptor_write();
 	int bytes = 0;
+	if(fd_user == STDERR){
+		drawWithColor(word, 0xFF0000);
+		return;
+	}
+
 	if(fd == STDOUT){
 		drawWord(word);
 	}else if(fd != DEV_NULL){

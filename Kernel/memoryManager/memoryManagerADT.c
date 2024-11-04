@@ -81,3 +81,11 @@ static int free_blocks_remaining(MemoryInfo *memory_info) {
 static MemoryManagerADT get_memory_manager() {
 	return (MemoryManagerADT) MM_ADDRESS;
 }
+
+
+void mem_info_ADT(int * current, int * free, int * total) {
+	MemoryManagerADT memory = get_memory_manager();
+	*current = memory->info.current;
+	*free = free_blocks_remaining(&(memory->info));
+	*total = TOTAL_BLOCKS;
+}

@@ -64,7 +64,7 @@ void terminal(){
 					break;
 				} else {
 					call_sys_commandEnter();
-					call_sys_drawWord("Parse error: near '&'");
+					call_sys_error("Parse error: near '&'", STDERR);
 					call_sys_enter();
 					not_valid = 1; 
 					break;
@@ -78,6 +78,11 @@ void terminal(){
 			}
 
 			token = strtok(NULL, " ");
+		}
+		if(strcmp(argv1[argc1 - 1]," ") == 0){
+			argc1--;
+		}else if(argc2 !=0 && strcmp(argv2[argc2 - 1]," ") == 0){
+			argc2--;
 		}
 		argv1[argc1] = NULL;
 		argv2[argc2] = NULL;

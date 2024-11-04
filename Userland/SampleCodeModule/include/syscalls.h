@@ -5,6 +5,7 @@
 
 
 extern void call_sys_drawWord(char *word);
+extern void call_sys_error(char *word, int fd);
 extern void call_sys_read(unsigned char *buf, uint32_t count, uint32_t *size);
 extern void call_sys_drawChar(char letter);
 extern void call_sys_delete();

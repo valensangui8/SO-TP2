@@ -66,7 +66,7 @@ char keyMap[][2] = {
 };
 
 // map the key to the corresponding character checking shift
-uint8_t getKeyMapping(uint64_t number) {
+int8_t getKeyMapping(uint64_t number) {
 	if (number == LEFT_SHIFT_NBR || number == RIGHT_SHIFT_NBR) {
 		shiftPressed = 1;
 	}
@@ -93,6 +93,7 @@ uint8_t getKeyMapping(uint64_t number) {
 
 	if(ctrlPressed && number == C_KEY){ // kill process foreground
 		kill_foreground_process();
+        enter();
         return 0;
 	}
 
@@ -113,12 +114,14 @@ void keyboard_handler() {
 	}
 	if (buffer_pos + 1 < SIZE) {
 		newPos(buffer_pos + 1);
-		buffer[buffer_pos + 1] = 0;
 	}
 	else {
 		newPos(0);
-		buffer[0] = 0;
 	}
+    if(getKeyMapping(key) == EOF){
+        buffer[buffer_pos] = 0;
+        return;
+    }
 	char letter = getKeyMapping(key);
 
 	buffer[buffer_pos] = letter;

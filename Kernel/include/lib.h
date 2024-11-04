@@ -14,6 +14,7 @@ void my_strcpy(char *dest, const char *src);
 void my_strcat(char *dest, const char *src);
 uint64_t my_strcmp(const char *s1, const char *s2);
 char *my_itoa(int num);
+char *hexToChar(uint64_t num);
 
 char *cpuVendor(char *result);
 void outb(uint16_t port, uint8_t data);
