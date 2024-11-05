@@ -37,7 +37,6 @@ void init_memory_manager_ADT(uint64_t size, void *start_address) {
 }
 
 void *alloc_memory_ADT(uint64_t size) {
-	drawWord("mem System");
 	MemoryManagerADT memory = get_memory_manager();
 	int free_remaining = free_blocks_remaining(&(memory->info));
 	int needed_blocks;
