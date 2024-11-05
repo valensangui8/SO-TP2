@@ -106,7 +106,8 @@ int readCommand(char * command) {
 void executeCommand(int index, char * flag, char * command, int argc, char **argv, int16_t fds[], int *pid) {
     if (index == -1 ) {
         call_sys_commandEnter();
-        call_sys_error("ERROR: Command not found", STDERR);
+        call_sys_error("ERROR: Command not found: ", STDERR);
+        call_sys_error(command, STDERR);
         call_sys_enter();
         *flag = 0;
         return;

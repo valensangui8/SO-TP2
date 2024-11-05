@@ -124,6 +124,10 @@ void keyboard_handler() {
     }
 	char letter = getKeyMapping(key);
 
+    if(letter == 0){
+        return;
+    }
+
 	buffer[buffer_pos] = letter;
 
 	if (letter == ',') {
