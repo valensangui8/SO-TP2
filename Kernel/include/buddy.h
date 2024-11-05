@@ -15,18 +15,11 @@
 // #define TOTAL_BLOCKS (MM_SIZE / BLOCK_SIZE)
 #define BASE 2
 
-
-typedef struct BuddyBlock {
-    struct BuddyBlock *prev;
-    struct BuddyBlock *next;
-    int level;
-    char is_free;
-} BuddyBlock;
-
 typedef struct MemoryManagerCDT * MemoryManagerADT;
 
 void init_buddy_system(uint64_t size, void *start_address);
 void *alloc_buddy_memory(uint64_t size);
 void free_buddy_memory(void *ptr);
+void get_memory_info_buddy(char *type, uint64_t *free, uint64_t *allocated);
 
 #endif

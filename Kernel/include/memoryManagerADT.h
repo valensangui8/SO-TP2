@@ -20,5 +20,6 @@ typedef struct MemoryManagerCDT *MemoryManagerADT;
 void init_memory_manager_ADT(uint64_t size, void *start_address);
 void *alloc_memory_ADT(uint64_t size);
 void free_memory_ADT(void *ptr);
+void get_memory_info_ADT(uint64_t *total, uint64_t *used, uint64_t *free);
 
 #endif

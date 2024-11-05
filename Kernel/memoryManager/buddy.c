@@ -1,6 +1,13 @@
 #ifdef BUDDY
 #include <buddy.h>
 
+typedef struct BuddyBlock {
+    struct BuddyBlock *prev;
+    struct BuddyBlock *next;
+    int level;
+    char is_free;
+} BuddyBlock;
+
 static void remove_block_from_free_list(BuddyBlock *block);
 static void add_block_to_free_list(BuddyBlock *block);
 static BuddyBlock *split_block(BuddyBlock *block);
@@ -204,6 +211,24 @@ void free_buddy_memory(void *ptr) {
     block->is_free = 1;
 
     merge_block(block);
+}
+
+void get_memory_info_buddy(char *type, uint64_t *free, uint64_t *allocated) {
+    MemoryManagerADT memory = get_memory_manager();
+    my_strcpy(type, "Buddy memory");
+    
+    *free = 0;
+    *allocated = 0;
+
+    for (int i = 0; i < memory->max_levels; i++) {
+        BuddyBlock *block = memory->free_list[i];
+        while (block != NULL) {
+            *free += (1 << i);
+            block = block->next;
+        }
+    }
+
+    *allocated = memory->size - *free;
 }
 
 #endif
