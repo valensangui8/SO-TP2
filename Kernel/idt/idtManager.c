@@ -47,6 +47,8 @@ static int16_t sys_close_pipe(uint16_t fd);
 static int16_t sys_write_pipe(uint16_t fd, char *buffer, uint16_t *count);
 static int16_t sys_read_pipe(uint16_t fd, char *buffer, uint16_t *count);
 
+static void sys_get_memory_info(char *type, uint64_t *free, uint64_t *allocated, uint64_t *total);
+
 
 uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
     uint64_t rdi, rsi, rdx, rcx, r8, r9;
@@ -177,6 +179,9 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 			break;
 		case 40:
 			return sys_read_pipe((uint16_t) rdi, (char *) rsi, (uint16_t *) rdx);
+			break;
+		case 41:
+			sys_get_memory_info((char *) rdi, (uint64_t *) rsi, (uint64_t *) rdx, (uint64_t *) rcx);
 			break;
 	}
 	return 0;
@@ -368,4 +373,8 @@ int16_t sys_write_pipe(uint16_t fd, char *buffer, uint16_t *count){
 
 int16_t sys_read_pipe(uint16_t fd, char *buffer, uint16_t *count){
 	return read_pipe(fd, buffer, count);
+}
+
+void sys_get_memory_info(char *type, uint64_t *free, uint64_t *allocated, uint64_t *total){
+	get_memory_info(type, free, allocated, total);
 }

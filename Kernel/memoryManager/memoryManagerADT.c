@@ -84,13 +84,14 @@ static MemoryManagerADT get_memory_manager() {
 	return (MemoryManagerADT) MM_ADDRESS;
 }
 
-void get_memory_info_ADT(char *type, uint64_t *free, uint64_t *allocated) {
+void get_memory_info_ADT(char *type, uint64_t *free, uint64_t *allocated, uint64_t *total) {
     MemoryManagerADT memory = get_memory_manager();
     my_strcpy(type, "Block memory");
 
     *free = free_blocks_remaining(&(memory->info)) * BLOCK_SIZE;
 
     *allocated = memory->size - *free;
+	*total = memory->size;
 }
 
 #endif

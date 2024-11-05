@@ -256,10 +256,6 @@ void filter(int16_t fds[], int argc, char **argv){
 }
 
 static void loop_process(int argc, char **argv) {
-    if(argc != 2){
-        call_sys_drawWord("Invalid number of arguments");
-        return;
-    }
     int pid = call_sys_get_pid();
     while(1){
         call_sys_sleep(my_atoi(argv[1]) * 1000);
@@ -277,4 +273,23 @@ void nice(int argc, char **argv){
 
 void block_process(int argc, char **argv) {
     call_sys_block_process(my_atoi(argv[1]));
+}
+
+void get_memory_info(){
+    char type[30];
+    uint64_t free, allocated,total;
+    call_sys_get_memory_info(type, &free, &allocated, &total);
+    call_sys_drawWithColor(type, 0x32a852);
+    call_sys_drawWord(" - Free: ");
+    free = free / 1024;
+    call_sys_draw_int(free);
+    call_sys_drawWord("KB -");
+    call_sys_drawWord(" Allocated: ");
+    allocated = allocated / 1024;
+    // allocated = allocated / 2048;
+    call_sys_draw_int(allocated);
+    call_sys_drawWord("KB");
+    call_sys_drawWord("- Total: ");
+    total = total / 1024;
+    call_sys_draw_int(total);
 }

@@ -5,7 +5,7 @@
 #include <commands.h>
 #include <stddef.h>
 
-#define COMMANDS 22
+#define COMMANDS 23
 #define FOREGROUND 1
 #define BACKGROUND !FOREGROUND
 

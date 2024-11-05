@@ -46,6 +46,7 @@ GLOBAL call_sys_close_pipe
 GLOBAL call_sys_write_pipe
 GLOBAL call_sys_read_pipe
 
+GLOBAL call_sys_get_memory_info
 
 call_sys_read:
     mov rax, 0
@@ -269,5 +270,10 @@ call_sys_write_pipe:
 
 call_sys_read_pipe:
     mov rax, 40
+    int 80h
+    ret
+
+call_sys_get_memory_info:
+    mov rax, 41
     int 80h
     ret

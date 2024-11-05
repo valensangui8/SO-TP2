@@ -35,7 +35,8 @@ Command commandsList[COMMANDS] = {
     {"loop", .process_params = loop, PROCESS_PARAMS},
     //{"phylo", .process_params = phylo, PROCESS_PARAMS}
     {"nice", .function_params = nice, FUNC_PARAMS},
-    {"block", .function_params = block_process, FUNC_PARAMS}
+    {"block", .function_params = block_process, FUNC_PARAMS},
+    {"mem", .function_void = get_memory_info, VOID}
 };
 
 static int run_command(char *command, int argc, char **argv, char *flag, int16_t fds[]);

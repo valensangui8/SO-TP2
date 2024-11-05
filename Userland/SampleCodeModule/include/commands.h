@@ -55,4 +55,6 @@ void nice(int argc, char **argv);
 
 void block_process(int argc, char **argv);
 
+void get_memory_info();
+
 #endif

@@ -55,4 +55,6 @@ extern int16_t call_sys_close_pipe(uint16_t fd);
 extern int16_t call_sys_write_pipe(uint16_t fd, char *buffer, uint16_t *count);
 extern int16_t call_sys_read_pipe(uint16_t fd, char *buffer, uint16_t *count);
 
+extern void call_sys_get_memory_info(char *type, uint64_t *free, uint64_t *allocated, uint64_t *total);
+
 #endif

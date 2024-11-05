@@ -213,7 +213,7 @@ void free_buddy_memory(void *ptr) {
     merge_block(block);
 }
 
-void get_memory_info_buddy(char *type, uint64_t *free, uint64_t *allocated) {
+void get_memory_info_buddy(char *type, uint64_t *free, uint64_t *allocated, uint64_t *total) {
     MemoryManagerADT memory = get_memory_manager();
     my_strcpy(type, "Buddy memory");
     
@@ -222,13 +222,16 @@ void get_memory_info_buddy(char *type, uint64_t *free, uint64_t *allocated) {
 
     for (int i = 0; i < memory->max_levels; i++) {
         BuddyBlock *block = memory->free_list[i];
+        uint64_t level_free = 0;
         while (block != NULL) {
-            *free += (1 << i);
+            level_free += (1 << i);
             block = block->next;
         }
+        *free += level_free;
     }
 
     *allocated = memory->size - *free;
+    *total = memory->size;
 }
 
 #endif
