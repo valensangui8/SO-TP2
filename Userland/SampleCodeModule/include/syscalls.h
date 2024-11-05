@@ -5,6 +5,7 @@
 
 
 extern void call_sys_drawWord(char *word);
+extern void call_sys_error(char *word, int fd);
 extern void call_sys_read(unsigned char *buf, uint32_t count, uint32_t *size);
 extern void call_sys_drawChar(char letter);
 extern void call_sys_delete();
@@ -30,7 +31,7 @@ extern uint16_t call_sys_block_process(unsigned int pid);
 extern uint16_t call_sys_unblock_process(unsigned int pid);
 extern void call_sys_yield();
 extern void call_sys_process_status(unsigned int pid);
-extern uint64_t call_sys_create_process(char *name, unsigned int priority, char foreground, char *argv[], int argc, void *rip);
+extern uint64_t call_sys_create_process(char *name, unsigned int priority, char *argv[], int argc, void *rip, int16_t fds[]);
 extern void call_sys_list_processes_state();
 
 
@@ -47,5 +48,11 @@ extern int64_t call_sys_sem_open(char *sem_id, uint64_t initialValue);
 extern int64_t call_sys_sem_wait(char *sem_id);
 extern int64_t call_sys_sem_post(char *sem_id);
 extern int64_t call_sys_sem_close(char *sem_id);
+
+extern int16_t call_sys_get_pipe_fd();
+extern int16_t call_sys_open_pipe(int id, char mode);
+extern int16_t call_sys_close_pipe(uint16_t fd);
+extern int16_t call_sys_write_pipe(uint16_t fd, char *buffer, uint16_t *count);
+extern int16_t call_sys_read_pipe(uint16_t fd, char *buffer, uint16_t *count);
 
 #endif

@@ -94,6 +94,7 @@ uint64_t my_strcmp(const char *s1, const char *s2) {
 	return *(const unsigned char *) s1 - *(const unsigned char *) s2;
 }
 
+
 uint8_t log2(uint64_t argument) {
     unsigned int count = 0;
     uint64_t value = 1;
@@ -111,4 +112,70 @@ uint64_t pow2(uint64_t argument) {
         argument--;
     }
     return count;
+}
+
+char *my_itoa(int num) {
+	static char str[12];
+	int i = 0;
+	int isNegative = 0;
+	if (num == 0) {
+		str[i++] = '0';
+		str[i] = '\0';
+		return str;
+	}
+	if (num < 0) {
+		isNegative = 1;
+		num = -num;
+	}
+	while (num != 0) {
+		int rem = num % 10;
+		str[i++] = rem + '0';
+		num = num/10;
+	}
+	if (isNegative) {
+		str[i++] = '-';
+	}
+	str[i] = '\0';
+	int start = 0;
+	int end = i - 1;
+	while (start < end) {
+		char temp = str[start];
+		str[start] = str[end];
+		str[end] = temp;
+		start++;
+		end--;
+	}
+	return str;
+}
+
+char *hexToChar(uint64_t num) {
+	static char str[12];
+	int i = 0;
+	str[i++] = '0';
+	str[i++] = 'x';
+	if (num == 0) {
+		str[i++] = '0';
+		str[i] = '\0';
+		return str;
+	}
+	while (num != 0) {
+		int rem = num % 16;
+		if (rem < 10) {
+			str[i++] = rem + '0';
+		} else {
+			str[i++] = rem - 10 + 'A';
+		}
+		num = num/16;
+	}
+	str[i] = '\0';
+	int start = 2;
+	int end = i - 1;
+	while (start < end) {
+		char temp = str[start];
+		str[start] = str[end];
+		str[end] = temp;
+		start++;
+		end--;
+	}
+	return str;
 }

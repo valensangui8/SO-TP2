@@ -5,9 +5,6 @@ char getChar(){
     uint32_t size = 0;
     while(size == 0){
         call_sys_read(&c,1,&size);
-        // if(size == 0){
-        //     call_sys_yield();  
-        // }
     }
     return c;
 }
@@ -126,4 +123,53 @@ char * strtok(char * str, const char * delim){
     }
     last = NULL;
     return ret;
+}
+
+
+char *my_itoa(int num) {
+	static char str[12];
+	int i = 0;
+	int isNegative = 0;
+	if (num == 0) {
+		str[i++] = '0';
+		str[i] = '\0';
+		return str;
+	}
+	if (num < 0) {
+		isNegative = 1;
+		num = -num;
+	}
+	while (num != 0) {
+		int rem = num % 10;
+		str[i++] = rem + '0';
+		num = num/10;
+	}
+	if (isNegative) {
+		str[i++] = '-';
+	}
+	str[i] = '\0';
+	int start = 0;
+	int end = i - 1;
+	while (start < end) {
+		char temp = str[start];
+		str[start] = str[end];
+		str[end] = temp;
+		start++;
+		end--;
+	}
+	return str;
+}
+
+int my_atoi(char *str) {
+    int res = 0;
+    int i = 0;
+    int sign = 1;
+    if (str[0] == '-') {
+        sign = -1;
+        i++;
+    }
+    for (; str[i] != '\0'; ++i) {
+        res = res * 10 + str[i] - '0';
+    }
+    return sign * res;
 }

@@ -10,6 +10,9 @@ static void exit_process(int ret, unsigned int pid) {
 	PCBT *process = find_process(pid);
 	process->ret = ret;
 	kill_process(pid);
+	close_pipe(process->fds[STDIN]);
+	close_pipe(process->fds[STDOUT]);
+	close_pipe(process->fds[STDERR]);
 	yield();
 }
 
@@ -20,13 +23,23 @@ void process_function(main_function rip, char **argv, uint64_t argc) {
 
 }
 
-void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char foreground, char **argv, int argc, main_function rip) {
+static void assign_fd(PCBT *process, int16_t index, int16_t fd, char mode){
+	process->fds[index]= fd;
+	if(fd>=BUILT_IN_FD){
+		open_pipe(fd, mode);
+	}
+}
+
+void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priority priority, char **argv, int argc, main_function rip, const int16_t fds[]) {
 	process->pid = pid;
 	process->ppid = ppid;
 	process->waiting_pid = NO_CHILDREN;
 	process->priority = priority;
-	process->foreground = foreground;
 	process->times_to_run = priority;
+	assign_fd(process, STDIN, fds[STDIN], 'r');
+	assign_fd(process, STDOUT, fds[STDOUT], 'w');
+	assign_fd(process, STDERR, fds[STDERR], 'w');
+
 	process->stack_base = alloc_memory(STACK_SIZE);
 	if (process->stack_base == NULL) {
         free_memory(process->stack_base);
@@ -37,7 +50,11 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 	process->argv = argv;
 	process->argc = argc;
 	process->stack_pointer = _initialize_stack_frame(&process_function, rip, stackEnd,(void *) process->argv);
-	
+	if(fds[STDIN] == DEV_NULL || pid == SESSION_LEADER){
+		process->foreground = 0;
+	} else {
+		process->foreground = 1;
+	}
 }
 
 int64_t wait_children(unsigned int pid) {
@@ -90,10 +107,10 @@ char *process_state(PCBT process) {
 	else if (process.priority == PRIORITY1) {
 		my_strcat(status, "N"); 
 	}
-	if (process.foreground) {
+	if (process.fds[STDIN] == DEV_NULL) { // Background
 		my_strcat(status, "+"); 
 	}
-	else if (process.pid == SESSION_LEADER) {
+	if (process.pid == SESSION_LEADER) { // Session leader
 		my_strcat(status, "s"); 
 	}
 	my_strcat(status, "\0");
@@ -104,7 +121,7 @@ char *process_state(PCBT process) {
 void process_status(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
 	commandEnter();
-	drawWord("STAT - T: Blocked - S: Ready  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Foreground - s: Session leader");
+	drawWord("STAT - T: Blocked - S: Ready  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Background - s: Session leader");
 	commandEnter();
 	drawWord("PID        STAT          RSP           RBP         COMMAND");
 	commandEnter();

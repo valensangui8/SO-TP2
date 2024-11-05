@@ -6,6 +6,7 @@
 #include <videoDriver.h>
 #include <scheduler.h>
 #include <semaphoreManager.h>
+#include <pipeManager.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -46,6 +47,7 @@ void *initializeKernelBinary() {
 	init_memory_manager(MM_SIZE, sampleDataModuleAddress + userspace_mem);
 	create_scheduler();
 	create_semaphoreADT();
+	create_pipe_manager();
 
 	return getStackBase();
 }
@@ -61,8 +63,9 @@ void idle() {
 int main() {
 	_cli();
 	load_idt();
-	create_process("init", PRIORITY1, 1, NULL, 0,(main_function) &idle);
-	create_process("Shell", PRIORITY4, 1, NULL, 0, (main_function) sampleCodeModuleAddress);
+	int16_t fd[] = {STDIN, STDOUT, STDERR};
+	create_process("init", PRIORITY1, NULL, 0,(main_function) &idle, fd);
+	create_process("Shell", PRIORITY4, NULL, 0, (main_function) sampleCodeModuleAddress, fd);
 
 	start();
 	sleep(500);

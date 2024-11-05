@@ -10,12 +10,13 @@ SchedulerInfo create_scheduler() {
 	for (int i = 0; i < MAX_PROCESS; i++) {
 		scheduler->processes[i].state = DEAD;
 	}
-	scheduler->current_pid = 0;
+	scheduler->current_pid = 1;
 	scheduler->index_p = 0;
 	scheduler->index_rr = 0;
 	scheduler->quantum_remaining = QUANTUM;
 	scheduler->amount_processes = 0;
-	scheduler->next_pid = 0;
+	scheduler->next_pid = 1;
+	scheduler->kill_foreground = 0;
 	initialized = 1;
 	
 	return scheduler;
@@ -47,7 +48,7 @@ uint8_t get_state() {
 	return process->state;
 }
 
-uint64_t create_process(char *name, Priority priority, char foreground, char *argv[], int argc, main_function rip) {
+uint64_t create_process(char *name, Priority priority, char *argv[], int argc, main_function rip, const int16_t fds[]) {
 	SchedulerInfo scheduler = get_scheduler();
 
 	int free_spot = scheduler->index_p;
@@ -70,7 +71,7 @@ uint64_t create_process(char *name, Priority priority, char foreground, char *ar
 		ppid = get_pid();
 	}
 	
-	init_process(process, name, process->pid, ppid, priority, foreground, new_argv, argc, rip);
+	init_process(process, name, process->pid, ppid, priority, new_argv, argc, rip, fds);
 
 	PCBT * parent = find_process(ppid);
 	parent->waiting_pid++;
@@ -126,13 +127,17 @@ PCBT *update_quantum(void *stack_pointer) {
                 current_process->times_to_run = current_process->priority;
             }
 		}
-
         scheduler->quantum_remaining = QUANTUM;  
     } else {
         scheduler->quantum_remaining--;  
     }
 
     current_process->state = RUNNING;
+	
+	if(scheduler->kill_foreground && current_process->foreground){
+		scheduler->kill_foreground = 0;
+		kill_process(current_process->pid);
+	}
 
     return current_process;  
 }
@@ -163,7 +168,7 @@ void *scheduler(void *stack_pointer) {
 
 void list_processes_state() {
 	SchedulerInfo scheduler = get_scheduler();
-	drawWord("STAT - T: Blocked - S: Seady  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Foreground - s: Session leader");
+	drawWord("STAT - T: Blocked - S: Seady  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Background - s: Session leader");
 	commandEnter();
 	commandEnter();
 	drawWord("PID        STAT          RSP           RBP         COMMAND");
@@ -187,7 +192,7 @@ void list_processes_state() {
 uint64_t kill_process(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
 	if(pid == INIT_PID){
-		drawWord("ERROR: You can not kill the Init process");
+		drawWithColor("ERROR: You can not kill the Init process", 0xFF0000);
 		return 0;
 	}
 	for (int i = 0; i < MAX_PROCESS; i++) {
@@ -216,6 +221,13 @@ uint64_t kill_process(unsigned int pid) {
 	}
 	
 	return 0;
+}
+
+void kill_foreground_process(){
+	SchedulerInfo scheduler = get_scheduler();
+	scheduler->quantum_remaining = 0;
+	scheduler->kill_foreground = 1;
+	yield();
 }
 
 void update_priority(unsigned int pid, Priority new_priority) {
@@ -289,4 +301,22 @@ PCBT * find_process(unsigned int pid){
 		}
 	}
 	return NULL;
+}
+
+int get_current_file_descriptor_read(){
+	SchedulerInfo scheduler = get_scheduler();
+	PCBT *process = &(scheduler->processes[scheduler->index_rr]);
+	return process->fds[STDIN];
+}
+
+int get_current_file_descriptor_write(){
+	SchedulerInfo scheduler = get_scheduler();
+	PCBT *process = &(scheduler->processes[scheduler->index_rr]);
+	return process->fds[STDOUT];
+}
+
+int get_current_file_descriptor_error(){
+	SchedulerInfo scheduler = get_scheduler();
+	PCBT *process = &(scheduler->processes[scheduler->index_rr]);
+	return process->fds[STDERR];
 }

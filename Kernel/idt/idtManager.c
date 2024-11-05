@@ -1,7 +1,7 @@
 #include <idtManager.h>
 
 static void sys_Read(uint8_t *buf, uint32_t count, uint32_t *size);
-static void sys_DrawWord(char *word);
+static void sys_DrawWord(char *word, int fd_user);
 static void sys_DrawChar(char letter);
 static void sys_delete();
 static void sys_enter();
@@ -25,7 +25,7 @@ static uint16_t sys_block_process(unsigned int pid);
 static uint16_t sys_unblock_process(unsigned int pid);
 static void sys_yield();
 static void sys_process_status(unsigned int pid);
-static uint64_t sys_create_process(char *name, Priority priority, char foreground, char *argv[], int argc, main_function rip);
+static uint64_t sys_create_process(char *name, Priority priority, char *argv[], int argc, main_function rip, int16_t fds[]);
 static void sys_list_processes_state();
 
 static int64_t sys_get_pid();
@@ -41,6 +41,11 @@ static int64_t sys_sem_wait(char *sem_id);
 static int64_t sys_sem_post(char *sem_id);
 static int64_t sys_sem_close(char *sem_id);
 
+static int16_t sys_get_pipe_fd();
+static int16_t sys_open_pipe(int id, char mode);
+static int16_t sys_close_pipe(uint16_t fd);
+static int16_t sys_write_pipe(uint16_t fd, char *buffer, uint16_t *count);
+static int16_t sys_read_pipe(uint16_t fd, char *buffer, uint16_t *count);
 
 
 uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
@@ -56,7 +61,7 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 			sys_Read((uint8_t *) rdi, (uint32_t) rsi, (uint32_t *) rdx); // rdi = buffer ; rsi = size , rdx = count
 			break;
 		case 1:							// write
-			sys_DrawWord((char *) rdi); // rdi = palabra
+			sys_DrawWord((char *) rdi, (int) rsi); // rdi = palabra
 			break;
 		case 2:
 			sys_DrawChar((char) rdi); // rdi = letra
@@ -122,7 +127,7 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 			sys_process_status((unsigned int) rdi);
 			break;
 		case 23:
-			return sys_create_process((char *) rdi, (Priority) rsi, (char) rdx, (char **) rcx, (int) r8, (main_function) r9);
+			return sys_create_process((char *) rdi, (Priority) rsi, (char**) rdx, (int) rcx, (main_function) r8, (int16_t *) r9);
 		
 		case 24:
 			sys_list_processes_state();
@@ -158,20 +163,57 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 		case 35:
 			return sys_sem_close((char *) rdi);
 			break;
+		case 36:
+			return sys_get_pipe_fd();
+			break;
+		case 37:
+			return sys_open_pipe((int) rdi, (char) rsi);
+			break;
+		case 38:
+			return sys_close_pipe((uint16_t) rdi);
+			break;
+		case 39:
+			return sys_write_pipe((uint16_t) rdi, (char *) rsi, (uint16_t *) rdx);
+			break;
+		case 40:
+			return sys_read_pipe((uint16_t) rdi, (char *) rsi, (uint16_t *) rdx);
+			break;
 	}
 	return 0;
 }
 
 void sys_Read(uint8_t *buf, uint32_t count, uint32_t *size) {
-	readChar(buf, count, size);
+	int fd = get_current_file_descriptor_read();
+	if(fd == STDIN){
+		readChar(buf, count, size);
+	}else if(fd != DEV_NULL){
+		read_pipe(fd, &buf, size);
+	}
 }
 
-void sys_DrawWord(char *word) {
-	drawWord(word);
+void sys_DrawWord(char *word, int fd_user) {
+	int fd = get_current_file_descriptor_write();
+	int bytes = 0;
+	if(fd_user == STDERR){
+		drawWithColor(word, 0xFF0000);
+		return;
+	}
+
+	if(fd == STDOUT){
+		drawWord(word);
+	}else if(fd != DEV_NULL){
+		write_pipe(fd, word, &bytes);
+	}
 }
 
 void sys_DrawChar(char letter) {
-	drawLine(letter);
+	int fd = get_current_file_descriptor_write();
+	int bytes = 0;
+	if(fd == STDOUT){
+		drawLine(letter);
+	}else if(fd != DEV_NULL){
+		write_pipe(fd, &letter, &bytes);
+	}
 }
 
 void sys_enter() {
@@ -254,8 +296,8 @@ void sys_process_status(unsigned int pid) {
 	process_status(pid);
 }
 
-uint64_t sys_create_process(char *name, Priority priority, char foreground, char *argv[], int argc, main_function rip) {
-	uint64_t pid = create_process(name, priority, foreground, argv, argc, rip);
+uint64_t sys_create_process(char *name, Priority priority, char *argv[], int argc, main_function rip, int16_t fds[]) {
+	uint64_t pid = create_process(name, priority, argv, argc, rip, fds);
 	
 	return pid;
 }
@@ -306,4 +348,24 @@ int64_t sys_sem_post(char *sem_id){
 
 int64_t sys_sem_close(char *sem_id){
 	return sem_close(sem_id);
+}
+
+int16_t sys_get_pipe_fd(){
+	return get_pipe_fd();
+}
+
+int16_t sys_open_pipe(int id, char mode){
+	return open_pipe(id, mode);
+}
+
+int16_t sys_close_pipe(uint16_t fd){
+	return close_pipe(fd);
+}
+
+int16_t sys_write_pipe(uint16_t fd, char *buffer, uint16_t *count){
+	return write_pipe(fd, buffer, count);
+}
+
+int16_t sys_read_pipe(uint16_t fd, char *buffer, uint16_t *count){
+	return read_pipe(fd, buffer, count);
 }

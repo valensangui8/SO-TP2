@@ -6,7 +6,7 @@
 
 #define QUANTUM 1
 #define RR_INDEX(i) ((i + 1) % (MAX_PROCESS * PRIORITY4))
-#define INIT_PID 0
+#define INIT_PID 1
 
 #define PID_WIDTH 6
 #define STAT_WIDTH 8
@@ -22,12 +22,16 @@ void* scheduler(void *stack_pointer);
 PCBT *update_quantum(void *stack_pointer);
 PCBT * find_process(unsigned int pid);
 
-uint64_t create_process(char *name, Priority priority, char foreground, char *argv[], int argc, main_function rip);
+uint64_t create_process(char *name, Priority priority, char *argv[], int argc, main_function rip, const int16_t fds[]);
 void list_processes_state();
 uint64_t kill_process(unsigned int pid);
 uint16_t unblock_process(unsigned int pid);
 uint16_t block_process(unsigned int pid);
 void update_priority(unsigned int pid, Priority new_priority);
 PCBT * find_process(unsigned int pid);
+
+int get_current_file_descriptor_read();
+int get_current_file_descriptor_write();
+int get_current_file_descriptor_error();
 
 #endif

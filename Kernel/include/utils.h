@@ -15,9 +15,13 @@
 #define MM_ADDRESS 0x50000
 #define SCHEDULER_ADDRESS 0x60000
 #define SEMAPHORE_MANAGER_ADDRESS 0x70000
+#define PIPE_MANAGER_ADDRESS 0x80000
 
-#define FOREGROUND 1
-#define BACKGROUND !FOREGROUND
+#define BUILT_IN_FD 3
+#define STDIN 0 
+#define STDOUT 1
+#define STDERR 2
+#define DEV_NULL -1
 
 #define NO_CHILDREN 0 
 
@@ -48,10 +52,11 @@ typedef struct PCB {
 	PCBState state;
 	void * stack_pointer;
 	void * stack_base;
-	char foreground;
+	int16_t fds[BUILT_IN_FD];
 	char **argv;
 	int argc;
 	int ret;
+	char foreground;
 } PCBT;
 
 typedef struct Scheduler {
@@ -62,6 +67,7 @@ typedef struct Scheduler {
 	int8_t quantum_remaining;
 	uint32_t amount_processes;
 	uint64_t next_pid;
+	uint8_t kill_foreground;
 } Scheduler;
 
 typedef struct Scheduler *SchedulerInfo;

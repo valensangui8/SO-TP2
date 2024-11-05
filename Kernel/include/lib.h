@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define EOF -1
+
 void *my_memset(void *destination, int32_t character, uint64_t length);
 void *my_memcpy(void *destination, const void *source, uint64_t length);
 unsigned int my_strlen(const char *s);
@@ -13,6 +15,8 @@ void my_strcat(char *dest, const char *src);
 uint64_t my_strcmp(const char *s1, const char *s2);
 uint8_t log2(uint64_t argument);
 uint64_t pow2(uint64_t argument);
+char *my_itoa(int num);
+char *hexToChar(uint64_t num);
 
 
 char *cpuVendor(char *result);

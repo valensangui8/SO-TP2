@@ -73,12 +73,14 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
   global = 0;
 
   uint64_t i;
+
+  int16_t fds[3] = {0, 1, 1};
   
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
     
-    pids[i] = call_sys_create_process("my_process_inc", 1, 0, argvDec, 3, &my_process_inc);
+    pids[i] = call_sys_create_process("my_process_inc", 1, argvDec, 3, &my_process_inc, fds);
    
-    pids[i + TOTAL_PAIR_PROCESSES] = call_sys_create_process("my_process_inc", 1, 0, argvInc, 3, &my_process_inc);
+    pids[i + TOTAL_PAIR_PROCESSES] = call_sys_create_process("my_process_inc", 1, argvInc, 3, &my_process_inc, fds);
 
   }
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
