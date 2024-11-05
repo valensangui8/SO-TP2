@@ -1,4 +1,4 @@
-#ifndef BUDDY_SYSTEM  // Compila solo si BUDDY_SYSTEM no está definido
+#ifndef BUDDY  // Compila solo si BUDDY_SYSTEM no está definido
 
 #include "memoryManagerADT.h"
 
@@ -37,7 +37,7 @@ void init_memory_manager_ADT(uint64_t size, void *start_address) {
 }
 
 void *alloc_memory_ADT(uint64_t size) {
-	 drawWord("mem System");
+	drawWord("mem System");
 	MemoryManagerADT memory = get_memory_manager();
 	int free_remaining = free_blocks_remaining(&(memory->info));
 	int needed_blocks;
@@ -56,12 +56,11 @@ void free_memory_ADT(void *ptr) {
 	MemoryManagerADT memory = get_memory_manager();
 	if (ptr > memory->size + memory->start_address || ptr < memory->start_address || memory->info.current == 0) {
 		// error no es válido el puntero
-		drawWord("Error: No es válido el puntero   ");
+		drawWithColor("Error: Pointer is not valid", 0xFF0000);
 		return;
 	}
 	if (check_already_free(ptr) == 1 || free_blocks_remaining(&(memory->info)) == 0) { 
-		drawWord("Error: Doble free   ");
-		// doble free
+		drawWithColor("Error: Double free not allowed", 0xFF0000);
 		return;
 	}
 	memory->info.free_blocks[--(memory->info.current)] = ptr;

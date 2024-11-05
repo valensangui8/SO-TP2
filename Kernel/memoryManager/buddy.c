@@ -1,101 +1,234 @@
-#ifdef BUDDY_SYSTEM
+//  #ifdef BUDDY
+#include <buddy.h>
 
-#include "buddy.h"
-#include <stddef.h>
-#include <stdint.h>
+static void remove_block_from_free_list(BuddyBlock *block);
+static void add_block_to_free_list(BuddyBlock *block);
+static BuddyBlock *split_block(BuddyBlock *block);
+static BuddyBlock *create_free_block(void *start_address, int level, BuddyBlock *next, BuddyBlock *prev);
 
-#define MAX_LEVELS 12  // Define los niveles de potencia de dos (por ejemplo, de 4 KB a 1 MB)
+struct MemoryManagerCDT {
+    uint64_t size;
+    void *start_address;
+    uint64_t max_levels;
+    BuddyBlock *free_list[MAX_LEVELS];
+};
 
-static BuddyBlock *free_list[MAX_LEVELS];
-static void *buddy_base_address;
 
-// Redondea el tamaño al siguiente múltiplo de 2^12 (4 KB)
-static uint64_t round_up_to_power_of_two(uint64_t size) {
-    uint64_t rounded_size = 4096;  // Tamaño mínimo de bloque es 4 KB
-    while (rounded_size < size) {
-        rounded_size <<= 1;
-    }
-    return rounded_size;
+// Función para obtener el manejador de memoria
+static MemoryManagerADT get_memory_manager() {
+    return (MemoryManagerADT) MM_ADDRESS;
 }
 
+// Función para inicializar el sistema de memoria Buddy
 void init_buddy_system(uint64_t size, void *start_address) {
-    drawWord("Buddy System");
-    buddy_base_address = start_address;
-    for (int i = 0; i < MAX_LEVELS; i++) {
-        free_list[i] = NULL;
+    MemoryManagerADT memory = get_memory_manager();
+    memory->start_address = start_address;
+    memory->size = size;
+    memory->max_levels = log2(size);
+
+    if(memory->max_levels > MAX_LEVELS){
+        drawWithColor("Error: Size requested is too large", 0xFF0000);
+    }else if(memory->max_levels < MIN_LEVELS){
+        drawWithColor("Error: Size requested is too small", 0xFF0000);
     }
 
-    int initial_level = MAX_LEVELS - 1;  // Nivel más grande
-    free_list[initial_level] = (BuddyBlock *)start_address;
-    free_list[initial_level]->next = NULL;
-    free_list[initial_level]->level = initial_level;
+    for (int i = 0; i < memory->max_levels; i++) {
+        memory->free_list[i] = NULL;
+    }
+
+    int initial_level = memory->max_levels - 1;
+    memory->free_list[initial_level] = create_free_block(start_address, initial_level, NULL, NULL);
 }
 
-void *alloc_buddy_memory(uint64_t size) {
-    size = round_up_to_power_of_two(size);
-    int level = 0;
-    while ((1 << (level + 12)) < size) {  // Encuentra el nivel adecuado (12 porque 2^12 = 4096)
-        level++;
+static BuddyBlock *create_free_block(void *start_address, int level, BuddyBlock *next, BuddyBlock *prev) {
+    BuddyBlock *block = (BuddyBlock *)start_address;
+    block->level = level;
+    block->is_free = 1;
+    block->next = next;
+    block->prev = prev;
+    return block;
+}
+
+static BuddyBlock *split_block(BuddyBlock *block) {
+    MemoryManagerADT memory = get_memory_manager();
+    int level = block->level - 1;
+
+    // Update the level of the original block
+    block->level = level;
+
+    // Calculate the address of the buddy
+    BuddyBlock *buddy = (BuddyBlock *)((uint64_t)block + (1 << level));
+
+    // Initialize the buddy block
+    buddy->level = level;
+    buddy->is_free = 1;
+    buddy->next = memory->free_list[level];
+    buddy->prev = NULL;
+
+    // Update the free list
+    if (memory->free_list[level] != NULL) {
+        memory->free_list[level]->prev = buddy;
+    }
+    memory->free_list[level] = buddy;
+
+    // The original block is used for allocation
+    return block;
+}
+
+
+static BuddyBlock *find_block_buddy(int level){
+    MemoryManagerADT memory = get_memory_manager();
+
+    // Check if the level is within valid bounds
+    if(level > memory->max_levels){
+        return NULL;
     }
 
-    if (level >= MAX_LEVELS) {
-        
-        return NULL;  // Tamaño solicitado demasiado grande
-    }
+    // Search for a free block from the requested level up to the maximum level
+    for(int i = level; i <= memory->max_levels; i++) {
+        if(memory->free_list[i] != NULL) {
+            // Found a free block at level i
+            BuddyBlock *block = memory->free_list[i];
 
-    for (int i = level; i < MAX_LEVELS; i++) {
-        if (free_list[i] != NULL) {
-            BuddyBlock *block = free_list[i];
-            free_list[i] = block->next;
+            // Remove the block from the free list
+            memory->free_list[i] = block->next;
+            if(block->next != NULL){
+                block->next->prev = NULL;
+            }
+            block->next = block->prev = NULL;
 
-            // Divide el bloque en bloques más pequeños si es necesario
-            while (i > level) {
+            // Split the block down to the desired level
+            while(i > level) {
+                block = split_block(block);
                 i--;
-                BuddyBlock *buddy = (BuddyBlock *)((uintptr_t)block + (1 << (i + 12)));
-                buddy->next = free_list[i];
-                buddy->level = i;
-                free_list[i] = buddy;
             }
 
-            // Inicializa la memoria antes de devolverla
-            my_memset(block, 0, size);
-            
-            return (void *)block;
+            // Mark the block as allocated
+            block->is_free = 0;
+            return block;
         }
     }
-   
-    return NULL;  // No hay memoria disponible
+
+    // No available block found
+    return NULL;
+}
+
+
+void *alloc_buddy_memory(uint64_t size) {
+    
+    int level = log2(size + sizeof(BuddyBlock));
+
+    if(level < MIN_LEVELS){
+        level = MIN_LEVELS;
+    } else if(level > MAX_LEVELS){
+        drawWithColor("Error: Size requested is too large", 0xFF0000);
+        return NULL;
+    }
+    
+    BuddyBlock *block = find_block_buddy(level);
+    if(block == NULL){
+        drawWithColor("Error: No available blocks", 0xFF0000);
+        return NULL;
+    }
+
+    // Return a pointer to the memory after the BuddyBlock struct
+    return (void*)((uint64_t)block + sizeof(BuddyBlock));
+}
+
+
+static void merge_block(BuddyBlock *block) {
+    MemoryManagerADT memory = get_memory_manager();
+
+    int level = block->level;
+
+    // Calculate the address difference to find the buddy
+    uint64_t relative_address = (uint64_t)block - (uint64_t)memory->start_address;
+    uint64_t buddy_number = relative_address / (1 << level);
+    uint64_t buddy_relative_address = 0;
+
+    if (buddy_number % 2 == 0) {
+        // If even, buddy is the next block
+        buddy_relative_address = relative_address + (1 << level);
+    } else {
+        // If odd, buddy is the previous block
+        buddy_relative_address = relative_address - (1 << level);
+    }
+
+    BuddyBlock *buddy = (BuddyBlock *)((uint64_t)memory->start_address + buddy_relative_address);
+
+    // Check if the buddy exists within the memory bounds
+    if ((uint64_t)buddy < (uint64_t)memory->start_address || 
+        (uint64_t)buddy >= (uint64_t)memory->start_address + memory->size) {
+        // Buddy is out of bounds, cannot merge
+        add_block_to_free_list(block);
+        return;
+    }
+
+    // Check if the buddy is free and at the same level
+    if (buddy->is_free && buddy->level == level) {
+        // Remove buddy from free list
+        remove_block_from_free_list(buddy);
+
+        // Determine the new block's address (lower of the two)
+        BuddyBlock *merged_block = (block < buddy) ? block : buddy;
+        merged_block->level = level + 1;
+
+        // Recursively attempt to merge at the next level
+        merge_block(merged_block);
+    } else {
+        // Cannot merge, add the block to the free list
+        add_block_to_free_list(block);
+    }
+}
+
+
+static void add_block_to_free_list(BuddyBlock *block) {
+    MemoryManagerADT memory = get_memory_manager();
+    int level = block->level;
+
+    block->is_free = 1;
+    block->next = memory->free_list[level];
+    block->prev = NULL;
+
+    if (memory->free_list[level] != NULL) {
+        memory->free_list[level]->prev = block;
+    }
+    memory->free_list[level] = block;
+}
+
+static void remove_block_from_free_list(BuddyBlock *block) {
+    MemoryManagerADT memory = get_memory_manager();
+    int level = block->level;
+
+    if (block->prev != NULL) {
+        block->prev->next = block->next;
+    } else {
+        // Block is the head of the free list
+        memory->free_list[level] = block->next;
+    }
+
+    if (block->next != NULL) {
+        block->next->prev = block->prev;
+    }
+
+    block->next = block->prev = NULL;
 }
 
 
 void free_buddy_memory(void *ptr) {
-    if (ptr == NULL) return;
-
-    BuddyBlock *block = (BuddyBlock *)ptr;
-    int level = block->level;
-
-    uintptr_t buddy_address = (uintptr_t)ptr ^ (1 << (level + 12));
-    BuddyBlock *buddy = (BuddyBlock *)buddy_address;
-
-    BuddyBlock **current = &free_list[level];
-    while (*current != NULL) {
-        if (*current == buddy && buddy->level == level) {
-            *current = buddy->next;
-            if (buddy_address < (uintptr_t)ptr) {
-                block = buddy;
-            }
-            level++;
-            buddy_address ^= (1 << (level + 12));
-            current = &free_list[level];
-        } else {
-            current = &((*current)->next);
-        }
+    if (ptr == NULL) {
+        return; // Nothing to free
     }
 
-    block->next = free_list[level];
-    block->level = level;
-    free_list[level] = block;
+    // Get the block address
+    BuddyBlock *block = (BuddyBlock *)((uint64_t)ptr - sizeof(BuddyBlock));
+
+    // Mark the block as free
+    block->is_free = 1;
+
+    // Merge the block with its buddy if possible
+    merge_block(block);
 }
 
 
-#endif
+// #endif

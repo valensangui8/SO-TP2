@@ -1,7 +1,7 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
-#ifdef BUDDY_SYSTEM
+#ifdef BUDDY
 #include "buddy.h"
 #define init_memory_manager init_buddy_system
 #define alloc_memory alloc_buddy_memory

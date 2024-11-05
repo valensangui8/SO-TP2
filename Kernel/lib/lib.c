@@ -93,3 +93,22 @@ uint64_t my_strcmp(const char *s1, const char *s2) {
 	}
 	return *(const unsigned char *) s1 - *(const unsigned char *) s2;
 }
+
+uint8_t log2(uint64_t argument) {
+    unsigned int count = 0;
+    uint64_t value = 1;
+    while (value < argument) {
+        value *= 2;
+        count++;
+    }
+    return count;
+}
+
+uint64_t pow2(uint64_t argument) {
+    uint64_t count = 1;
+    while (argument > 0) {
+        count *= 2;
+        argument--;
+    }
+    return count;
+}

@@ -11,6 +11,9 @@ unsigned int log(uint64_t n, int base);
 void my_strcpy(char *dest, const char *src);
 void my_strcat(char *dest, const char *src);
 uint64_t my_strcmp(const char *s1, const char *s2);
+uint8_t log2(uint64_t argument);
+uint64_t pow2(uint64_t argument);
+
 
 char *cpuVendor(char *result);
 void outb(uint16_t port, uint8_t data);

@@ -3,13 +3,27 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <utils.h>
 
-#define MAX_LEVELS 12  // Número de niveles de memoria (por ejemplo, de 4096 bytes a 1 MB)
+// #define MIN_LEVELS 5
+// #define MAX_LEVELS 27 
+#define MIN_LEVELS 5
+#define MAX_LEVELS 20
+
+// #define BLOCK_SIZE 512
+// #define MM_SIZE (1 << 20)
+// #define TOTAL_BLOCKS (MM_SIZE / BLOCK_SIZE)
+#define BASE 2
+
 
 typedef struct BuddyBlock {
+    struct BuddyBlock *prev;
     struct BuddyBlock *next;
     int level;
+    char is_free;
 } BuddyBlock;
+
+typedef struct MemoryManagerCDT * MemoryManagerADT;
 
 void init_buddy_system(uint64_t size, void *start_address);
 void *alloc_buddy_memory(uint64_t size);

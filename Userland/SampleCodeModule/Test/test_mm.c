@@ -30,6 +30,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
   
 
   while (1) {
+  
     rq = 0;
     total = 0;
     
