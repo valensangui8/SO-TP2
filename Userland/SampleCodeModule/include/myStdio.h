@@ -7,7 +7,7 @@
 #include <stddef.h>
 
 
-#define EOF -1
+#define EOF (-1)
 
 char getChar();
 int strcmp(const char * s1, const char * s2);

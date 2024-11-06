@@ -75,18 +75,28 @@ void terminal(){
 			}
 			else if (c != 27) {
 				buffer[buffer_pos++] = c;
-				call_sys_drawChar(c);
+				if(c != EOF) {
+					call_sys_drawChar(c);
+				}
 			}
 		}
-		buffer[buffer_pos] = '\0';
+
+		int foreground = call_sys_foreground();
+		if(!foreground){
+			buffer[buffer_pos] = '\0';
+		}
+		else{
+			buffer[buffer_pos] = '\n';
+			call_sys_drawChar('\n');
+		}
 
 		char *argv1[MAX_ARGS] = {NULL};
 		char *argv2[MAX_ARGS] = {NULL};   
         int argc1 = 0, argc2 = 0, one_process = 1, background = 0;
 
 		int not_valid = parse_command(buffer, argv1, &argc1, argv2, &argc2, &background);
-        
-		if(!not_valid){
+		
+		if(!not_valid && foreground == 0){
 			initialize_shell(argv1[0], argc1, argv1, argv2[0], argc2, argv2, background);
 		}
 	}

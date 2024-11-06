@@ -34,4 +34,6 @@ int get_current_file_descriptor_read();
 int get_current_file_descriptor_write();
 int get_current_file_descriptor_error();
 
+int foreground();
+
 #endif

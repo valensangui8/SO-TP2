@@ -6,7 +6,7 @@
 
 extern void call_sys_drawWord(char *word);
 extern void call_sys_error(char *word, int fd);
-extern void call_sys_read(unsigned char *buf, uint32_t count, uint32_t *size);
+extern void call_sys_read(char *buf, uint32_t count, uint32_t *size);
 extern void call_sys_drawChar(char letter);
 extern void call_sys_delete();
 extern void call_sys_enter();
@@ -56,5 +56,7 @@ extern int16_t call_sys_write_pipe(uint16_t fd, char *buffer, uint16_t *count);
 extern int16_t call_sys_read_pipe(uint16_t fd, char *buffer, uint16_t *count);
 
 extern void call_sys_get_memory_info(char *type, uint64_t *free, uint64_t *allocated, uint64_t *total);
+
+extern int call_sys_foreground();
 
 #endif

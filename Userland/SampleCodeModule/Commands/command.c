@@ -230,10 +230,13 @@ static void wc_process() {
     char c;
     int line_count = 0;
     while((c = getChar()) != EOF){
-        if((c = getChar()) != '\n'){
+        call_sys_drawWord("entre ");
+        if((c = getChar()) == '\n'){
             line_count++;
+            call_sys_draw_int(line_count);
         }
     }
+
     printf("Lines: %d", line_count);
 }
 

@@ -17,6 +17,7 @@ SchedulerInfo create_scheduler() {
 	scheduler->amount_processes = 0;
 	scheduler->next_pid = 1;
 	scheduler->kill_foreground = 0;
+	scheduler->foreground_pid = 0;
 	initialized = 1;
 	
 	return scheduler;
@@ -106,6 +107,15 @@ PCBT *update_quantum(void *stack_pointer) {
     SchedulerInfo scheduler = get_scheduler();
     PCBT *current_process = &(scheduler->processes[scheduler->index_rr]);
 
+	if(current_process->fds[STDIN] != DEV_NULL && current_process->pid != SESSION_LEADER && current_process->pid != INIT_PID && current_process->state != ZOMBIE && current_process->state != DEAD) {
+		scheduler->foreground_pid = current_process->pid;
+	}
+
+	if(scheduler->kill_foreground && scheduler->foreground_pid == current_process->pid){
+		scheduler->kill_foreground = 0;
+		kill_process(current_process->pid);
+	}
+
     if (scheduler->quantum_remaining == 0 || current_process->state == BLOCKED || current_process->state == ZOMBIE || current_process->times_to_run == 0) {
 		if(scheduler->quantum_remaining == 0){
 			collect_zombies();
@@ -117,7 +127,7 @@ PCBT *update_quantum(void *stack_pointer) {
         if (current_process->state != BLOCKED && current_process->times_to_run > 0) {
             current_process->times_to_run--;
         }
-		current_process->stack_pointer = stack_pointer; // Save the stack pointer 
+		current_process->stack_pointer = stack_pointer; // Save the stack pointer 	
 
 		while (current_process->state != READY || current_process->times_to_run == 0){
 			scheduler->index_rr = (scheduler->index_rr + 1) % MAX_PROCESS; 
@@ -133,11 +143,6 @@ PCBT *update_quantum(void *stack_pointer) {
     }
 
     current_process->state = RUNNING;
-	
-	if(scheduler->kill_foreground && current_process->foreground){
-		scheduler->kill_foreground = 0;
-		kill_process(current_process->pid);
-	}
 
     return current_process;  
 }
@@ -213,12 +218,17 @@ uint64_t kill_process(unsigned int pid) {
 					}
 				}
 			}
+			if(pid == scheduler->foreground_pid){
+				//wait_children(pid);
+				scheduler->foreground_pid = 0;
+			}
 			if(scheduler->current_pid == pid){
 				yield();
 			}
 			return 1;
 		}
 	}
+	
 	
 	return 0;
 }
@@ -319,4 +329,9 @@ int get_current_file_descriptor_error(){
 	SchedulerInfo scheduler = get_scheduler();
 	PCBT *process = &(scheduler->processes[scheduler->index_rr]);
 	return process->fds[STDERR];
+}
+
+int foreground(){
+	SchedulerInfo scheduler = get_scheduler();
+	return scheduler->foreground_pid;
 }

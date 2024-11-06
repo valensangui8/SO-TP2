@@ -50,14 +50,10 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 	process->argv = argv;
 	process->argc = argc;
 	process->stack_pointer = _initialize_stack_frame(&process_function, rip, stackEnd,(void *) process->argv);
-	if(fds[STDIN] == DEV_NULL || pid == SESSION_LEADER){
-		process->foreground = 0;
-	} else {
-		process->foreground = 1;
-	}
 }
 
 int64_t wait_children(unsigned int pid) {
+	SchedulerInfo scheduler = get_scheduler();
 	if(pid == INIT_PID){ // Has no father
 		return -1;
 	}
@@ -71,7 +67,7 @@ int64_t wait_children(unsigned int pid) {
 	} 
 	
 	child->state = DEAD;
-	
+	scheduler->amount_processes--;
 
 	return child->ret;
 }
@@ -125,7 +121,7 @@ void process_status(unsigned int pid) {
 	commandEnter();
 	drawWord("PID        STAT          RSP           RBP         COMMAND");
 	commandEnter();
-	for (int i = 0; i < scheduler->amount_processes; i++) {
+	for (int i = 0; i < MAX_PROCESS; i++) {
 		if (scheduler->processes[i].pid == pid) {
 			drawInt(scheduler->processes[i].pid);
 			drawWord("        ");

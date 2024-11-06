@@ -46,8 +46,9 @@ void test_prio() {
 	call_sys_drawWord("CHANGING PRIORITIES WHILE BLOCKED...");
 	call_sys_commandEnter();
 
-	for (i = 0; i < TOTAL_PROCESSES; i++)
+	for (i = 0; i < TOTAL_PROCESSES; i++){
 		call_sys_update_priority(pids[i], MEDIUM);
+	}
 
 	call_sys_drawWord("UNBLOCKING...");
 	call_sys_commandEnter();

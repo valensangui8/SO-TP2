@@ -47,7 +47,6 @@ void printf(char * fmt, ...){
                 break;
             case 's':
                 index += strcpy(toPrint+index,va_arg(variables,char *));
-            
             default:
                 break;
             }
@@ -55,13 +54,13 @@ void printf(char * fmt, ...){
         } else toPrint[index++]=*fmt++; 
     }
     toPrint[index]=0;
-    puts(toPrint);
+    call_sys_drawWord(toPrint);
+    // puts(toPrint);
     va_end(variables);
 }
 
 void puts(char * buffer){
     call_sys_drawWord(buffer);
-    call_sys_commandEnter();
     call_sys_commandEnter();
 }
 

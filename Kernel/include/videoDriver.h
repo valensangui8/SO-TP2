@@ -10,7 +10,7 @@ void putPixel(uint32_t hexColor, uint64_t x, uint64_t y);						   // draws a pix
 void drawSquare(uint32_t hexColor, uint64_t width, uint64_t height, int x, int y); // draws a square with the given color, width, height and position
 void draw(uint32_t x, uint32_t y, uint32_t size, uint32_t color);				   // draws a square with the given color, size and position
 void drawRegisters(uint64_t value);												   // draw registers in the screen
-void drawChar(uint8_t character);												   // draw a character
+void drawChar(char character);												   // draw a character
 void drawError(char *word);														   // draw an error message after an unavailable command
 void drawWord(char *word);														   // draw a word in the screen
 void drawLine(char letter);														   // draw a line in the screen

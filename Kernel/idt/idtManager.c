@@ -1,6 +1,6 @@
 #include <idtManager.h>
 
-static void sys_Read(uint8_t *buf, uint32_t count, uint32_t *size);
+static void sys_Read(char *buf, uint32_t count, uint32_t *size);
 static void sys_DrawWord(char *word, int fd_user);
 static void sys_DrawChar(char letter);
 static void sys_delete();
@@ -48,6 +48,7 @@ static int16_t sys_write_pipe(uint16_t fd, char *buffer, uint16_t *count);
 static int16_t sys_read_pipe(uint16_t fd, char *buffer, uint16_t *count);
 
 static void sys_get_memory_info(char *type, uint64_t *free, uint64_t *allocated, uint64_t *total);
+static int sys_foreground();
 
 
 uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
@@ -60,7 +61,7 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
     r9 = otherRegisters[5];
 	switch (rax) {
 		case 0:															 // read
-			sys_Read((uint8_t *) rdi, (uint32_t) rsi, (uint32_t *) rdx); // rdi = buffer ; rsi = size , rdx = count
+			sys_Read((char *) rdi, (uint32_t) rsi, (uint32_t *) rdx); // rdi = buffer ; rsi = size , rdx = count
 			break;
 		case 1:							// write
 			sys_DrawWord((char *) rdi, (int) rsi); // rdi = palabra
@@ -183,11 +184,14 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 		case 41:
 			sys_get_memory_info((char *) rdi, (uint64_t *) rsi, (uint64_t *) rdx, (uint64_t *) rcx);
 			break;
+		case 42:
+			return sys_foreground();
+			break;
 	}
 	return 0;
 }
 
-void sys_Read(uint8_t *buf, uint32_t count, uint32_t *size) {
+void sys_Read(char *buf, uint32_t count, uint32_t *size) {
 	int fd = get_current_file_descriptor_read();
 	if(fd == STDIN){
 		readChar(buf, count, size);
@@ -203,7 +207,6 @@ void sys_DrawWord(char *word, int fd_user) {
 		drawWithColor(word, 0xFF0000);
 		return;
 	}
-
 	if(fd == STDOUT){
 		drawWord(word);
 	}else if(fd != DEV_NULL){
@@ -377,4 +380,8 @@ int16_t sys_read_pipe(uint16_t fd, char *buffer, uint16_t *count){
 
 void sys_get_memory_info(char *type, uint64_t *free, uint64_t *allocated, uint64_t *total){
 	get_memory_info(type, free, allocated, total);
+}
+
+int sys_foreground(){
+	return foreground();
 }

@@ -5,42 +5,42 @@ static char shiftPressed = 0;
 static char ctrlPressed = 0;
 
 char keyMap[][2] = {
-		{0, 0},
-        {27, 27}, // esc key
-        {'1', '!'},
-        {'2', '@'},
-        {'3', '#'},
-        {'4', '$'},
-        {'5', '%'},
-        {'6', '^'},
-        {'7', '&'},
-        {'8', '*'},
-        {'9', '('},
-        {'0', ')'},
-        {'-', '_'},
-        {'-', '+'},
-        {'\b', '\b'}, // delete
-        {'\t', '\t'}, //tab
-        {'q', 'Q'},
-        {'w', 'W'},
-        {'e', 'E'},
-        {'r', 'R'},
-        {'t', 'T'},
-        {'y', 'Y'},
-        {'u', 'U'},
-        {'i', 'I'},
-        {'o', 'O'},
-        {'p', 'P'},
-        {'[', '{'},
-        {']', '}'},
-        {'\n', '\n'}, //enter
-        {0, 0}, //ctrl
-        {'a', 'A'},
-        {'s', 'S'},
-        {'d', 'D'},
-        {'f', 'F'},
-        {'g', 'G'},
-        {'h', 'H'},
+    {0, 0},
+    {27, 27}, // esc key
+    {'1', '!'},
+    {'2', '@'},
+    {'3', '#'},
+    {'4', '$'},
+    {'5', '%'},
+    {'6', '^'},
+    {'7', '&'},
+    {'8', '*'},
+    {'9', '('},
+    {'0', ')'},
+    {'-', '_'},
+    {'-', '+'},
+    {'\b', '\b'}, // delete
+    {'\t', '\t'}, //tab
+    {'q', 'Q'},
+    {'w', 'W'},
+    {'e', 'E'},
+    {'r', 'R'},
+    {'t', 'T'},
+    {'y', 'Y'},
+    {'u', 'U'},
+    {'i', 'I'},
+    {'o', 'O'},
+    {'p', 'P'},
+    {'[', '{'},
+    {']', '}'},
+    {'\n', '\n'}, //enter
+    {0, 0}, //ctrl
+    {'a', 'A'},
+    {'s', 'S'},
+    {'d', 'D'},
+    {'f', 'F'},
+    {'g', 'G'},
+    {'h', 'H'},
     {'j', 'J'},
     {'k', 'K'},
     {'l', 'L'},
@@ -66,7 +66,7 @@ char keyMap[][2] = {
 };
 
 // map the key to the corresponding character checking shift
-int8_t getKeyMapping(uint64_t number) {
+char getKeyMapping(uint64_t number) {
 	if (number == LEFT_SHIFT_NBR || number == RIGHT_SHIFT_NBR) {
 		shiftPressed = 1;
 	}
@@ -118,10 +118,7 @@ void keyboard_handler() {
 	else {
 		newPos(0);
 	}
-    if(getKeyMapping(key) == EOF){
-        buffer[buffer_pos] = 0;
-        return;
-    }
+    
 	char letter = getKeyMapping(key);
 
     if(letter == 0){
@@ -138,7 +135,7 @@ void keyboard_handler() {
 }
 
 // function that reads the characters
-void readChar(uint8_t *buf, uint32_t count, uint32_t *size) {
+void readChar(char *buf, uint32_t count, uint32_t *size) {
 	char *buffer = getAddress();
 	int write_pos = getPos();	 // get writing position
 	int read_pos = getReadPos(); // get reading position

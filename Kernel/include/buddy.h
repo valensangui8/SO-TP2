@@ -8,7 +8,7 @@
 // #define MIN_LEVELS 5
 // #define MAX_LEVELS 27 
 #define MIN_LEVELS 1
-#define MAX_LEVELS 20
+#define MAX_LEVELS 24
 
 // #define BLOCK_SIZE 512
 // #define MM_SIZE (1 << 20)

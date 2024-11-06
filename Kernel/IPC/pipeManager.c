@@ -8,7 +8,7 @@ typedef struct Pipe {
     uint16_t write_index;
     uint16_t read_index;
     int16_t input_pid, output_pid;
-    int64_t mutex;
+    int64_t readable;
 } Pipe;
 
 struct PipeManagerCDT {
@@ -31,21 +31,6 @@ PipeManagerADT create_pipe_manager() {
     return pipe_manager;
 }
 
-static char *name_pipe_sem(int fd) {
-    char *name = (char *) alloc_memory(10); // CAMBIAR DESPUES
-    if (name == NULL) {
-        return NULL;
-    }
-    my_strcpy(name, "pipe_");
-    char *fd_str = my_itoa(fd);
-    if (fd_str == NULL) {
-        free_memory(name);
-        return NULL;
-    }
-    my_strcat(name, fd_str);
-    return name;
-}
-
 static Pipe *create_pipe(uint64_t id) {
     Pipe *pipe = (Pipe *) alloc_memory(sizeof(Pipe));
     if (pipe == NULL) {
@@ -59,7 +44,7 @@ static Pipe *create_pipe(uint64_t id) {
         pipe->buffer[i] = 0;
     }
 
-    pipe->mutex = sem_open(name_pipe_sem(id), 0);
+    pipe->readable = sem_open(my_itoa(id), 0);
 
     return pipe;
 }
@@ -121,7 +106,7 @@ int16_t open_pipe(int id, char mode) {
 }
 
 static void free_pipe(Pipe *pipe) {
-    sem_close(pipe->mutex);
+    sem_close(pipe->readable);
     free_memory(pipe);
 
     PipeManagerADT pipe_manager = get_pipe_manager();
@@ -171,7 +156,7 @@ int16_t write_pipe(uint16_t fd, char *buffer, uint16_t *count) {
         pipe->buffer[pipe->write_index] = buffer[i];
         pipe->write_index = (pipe->write_index + 1) % PIPE_SIZE;
         *count++;
-        sem_post(pipe->mutex);
+        sem_post(pipe->readable);
     }
     
     return count;
@@ -187,7 +172,7 @@ int16_t read_pipe(uint16_t fd, char *buffer, uint16_t *count) {
         return -1;
     }
     for (int i = 0; pipe->read_index != pipe->read_index; i++) {
-        sem_wait(pipe->mutex);
+        sem_wait(pipe->readable);
         buffer[i] = pipe->buffer[pipe->read_index];
         pipe->read_index = (pipe->read_index + 1) % PIPE_SIZE;
         *count++;

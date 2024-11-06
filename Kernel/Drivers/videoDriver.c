@@ -129,9 +129,17 @@ static void uint64HexaToString(uint64_t valorHexa, char *hexaString) {
 }
 
 // draw a character
-void drawChar(uint8_t character) {
+void drawChar(char character) {
 	unsigned char *bitMapChar = font[character];
 	drawSquare(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
+	if(character == '\t'){
+		x += TAB_SIZE * 8 * scale;
+		return;
+	}
+	else if(character == '\n'){
+		commandEnter();
+		return;
+	}
 	for (int i = 0; i < HEIGHT_FONT * scale; i++) {
 		for (int j = 0; j < WIDTH_FONT * scale; j++) {
 			int bit = (bitMapChar[i / scale] >> (j / scale)) & 1;

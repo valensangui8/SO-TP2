@@ -56,7 +56,6 @@ typedef struct PCB {
 	char **argv;
 	int argc;
 	int ret;
-	char foreground;
 } PCBT;
 
 typedef struct Scheduler {
@@ -68,6 +67,7 @@ typedef struct Scheduler {
 	uint32_t amount_processes;
 	uint64_t next_pid;
 	uint8_t kill_foreground;
+	uint64_t foreground_pid;
 } Scheduler;
 
 typedef struct Scheduler *SchedulerInfo;
