@@ -222,29 +222,29 @@ static void cat_process(int argc, char **argv) {
     }
 }
 
-void cat(int16_t fds[], int argc, char **argv){
-    call_sys_create_process("cat", 1, argv, argc, &cat_process, fds); 
+int cat(int16_t fds[], int argc, char **argv){
+    return call_sys_create_process("cat", 1, argv, argc, &cat_process, fds); 
 }
 
 static void wc_process() {
     char c;
     int line_count = 0;
+
     while((c = getChar()) != EOF){
-        call_sys_drawWord("entre ");
-        if((c = getChar()) == '\n'){
+        call_sys_drawChar(c);
+        if(c == '\n'){
             line_count++;
-            call_sys_draw_int(line_count);
         }
     }
 
     printf("Lines: %d", line_count);
 }
 
-void wc(int16_t fds[]){
-    call_sys_create_process("wc", 1, NULL, 0, &wc_process, fds);
+int wc(int16_t fds[]){
+    return call_sys_create_process("wc", 4, NULL, 0, &wc_process, fds);
 }
 
-static void filter_process(int argc, char **argv) {
+static void filter_process() {
     char c;
     while ((c = getChar()) != EOF) {
         if (c != 'a' && c != 'e' && c != 'i' && c != 'o' && c != 'u' &&
@@ -254,8 +254,8 @@ static void filter_process(int argc, char **argv) {
     }
 }
 
-void filter(int16_t fds[], int argc, char **argv){
-    call_sys_create_process("filter", 1, argv, argc, &filter_process, fds);
+int filter(int16_t fds[]){
+    return call_sys_create_process("filter", 4, NULL, 0, &filter_process, fds);
 }
 
 static void loop_process(int argc, char **argv) {
@@ -266,8 +266,8 @@ static void loop_process(int argc, char **argv) {
     }
 }
 
-void loop(int16_t fds[], int argc, char **argv){
-    call_sys_create_process("loop", 1, argv, argc, &loop_process, fds);
+int loop(int16_t fds[], int argc, char **argv){
+    return call_sys_create_process("loop", 1, argv, argc, &loop_process, fds);
 }
 
 void nice(int argc, char **argv){
@@ -295,4 +295,19 @@ void get_memory_info(){
     call_sys_drawWord("- Total: ");
     total = total / 1024;
     call_sys_draw_int(total);
+}
+
+static void text_process() {
+    call_sys_drawWord("Hello, I'm a text process\n");
+    call_sys_drawWord("I'm going to sleep for 5 seconds\n");
+    call_sys_drawWord("I woke up\n");
+    call_sys_drawWord("I'm going to sleep for 5 seconds again\n");
+    call_sys_drawWord("I woke up again\n");
+    call_sys_drawWord("I'm going to sleep for 5 seconds again\n");
+    call_sys_drawWord("I woke up again\n");
+    // call_sys_drawWord(EOF);
+}
+
+int text(int16_t fds[]){
+    return call_sys_create_process("text", 1, NULL, 0, &text_process, fds);
 }

@@ -11,7 +11,7 @@
 #include <string.h>
 #include "memory.h"
 
-#define MAX_PROCESS 20
+#define MAX_PROCESS 5
 #define MM_ADDRESS 0x50000
 #define SCHEDULER_ADDRESS 0x60000
 #define SEMAPHORE_MANAGER_ADDRESS 0x70000

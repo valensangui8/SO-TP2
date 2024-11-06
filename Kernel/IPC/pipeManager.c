@@ -8,7 +8,7 @@ typedef struct Pipe {
     uint16_t write_index;
     uint16_t read_index;
     int16_t input_pid, output_pid;
-    int64_t readable;
+    char readable[10];
 } Pipe;
 
 struct PipeManagerCDT {
@@ -44,7 +44,8 @@ static Pipe *create_pipe(uint64_t id) {
         pipe->buffer[i] = 0;
     }
 
-    pipe->readable = sem_open(my_itoa(id), 0);
+    sem_open(my_itoa(id), 0);
+    my_strcpy(pipe->readable, my_itoa(id));
 
     return pipe;
 }
@@ -83,19 +84,23 @@ int16_t get_pipe_fd() {
 static int16_t open_pipe_pid(int id, char mode, int16_t pid) {
     Pipe *pipe = get_pipe(id);
     if (pipe == NULL) {
+        drawWithColor("ERROR: Pipe not found", 0xFF0000);
         return -1;
     }
     if (mode == 'r') {
-        if (pipe->input_pid != -1) {
-            return -1;
-        }
-        pipe->input_pid = pid;
-    } else if (mode == 'w') {
         if (pipe->output_pid != -1) {
+            drawWithColor("ERROR: Pipe already in use", 0xFF0000);
             return -1;
         }
         pipe->output_pid = pid;
+    } else if (mode == 'w') {
+        if (pipe->input_pid != -1) {
+            drawWithColor("ERROR: Pipe already in use", 0xFF0000);
+            return -1;
+        }
+        pipe->input_pid = pid;
     } else {
+        drawWithColor("ERROR: Invalid mode", 0xFF0000);
         return -1;
     }
     return id;
@@ -142,40 +147,60 @@ int16_t close_pipe(uint16_t fd) {
     return close_pipe_pid(fd, get_pid());
 }
 
-int16_t write_pipe(uint16_t fd, char *buffer, uint16_t *count) {
+int32_t write_pipe(uint16_t fd, char *buffer, uint32_t *count) {
     Pipe *pipe = get_pipe(fd);
     int len = my_strlen(buffer);
     *count = 0;
+
     if (pipe == NULL) {
+        drawWithColor("ERROR: Pipe not found", 0xFF0000);
         return -1;
     }
-    if (pipe->output_pid != get_pid() || pipe->input_pid == -1) {
+    if (pipe->input_pid != get_pid()) {
+        drawWithColor("ERROR: No permission to write pid", 0xFF0000);
+        drawInt(get_pid());
         return -1;
     }
+
     for (int i = 0; i < len; i++) {
+        if ((pipe->write_index + 1) % PIPE_SIZE == pipe->read_index) {
+            return -1;
+        }
+        
         pipe->buffer[pipe->write_index] = buffer[i];
         pipe->write_index = (pipe->write_index + 1) % PIPE_SIZE;
-        *count++;
-        sem_post(pipe->readable);
+        (*count)++;
+        sem_post(pipe->readable);  
     }
-    
-    return count;
+    drawWord(pipe->buffer);
+    return (int32_t) *count;
 }
 
-int16_t read_pipe(uint16_t fd, char *buffer, uint16_t *count) {
+
+int32_t read_pipe(uint16_t fd, char *buffer, uint32_t *count) {
     Pipe *pipe = get_pipe(fd);
     *count = 0;
+
     if (pipe == NULL) {
+        drawWithColor("ERROR: Pipe not found!", 0xFF0000);
         return -1;
     }
-    if (pipe->input_pid != get_pid() || pipe->output_pid == -1) {
+    if (pipe->output_pid != get_pid()) {
+        drawWord("OUTPUT PID: ");
+        drawInt(pipe->output_pid);
+        commandEnter();
+        //drawWithColor("ERROR: No permission to read pid", 0xFF0000);
+        drawInt(get_pid());
         return -1;
     }
-    for (int i = 0; pipe->read_index != pipe->read_index; i++) {
+
+    int i = 0;
+    while ( pipe->buffer[pipe->read_index] != EOF) {
         sem_wait(pipe->readable);
-        buffer[i] = pipe->buffer[pipe->read_index];
+        buffer[i++] = pipe->buffer[pipe->read_index];
         pipe->read_index = (pipe->read_index + 1) % PIPE_SIZE;
-        *count++;
+        (*count)++;
     }
-    return count;
+
+    return (int32_t) *count;
 }

@@ -1,5 +1,5 @@
-#include <font.h>
 #include <videoDriver.h>
+#include <font.h>
 
 // font
 #define WIDTH_FONT 8
@@ -130,7 +130,7 @@ static void uint64HexaToString(uint64_t valorHexa, char *hexaString) {
 
 // draw a character
 void drawChar(char character) {
-	unsigned char *bitMapChar = font[character];
+	char *bitMapChar = font[character];
 	drawSquare(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
 	if(character == '\t'){
 		x += TAB_SIZE * 8 * scale;
@@ -138,6 +138,8 @@ void drawChar(char character) {
 	}
 	else if(character == '\n'){
 		commandEnter();
+		return;
+	} else if(character == EOF){
 		return;
 	}
 	for (int i = 0; i < HEIGHT_FONT * scale; i++) {

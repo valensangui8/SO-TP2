@@ -75,9 +75,7 @@ void terminal(){
 			}
 			else if (c != 27) {
 				buffer[buffer_pos++] = c;
-				if(c != EOF) {
-					call_sys_drawChar(c);
-				}
+				call_sys_drawChar(c);
 			}
 		}
 
@@ -92,11 +90,11 @@ void terminal(){
 
 		char *argv1[MAX_ARGS] = {NULL};
 		char *argv2[MAX_ARGS] = {NULL};   
-        int argc1 = 0, argc2 = 0, one_process = 1, background = 0;
+        int argc1 = 0, argc2 = 0, background = 0;
 
 		int not_valid = parse_command(buffer, argv1, &argc1, argv2, &argc2, &background);
 		
-		if(!not_valid && foreground == 0){
+		if(!not_valid){
 			initialize_shell(argv1[0], argc1, argv1, argv2[0], argc2, argv2, background);
 		}
 	}

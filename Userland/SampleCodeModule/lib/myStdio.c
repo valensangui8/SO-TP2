@@ -1,7 +1,7 @@
 #include <myStdio.h>
 
 char getChar(){
-    uint8_t c;
+    char c;
     uint32_t size = 0;
     while(size == 0){
         call_sys_read(&c,1,&size);
@@ -64,7 +64,7 @@ void puts(char * buffer){
     call_sys_commandEnter();
 }
 
-void putchar(char c){
+void putchar(char c) {
     call_sys_drawChar(c);
 }
 

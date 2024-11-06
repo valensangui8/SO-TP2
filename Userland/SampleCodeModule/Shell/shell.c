@@ -26,17 +26,18 @@ Command commandsList[COMMANDS] = {
     {"testprio", .process_no_params = test_prio_user, PROCESS_NO_PARAMS},              
     {"testmm", .process_params = test_mm_user, PROCESS_PARAMS},
     {"testprocess", .process_params = test_process_user, PROCESS_PARAMS},
-    {"ps", .process_no_params = ps, VOID},
+    {"ps", .function_void = ps, VOID},
     {"kill", .function_params = kill_process, FUNC_PARAMS},
     {"testsync", .process_params = test_sync_user, PROCESS_PARAMS},
     {"cat", .process_params = cat, PROCESS_PARAMS},
-    {"filter", .process_params = filter, PROCESS_PARAMS},
+    {"filter", .process_no_params = filter, PROCESS_NO_PARAMS},
     {"wc", .process_no_params = wc, PROCESS_NO_PARAMS},
     {"loop", .process_params = loop, PROCESS_PARAMS},
     //{"phylo", .process_params = phylo, PROCESS_PARAMS}
     {"nice", .function_params = nice, FUNC_PARAMS},
     {"block", .function_params = block_process, FUNC_PARAMS},
-    {"mem", .function_void = get_memory_info, VOID}
+    {"mem", .function_void = get_memory_info, VOID},
+    {"text", .process_no_params = text,PROCESS_NO_PARAMS}
 };
 
 static int run_command(char *command, int argc, char **argv, char *flag, int16_t fds[]);
@@ -45,15 +46,9 @@ void initialize_shell(char *command, int argc, char **argv, char *command2, int 
     char flag = 0;
     int16_t fds1[3], fds2[3];
     if(argc2 == 0){ // one process
-        if(background){
-            fds1[STDIN] = DEV_NULL;
-            fds1[STDOUT]= STDOUT; 
-            fds1[STDERR] = STDERR;
-        }else{
-            fds1[STDIN] = STDIN;
-            fds1[STDOUT] = STDOUT; 
-            fds1[STDERR] = STDERR;
-        }
+        fds1[STDIN] =  (background)? DEV_NULL : STDIN;
+        fds1[STDOUT] = STDOUT; 
+        fds1[STDERR] = STDERR;
         run_command(command, argc, argv, &flag, fds1);
         return;
     }
@@ -87,7 +82,7 @@ void initialize_shell(char *command, int argc, char **argv, char *command2, int 
 int run_command(char *command, int argc, char **argv, char *flag, int16_t fds[]){
     if(*command == 0){
         call_sys_enter();
-        return;
+        return -1;
     }
     int id = readCommand(command);
     int pid = 0;
@@ -129,18 +124,21 @@ void executeCommand(int index, char * flag, char * command, int argc, char **arg
                 return;
             }
             *pid = commandsList[index].process_params(fds, argc, argv);
+            call_sys_commandEnter();
             break;
         case PROCESS_NO_PARAMS:
             *pid = commandsList[index].process_no_params(fds);
+            call_sys_commandEnter();
             break;
         case FUNC_PARAMS:
             commandsList[index].function_params(argc, argv);
+            call_sys_enter();
             break;
         case VOID:
             commandsList[index].function_void();
+            call_sys_enter();
             break;
     }
-    call_sys_enter();
     
     *flag = 1;
 }

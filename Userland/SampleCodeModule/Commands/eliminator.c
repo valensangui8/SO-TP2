@@ -81,7 +81,7 @@ void startGame(){
     player1.score = 0;
     player2.score = 0;
 
-    unsigned char c;
+    char c;
     
     while(exit != 1) {
         startPlayer();

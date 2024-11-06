@@ -107,8 +107,9 @@ PCBT *update_quantum(void *stack_pointer) {
     SchedulerInfo scheduler = get_scheduler();
     PCBT *current_process = &(scheduler->processes[scheduler->index_rr]);
 
-	if(current_process->fds[STDIN] != DEV_NULL && current_process->pid != SESSION_LEADER && current_process->pid != INIT_PID && current_process->state != ZOMBIE && current_process->state != DEAD) {
+	if(current_process->fds[STDIN] == STDIN && current_process->pid != SESSION_LEADER && current_process->pid != INIT_PID && current_process->state != ZOMBIE && current_process->state != DEAD) {
 		scheduler->foreground_pid = current_process->pid;
+		block_process(current_process->ppid);
 	}
 
 	if(scheduler->kill_foreground && scheduler->foreground_pid == current_process->pid){
@@ -219,8 +220,8 @@ uint64_t kill_process(unsigned int pid) {
 				}
 			}
 			if(pid == scheduler->foreground_pid){
-				//wait_children(pid);
 				scheduler->foreground_pid = 0;
+				unblock_process(parent->pid);
 			}
 			if(scheduler->current_pid == pid){
 				yield();

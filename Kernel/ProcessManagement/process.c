@@ -37,7 +37,7 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 	process->priority = priority;
 	process->times_to_run = priority;
 	assign_fd(process, STDIN, fds[STDIN], 'r');
-	assign_fd(process, STDOUT, fds[STDOUT], 'w');
+	assign_fd(process, STDOUT, fds[STDOUT], 'w'); 
 	assign_fd(process, STDERR, fds[STDERR], 'w');
 
 	process->stack_base = alloc_memory(STACK_SIZE);

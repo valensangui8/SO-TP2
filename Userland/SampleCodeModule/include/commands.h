@@ -43,18 +43,20 @@ void ps();
 
 void kill_process(int argc, char **argv);
 
-void cat(int16_t fds[], int argc, char **argv);
+int cat(int16_t fds[], int argc, char **argv);
 
-void wc(int16_t fds[]);
+int wc(int16_t fds[]);
 
-void filter(int16_t fds[], int argc, char **argv);
+int filter(int16_t fds[]);
 
-void loop(int16_t fds[], int argc, char **argv);
+int loop(int16_t fds[], int argc, char **argv);
 
 void nice(int argc, char **argv);
 
 void block_process(int argc, char **argv);
 
 void get_memory_info();
+
+int text(int16_t fds[]);
 
 #endif
