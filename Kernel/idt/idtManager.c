@@ -197,12 +197,12 @@ void sys_Read(char *buf, uint32_t count, uint32_t *size) {
 		readChar(buf, count, size);
 	}else if(fd != DEV_NULL){
 		read_pipe(fd, buf, size);
+		
 	}
 }
 
 void sys_DrawWord(char *word, int fd_user) {
 	int fd = get_current_file_descriptor_write();
-	drawInt(fd);
 	uint32_t bytes = 0;
 	if(fd_user == STDERR){
 		drawWithColor(word, 0xFF0000);

@@ -252,6 +252,7 @@ static void filter_process() {
             putchar(c);
         }
     }
+    call_sys_enter();
 }
 
 int filter(int16_t fds[]){
@@ -301,10 +302,7 @@ static void text_process() {
     call_sys_drawWord("Hello, I'm a text process\n");
     call_sys_drawWord("I'm going to sleep for 5 seconds\n");
     call_sys_drawWord("I woke up\n");
-    call_sys_drawWord("I'm going to sleep for 5 seconds again\n");
-    call_sys_drawWord("I woke up again\n");
-    call_sys_drawWord("I'm going to sleep for 5 seconds again\n");
-    call_sys_drawWord("I woke up again\n");
+    call_sys_drawChar(EOF);
     // call_sys_drawWord(EOF);
 }
 

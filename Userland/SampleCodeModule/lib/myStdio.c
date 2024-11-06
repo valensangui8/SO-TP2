@@ -4,7 +4,7 @@ char getChar(){
     char c;
     uint32_t size = 0;
     while(size == 0){
-        call_sys_read(&c,1,&size);
+        call_sys_read(&c, 1, &size);
     }
     return c;
 }

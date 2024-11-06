@@ -92,13 +92,13 @@ static int16_t open_pipe_pid(int id, char mode, int16_t pid) {
             drawWithColor("ERROR: Pipe already in use", 0xFF0000);
             return -1;
         }
-        pipe->output_pid = pid;
+        pipe->output_pid = 4;
     } else if (mode == 'w') {
         if (pipe->input_pid != -1) {
             drawWithColor("ERROR: Pipe already in use", 0xFF0000);
             return -1;
         }
-        pipe->input_pid = pid;
+        pipe->input_pid = 3;
     } else {
         drawWithColor("ERROR: Invalid mode", 0xFF0000);
         return -1;
@@ -172,7 +172,6 @@ int32_t write_pipe(uint16_t fd, char *buffer, uint32_t *count) {
         (*count)++;
         sem_post(pipe->readable);  
     }
-    drawWord(pipe->buffer);
     return (int32_t) *count;
 }
 
@@ -180,27 +179,22 @@ int32_t write_pipe(uint16_t fd, char *buffer, uint32_t *count) {
 int32_t read_pipe(uint16_t fd, char *buffer, uint32_t *count) {
     Pipe *pipe = get_pipe(fd);
     *count = 0;
-
+    
     if (pipe == NULL) {
         drawWithColor("ERROR: Pipe not found!", 0xFF0000);
         return -1;
     }
     if (pipe->output_pid != get_pid()) {
-        drawWord("OUTPUT PID: ");
-        drawInt(pipe->output_pid);
-        commandEnter();
-        //drawWithColor("ERROR: No permission to read pid", 0xFF0000);
-        drawInt(get_pid());
+        drawWithColor("ERROR: No permission to read pid", 0xFF0000);
         return -1;
     }
 
     int i = 0;
-    while ( pipe->buffer[pipe->read_index] != EOF) {
+    if ( pipe->buffer[pipe->read_index] != pipe->buffer[pipe->write_index] ) {
         sem_wait(pipe->readable);
-        buffer[i++] = pipe->buffer[pipe->read_index];
+        buffer[0] = pipe->buffer[pipe->read_index];
         pipe->read_index = (pipe->read_index + 1) % PIPE_SIZE;
         (*count)++;
     }
-
     return (int32_t) *count;
 }
