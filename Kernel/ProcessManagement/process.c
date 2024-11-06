@@ -25,7 +25,7 @@ void process_function(main_function rip, char **argv, uint64_t argc) {
 
 static void assign_fd(PCBT *process, int16_t index, int16_t fd, char mode){
 	process->fds[index]= fd;
-	if(fd>=BUILT_IN_FD){
+	if(fd >= BUILT_IN_FD){
 		open_pipe(fd, mode, process->pid);
 	}
 }
@@ -42,6 +42,7 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 
 	process->stack_base = alloc_memory(STACK_SIZE);
 	if (process->stack_base == NULL) {
+		drawWithColor("Error: Could not allocate memory for process", 0xFF0000);
         free_memory(process->stack_base);
         return;
     }

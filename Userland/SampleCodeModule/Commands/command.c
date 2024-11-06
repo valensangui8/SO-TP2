@@ -27,69 +27,69 @@ void clear(){
 void help(){
     call_sys_commandEnter();
     
-    printf("PROGRAMS AVAILABLE FOR USER: ");
+    printf("PROGRAMS AVAILABLE FOR USER: \n");
     
     
-    call_sys_drawWithColor(" help", 0x32a852);
-    printf(" - shows the different programs available.");
+    call_sys_drawWithColor(" help\n", 0x32a852);
+    printf(" - shows the different programs available.\n");
     
 
-    call_sys_drawWithColor(" date", 0x32a852);
-    printf(" - Retrieve the current day and time.");
+    call_sys_drawWithColor(" date\n", 0x32a852);
+    printf(" - Retrieve the current day and time.\n");
    
     
-    call_sys_drawWithColor(" eliminator", 0x32a852);
-    printf(" - Play the Eliminator game, available for both single-player and two-player modes.");
+    call_sys_drawWithColor(" eliminator\n", 0x32a852);
+    printf(" - Play the Eliminator game, available for both single-player and two-player modes.\n");
   
 
-    call_sys_drawWithColor(" clear", 0x32a852);
+    call_sys_drawWithColor(" clear\n", 0x32a852);
     printf(" - Clear the screen.");
    
 
-    call_sys_drawWithColor(" zoomIn", 0x32a852);
-    printf(" - Increase text size. Clears screen after change.");
+    call_sys_drawWithColor(" zoomIn\n", 0x32a852);
+    printf(" - Increase text size. Clears screen after change.\n");
 
 
-    call_sys_drawWithColor(" zoomOut", 0x32a852);
-    printf(" - Decrease text size. Clears screen after change.");
+    call_sys_drawWithColor(" zoomOut\n", 0x32a852);
+    printf(" - Decrease text size. Clears screen after change.\n");
   
 
-    call_sys_drawWithColor(" registers", 0x32a852);
-    printf(" - View the registers in use after pressing ',' .");
+    call_sys_drawWithColor(" registers\n", 0x32a852);
+    printf(" - View the registers in use after pressing ',' .\n");
 
-    call_sys_drawWithColor(" itba", 0x32a852);
-    printf(" - We'll show you ITBA's logo after execution.");
+    call_sys_drawWithColor(" itba\n", 0x32a852);
+    printf(" - We'll show you ITBA's logo after execution.\n");
  
 
-    call_sys_drawWithColor(" EXCEPTIONS", 0xc70e24);
+    call_sys_drawWithColor(" EXCEPTIONS\n", 0xc70e24);
     call_sys_commandEnter();
 
-    call_sys_drawWithColor(" invalidOpcode", 0x32a852);
-    printf(" - Indicates an invalid operation.");
+    call_sys_drawWithColor(" invalidOpcode\n", 0x32a852);
+    printf(" - Indicates an invalid operation.\n");
    
-    call_sys_drawWithColor(" div0", 0x32a852);
-    printf(" - Signals division by zero.");
+    call_sys_drawWithColor(" div0\n", 0x32a852);
+    printf(" - Signals division by zero.\n");
 
-    printf(" TEST:");
+    printf(" TEST:\n");
 
-    call_sys_drawWithColor(" testprio", 0x32a852);
-    printf(" - Executes the memory manager test.");
+    call_sys_drawWithColor(" testprio\n", 0x32a852);
+    printf(" - Executes the memory manager test.\n");
 
-    call_sys_drawWithColor(" testmm <MAX_MERMORY>", 0x32a852);
-    printf(" - Executes the memory manager test. Pass the max memory number as an argument.");
+    call_sys_drawWithColor(" testmm <MAX_MERMORY>\n", 0x32a852);
+    printf(" - Executes the memory manager test. Pass the max memory number as an argument.\n");
 
-    call_sys_drawWithColor(" testprocess <MAX_PROCESSES>", 0x32a852);
-    printf(" - Executes the memory manager test. Pass the max number of processes as an argument.");
+    call_sys_drawWithColor(" testprocess <MAX_PROCESSES>\n", 0x32a852);
+    printf(" - Executes the memory manager test. Pass the max number of processes as an argument.\n");
 
-    call_sys_drawWithColor(" testsync <ITERATIONS> <SEM_VALUE>", 0x32a852);
-    printf(" - Executes the synchronization test. Pass the max number of iterations as the first argument and set the use of semaphores as the second.");
+    call_sys_drawWithColor(" testsync <ITERATIONS> <SEM_VALUE>\n", 0x32a852);
+    printf(" - Executes the synchronization test. Pass the max number of iterations as the first argument and set the use of semaphores as the second.\n");
 
 
-    call_sys_drawWithColor(" ps", 0x32a852);
-    printf(" - Lists all active processes and their statuses.");
+    call_sys_drawWithColor(" ps\n", 0x32a852);
+    printf(" - Lists all active processes and their statuses.\n");
 
-    call_sys_drawWithColor(" kill <PID>", 0x32a852);
-    printf(" - Kill process. Pass the PID as an argument.");
+    call_sys_drawWithColor(" kill <PID>\n", 0x32a852);
+    printf(" - Kill process. Pass the PID as an argument.\n");
 }
 
 void div0() {
