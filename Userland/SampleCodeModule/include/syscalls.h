@@ -50,7 +50,7 @@ extern int64_t call_sys_sem_post(char *sem_id);
 extern int64_t call_sys_sem_close(char *sem_id);
 
 extern int16_t call_sys_get_pipe_fd();
-extern int16_t call_sys_open_pipe(int id, char mode);
+extern int16_t call_sys_open_pipe(int id, char mode, int pid);
 extern int16_t call_sys_close_pipe(uint16_t fd);
 extern int16_t call_sys_write_pipe(uint16_t fd, char *buffer, uint16_t *count);
 extern int16_t call_sys_read_pipe(uint16_t fd, char *buffer, uint16_t *count);

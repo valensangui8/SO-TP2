@@ -81,7 +81,7 @@ int16_t get_pipe_fd() {
     return -1;
 }
 
-static int16_t open_pipe_pid(int id, char mode, int16_t pid) {
+int16_t open_pipe(int id, char mode, int pid) {
     Pipe *pipe = get_pipe(id);
     if (pipe == NULL) {
         drawWithColor("ERROR: Pipe not found", 0xFF0000);
@@ -92,22 +92,18 @@ static int16_t open_pipe_pid(int id, char mode, int16_t pid) {
             drawWithColor("ERROR: Pipe already in use", 0xFF0000);
             return -1;
         }
-        pipe->output_pid = 4;
+        pipe->output_pid = pid;
     } else if (mode == 'w') {
         if (pipe->input_pid != -1) {
             drawWithColor("ERROR: Pipe already in use", 0xFF0000);
             return -1;
         }
-        pipe->input_pid = 3;
+        pipe->input_pid = pid;
     } else {
         drawWithColor("ERROR: Invalid mode", 0xFF0000);
         return -1;
     }
     return id;
-}
-
-int16_t open_pipe(int id, char mode) {
-    return open_pipe_pid(id, mode, get_pid());
 }
 
 static void free_pipe(Pipe *pipe) {
@@ -189,10 +185,10 @@ int32_t read_pipe(uint16_t fd, char *buffer, uint32_t *count) {
         return -1;
     }
 
-    int i = 0;
-    if ( pipe->buffer[pipe->read_index] != pipe->buffer[pipe->write_index] ) {
-        sem_wait(pipe->readable);
-        buffer[0] = pipe->buffer[pipe->read_index];
+    sem_wait(pipe->readable);
+    int write = pipe->buffer[pipe->write_index];
+    if ( pipe->buffer[pipe->read_index] !=  write ) {
+        *buffer = pipe->buffer[pipe->read_index];
         pipe->read_index = (pipe->read_index + 1) % PIPE_SIZE;
         (*count)++;
     }

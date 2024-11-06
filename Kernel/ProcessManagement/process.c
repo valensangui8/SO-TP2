@@ -26,7 +26,7 @@ void process_function(main_function rip, char **argv, uint64_t argc) {
 static void assign_fd(PCBT *process, int16_t index, int16_t fd, char mode){
 	process->fds[index]= fd;
 	if(fd>=BUILT_IN_FD){
-		open_pipe(fd, mode);
+		open_pipe(fd, mode, process->pid);
 	}
 }
 
