@@ -4,15 +4,13 @@
 #include <stdint.h>
 #include <commands.h>
 #include <stddef.h>
+#include <Phylo.h>
+#include <myStdio.h>
 
-#define COMMANDS 24
+#define COMMANDS 25
 #define FOREGROUND 1
 #define BACKGROUND !FOREGROUND
 
-#define DEV_NULL -1
-#define STDIN 0
-#define STDOUT 1
-#define STDERR 2
 
 typedef enum {VOID = 0, PROCESS_NO_PARAMS, PROCESS_PARAMS, FUNC_PARAMS} Type_t;
 

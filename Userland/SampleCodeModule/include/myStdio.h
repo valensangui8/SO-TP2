@@ -8,6 +8,10 @@
 
 
 #define EOF (-1)
+#define DEV_NULL -1
+#define STDIN 0
+#define STDOUT 1
+#define STDERR 2
 
 char getChar();
 int strcmp(const char * s1, const char * s2);

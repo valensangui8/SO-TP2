@@ -36,7 +36,7 @@ extern void call_sys_list_processes_state(int *pids, char states[][10], uint64_t
 
 extern int64_t call_sys_get_pid();
 extern int64_t call_sys_get_ppid();
-extern int64_t call_sys_wait_children(unsigned int ppid);
+extern int64_t call_sys_wait_children(unsigned int pid);
 extern void call_sys_halt();
 
 extern void *call_sys_alloc_memory(uint64_t size);

@@ -306,12 +306,13 @@ void get_memory_info(){
     call_sys_draw_int(free);
     call_sys_drawWord("KB -");
     call_sys_drawWord(" Allocated: ");
-    //allocated = allocated / 1024;
+    allocated = allocated / 1024;
     call_sys_draw_int(allocated);
     call_sys_drawWord("KB");
     call_sys_drawWord("- Total: ");
     total = total / 1024;
     call_sys_draw_int(total);
+    call_sys_drawWord("KB");
 }
 
 static void text_process() {
