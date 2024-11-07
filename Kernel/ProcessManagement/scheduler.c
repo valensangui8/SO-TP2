@@ -172,27 +172,20 @@ void *scheduler(void *stack_pointer) {
     return current_process->stack_pointer;
 }
 
-void list_processes_state() {
+void list_processes_state(int *pids, char states[][10], uint64_t *rsps, uint64_t *rbps, char commands[][30], int *process_count) {
 	SchedulerInfo scheduler = get_scheduler();
-	drawWord("STAT - T: Blocked - S: Seady  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Background - s: Session leader");
-	commandEnter();
-	commandEnter();
-	drawWord("PID        STAT          RSP           RBP         COMMAND");
-	commandEnter();
+	int count = 0;
 	for (int i = 0; i < MAX_PROCESS; i++) {
 		if(scheduler->processes[i].state != DEAD){
-			drawInt(scheduler->processes[i].pid);
-			drawWord("        ");
-			drawWord(process_state(scheduler->processes[i]));
-			drawWord("        ");
-			drawHex((uint64_t) scheduler->processes[i].stack_pointer);
-			drawWord("        ");
-			drawHex((uint64_t) scheduler->processes[i].stack_base);
-			drawWord("        ");
-			drawWord(scheduler->processes[i].name);
-			commandEnter();
+			pids[count] = scheduler->processes[i].pid;
+            my_strcpy(states[count], process_state(scheduler->processes[i]));
+            rsps[count] = (uint64_t) scheduler->processes[i].stack_pointer;
+            rbps[count] = (uint64_t) scheduler->processes[i].stack_base;
+            my_strncpy(commands[count], scheduler->processes[i].name, sizeof(scheduler->processes[i].name) - 1);
+            count++;
 		}
 	}
+	*process_count = count;
 }
 
 uint64_t kill_process(unsigned int pid) {

@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-
 extern void call_sys_drawWord(char *word);
 extern void call_sys_error(char *word, int fd);
 extern void call_sys_read(char *buf, uint32_t count, uint32_t *size);
@@ -32,7 +31,7 @@ extern uint16_t call_sys_unblock_process(unsigned int pid);
 extern void call_sys_yield();
 extern void call_sys_process_status(unsigned int pid);
 extern uint64_t call_sys_create_process(char *name, unsigned int priority, char *argv[], int argc, void *rip, int16_t fds[]);
-extern void call_sys_list_processes_state();
+extern void call_sys_list_processes_state(int *pids, char states[][10], uint64_t *rsps, uint64_t *rbps, char commands[][30], int *process_count);
 
 
 extern int64_t call_sys_get_pid();

@@ -198,7 +198,24 @@ int test_prio_user(int16_t fds[]){
 }
 
 void ps(){
-    call_sys_list_processes_state();
+    int pids[MAX_PROCESS];
+    char states[MAX_PROCESS][10];
+    uint64_t rsps[MAX_PROCESS];
+    uint64_t rbps[MAX_PROCESS];
+    char commands[MAX_PROCESS][30];
+    int process_count = 0;
+
+    call_sys_list_processes_state(pids, states, rsps, rbps, commands, &process_count);
+
+    printf("\nSTATE: S = Ready, T = Blocked, R = Running, Z = Zombie \t PRIORITY LEVELS: N = Low, M = Medium, H = High, < = Very High\n");
+    printf("BACKGROUND: +   \t  SESSION LEADER: s\n\n");
+
+    printf("PID        STAT          RSP           RBP         COMMAND\n");
+    printf("------------------------------------------------------------\n");
+
+    for (int i = 0; i < process_count; i++) {
+        printf("%d           %s       %p      %p       %s\n", pids[i], states[i], rsps[i], rbps[i], commands[i]);
+    }
 }
 
 void kill_process(int argc, char **argv) {
@@ -289,8 +306,7 @@ void get_memory_info(){
     call_sys_draw_int(free);
     call_sys_drawWord("KB -");
     call_sys_drawWord(" Allocated: ");
-    allocated = allocated / 1024;
-    // allocated = allocated / 2048;
+    //allocated = allocated / 1024;
     call_sys_draw_int(allocated);
     call_sys_drawWord("KB");
     call_sys_drawWord("- Total: ");

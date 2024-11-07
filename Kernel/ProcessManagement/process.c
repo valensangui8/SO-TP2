@@ -98,11 +98,19 @@ char *process_state(PCBT process) {
 			my_strcat(status, "UNKNOWN");
 			return status;
 	}
-	if (process.priority == PRIORITY4) {
-		my_strcat(status, "<"); 
-	}
-	else if (process.priority == PRIORITY1) {
-		my_strcat(status, "N"); 
+	switch(process.priority) {
+		case PRIORITY3:
+			my_strcat(status, "H");
+			break;
+		case PRIORITY2:
+			my_strcat(status, "M");
+			break;
+		case PRIORITY4:
+			my_strcat(status, "<");
+			break;
+		case PRIORITY1:
+			my_strcat(status, "N");
+			break;
 	}
 	if (process.fds[STDIN] == DEV_NULL) { // Background
 		my_strcat(status, "+"); 

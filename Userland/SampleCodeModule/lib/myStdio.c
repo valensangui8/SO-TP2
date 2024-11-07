@@ -47,6 +47,10 @@ void printf(char * fmt, ...){
                 break;
             case 's':
                 index += strcpy(toPrint+index,va_arg(variables,char *));
+                break;
+            case 'p':
+                index += hexToString(va_arg(variables,uint64_t),toPrint+index);
+                break;
             default:
                 break;
             }
@@ -93,6 +97,36 @@ int intToString(int num, char *toPrint){
         toPrint[i] = '-';
         i++;
     }
+
+    for (j = j - 1; j >= 0; j--) {
+        toPrint[i] = aux[j];
+        i++;
+    }
+    toPrint[i] = '\0';
+
+    return i;
+}
+
+int hexToString(uint64_t num, char *toPrint) {
+    char hexa[16] = "0123456789ABCDEF";
+    char aux[16];
+    int i = 0, j = 0;
+
+    if (num == 0) {
+        toPrint[i] = '0';
+        i++;
+    }
+
+    while (num != 0) {
+        aux[j] = hexa[num % 16];
+        num = num / 16;
+        j++;
+    }
+
+    toPrint[i] = '0';
+    i++;
+    toPrint[i] = 'x';
+    i++;
 
     for (j = j - 1; j >= 0; j--) {
         toPrint[i] = aux[j];

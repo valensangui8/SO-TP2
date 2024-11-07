@@ -17,6 +17,7 @@ void puts(char * buffer);
 void putchar(char c);
 
 int intToString(int num, char *str);
+int hexToString(uint64_t num, char *toPrint);
 char * strtok(char * str, const char * delim);
 char *my_itoa(int num);
 int my_atoi(char *str);

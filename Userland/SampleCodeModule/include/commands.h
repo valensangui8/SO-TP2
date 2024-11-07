@@ -16,6 +16,7 @@
 #define DAY     0x7
 #define MONTH   0x8
 #define YEAR    0x9
+#define MAX_PROCESS 20
 
 void date();
 

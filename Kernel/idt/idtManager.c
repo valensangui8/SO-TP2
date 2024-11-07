@@ -26,7 +26,7 @@ static uint16_t sys_unblock_process(unsigned int pid);
 static void sys_yield();
 static void sys_process_status(unsigned int pid);
 static uint64_t sys_create_process(char *name, Priority priority, char *argv[], int argc, main_function rip, int16_t fds[]);
-static void sys_list_processes_state();
+static void sys_list_processes_state(int *pids, char states[][10], uint64_t *rsps, uint64_t *rbps, char commands[][30], int *process_count);
 
 static int64_t sys_get_pid();
 static int64_t sys_get_ppid();
@@ -133,7 +133,7 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 			return sys_create_process((char *) rdi, (Priority) rsi, (char**) rdx, (int) rcx, (main_function) r8, (int16_t *) r9);
 		
 		case 24:
-			sys_list_processes_state();
+			sys_list_processes_state((int *) rdi, (char **) rsi, (uint64_t *) rdx, (uint64_t *) rcx, (char **) r8, (int *) r9);
 			break;
 		case 25:
 			return sys_get_pid();
@@ -311,8 +311,8 @@ uint64_t sys_create_process(char *name, Priority priority, char *argv[], int arg
 	return pid;
 }
 
-void sys_list_processes_state() {
-	list_processes_state();
+void sys_list_processes_state(int *pids, char states[][10], uint64_t *rsps, uint64_t *rbps, char commands[][30], int *process_count) {
+	list_processes_state(pids, states, rsps, rbps, commands, process_count);
 }
 
 int64_t sys_wait_children(unsigned int ppid) {
