@@ -13,6 +13,8 @@
 #define QUIT 'q'
 #define THINKING '.'
 #define EATING 'E'
+#define HUNGRY 'H'
+#define EATING_TIME = 1;
 
 // Function to initialize the philosophers and start the table manager process
 int initialize_philosophers();

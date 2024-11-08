@@ -51,6 +51,9 @@ void printf(char * fmt, ...){
             case 'p':
                 index += hexToString(va_arg(variables,uint64_t),toPrint+index);
                 break;
+            case 'c':
+                toPrint[index++]=va_arg(variables,int);
+                break;
             default:
                 break;
             }

@@ -113,7 +113,6 @@ PCBT *update_quantum(void *stack_pointer) {
 		&& current_process->state != ZOMBIE 
 		&& current_process->state != DEAD) {
 		scheduler->foreground_pid = current_process->pid;
-		block_process(current_process->ppid);
 	}
 
 	if(scheduler->kill_foreground && scheduler->foreground_pid == current_process->pid){
@@ -219,7 +218,6 @@ uint64_t kill_process(unsigned int pid) {
 			}
 			if(pid == scheduler->foreground_pid){
 				scheduler->foreground_pid = 0;
-				unblock_process(parent->pid);
 			}
 			if(scheduler->current_pid == pid){
 				yield();
@@ -227,7 +225,6 @@ uint64_t kill_process(unsigned int pid) {
 			return 1;
 		}
 	}
-	
 	
 	return 0;
 }

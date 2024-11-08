@@ -139,6 +139,9 @@ void drawChar(char character) {
 	else if(character == '\n'){
 		commandEnter();
 		return;
+	}else if(character == '\b'){
+		delete();
+		return;
 	} else if(character == EOF){
 		return;
 	}

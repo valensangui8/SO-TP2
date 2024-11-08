@@ -245,20 +245,29 @@ int cat(int16_t fds[], int argc, char **argv){
 
 static void wc_process() {
     char c;
-    int line_count = 0;
+    int line_count = 0, word_count = 0, char_count = 0, in_word = 0;
 
     while((c = getChar()) != EOF){
         call_sys_drawChar(c);
         if(c == '\n'){
             line_count++;
         }
+        if(!in_word && c != ' ' && c != '\n' && c != '\t'){
+            in_word = 1;
+            word_count++;
+        }else{
+            in_word = 0;
+        }
+        char_count++;
     }
 
-    printf("Lines: %d", line_count);
+    printf("Lines: %d  Word: %d  Characters: %d", line_count, word_count, char_count);
 }
 
 int wc(int16_t fds[]){
-    return call_sys_create_process("wc", 4, NULL, 0, &wc_process, fds);
+    int pid = call_sys_create_process("wc", 4, NULL, 0, &wc_process, fds);
+    call_sys_wait_children(pid);
+    return pid;
 }
 
 static void filter_process() {
@@ -320,7 +329,6 @@ static void text_process() {
     call_sys_drawWord("I'm going to sleep for 5 seconds\n");
     call_sys_drawWord("I woke up\n");
     call_sys_drawChar(EOF);
-    // call_sys_drawWord(EOF);
 }
 
 int text(int16_t fds[]){
