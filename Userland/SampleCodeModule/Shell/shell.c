@@ -29,7 +29,7 @@ Command commandsList[COMMANDS] = {
     {"ps", .function_void = ps, VOID},
     {"kill", .function_params = kill_process, FUNC_PARAMS},
     {"testsync", .process_params = test_sync_user, PROCESS_PARAMS},
-    {"cat", .process_params = cat, PROCESS_PARAMS},
+    {"cat", .process_no_params = cat, PROCESS_NO_PARAMS},
     {"filter", .process_no_params = filter, PROCESS_NO_PARAMS},
     {"wc", .process_no_params = wc, PROCESS_NO_PARAMS},
     {"loop", .process_params = loop, PROCESS_PARAMS},
@@ -110,7 +110,7 @@ void executeCommand(int index, char * flag, char * command, int argc, char **arg
     }
     call_sys_commandEnter();
     char HeightPassed = 0;
-    call_sys_checkHeight(&HeightPassed,index);
+    call_sys_checkHeight(&HeightPassed, index);
     if(HeightPassed == 1){
         call_sys_clear();
     }
@@ -124,11 +124,11 @@ void executeCommand(int index, char * flag, char * command, int argc, char **arg
                 return;
             }
             *pid = commandsList[index].process_params(fds, argc, argv);
-            call_sys_commandEnter();
+            
             break;
         case PROCESS_NO_PARAMS:
             *pid = commandsList[index].process_no_params(fds);
-            call_sys_commandEnter();
+            
             break;
         case FUNC_PARAMS:
             commandsList[index].function_params(argc, argv);

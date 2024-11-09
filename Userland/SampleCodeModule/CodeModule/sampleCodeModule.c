@@ -84,7 +84,7 @@ void terminal(){
 			buffer[buffer_pos] = '\0';
 		}
 		else{
-			buffer[buffer_pos] = '\n';
+			buffer[buffer_pos] = '\0';
 			call_sys_drawChar('\n');
 		}
 

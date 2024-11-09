@@ -391,7 +391,7 @@ void delete() {
 
 // function to check if the command is too long
 void checkHeight(char *HeightPassed, int command) {
-	if (y + commands[command] * 16 * scale >= VBE_mode_info->height) {
+	if (command < 10 && y + commands[command] * 16 * scale >= VBE_mode_info->height) {
 		*HeightPassed = 1;
 	}
 	else {

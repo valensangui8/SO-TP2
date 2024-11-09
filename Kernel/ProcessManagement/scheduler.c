@@ -153,8 +153,7 @@ PCBT *update_quantum(void *stack_pointer) {
 
 void *scheduler(void *stack_pointer) {
     SchedulerInfo scheduler = get_scheduler();
-	
-	
+		
     if (!initialized) {
         return stack_pointer;
     }

@@ -44,7 +44,7 @@ void ps();
 
 void kill_process(int argc, char **argv);
 
-int cat(int16_t fds[], int argc, char **argv);
+int cat(int16_t fds[]);
 
 int wc(int16_t fds[]);
 

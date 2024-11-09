@@ -28,8 +28,11 @@ SemaphoresADT get_semaphoresADT() {
 
 MySem_t get_semaphore(char *sem_id) {
     SemaphoresADT semaphores = get_semaphoresADT();
+    drawHex((uint64_t) semaphores);
+    
     for (int i = 0; i < MAX_SEMAPHORE; i++) {
         if (semaphores->semaphores[i] != NULL && my_strcmp(semaphores->semaphores[i]->name, sem_id) == 0) {
+
             return semaphores->semaphores[i];
         }
     }
@@ -91,6 +94,8 @@ int64_t sem_open(char *sem_id, uint64_t initial_value) {
     }
 
     int id = create_sem(sem_id, initial_value);
+    // drawInt(id);
+    // commandEnter();
     return id;
 }
 
