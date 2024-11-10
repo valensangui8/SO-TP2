@@ -98,7 +98,7 @@ int64_t sem_wait(char *sem_id) {
     }
     acquire(&(sem->mutex));
     while(sem->value <= 0){
-        append_element(sem->waiting_processes, (void *) get_pid());
+        append_element(sem->waiting_processes, (void *)(uintptr_t) get_pid());
         block_process(get_pid());
         release(&(sem->mutex));
         yield();
@@ -119,8 +119,8 @@ int64_t sem_post(char *sem_id) {
     semaphoresADT->semaphores[sem->id]->value += 1;
     TNode * next_process = get_first(sem->waiting_processes);
     if(next_process != NULL){
-        delete_element(sem->waiting_processes, (void *) get_pid());
-        unblock_process( next_process->data);
+        delete_element(sem->waiting_processes, (void *)(uintptr_t) get_pid());
+        unblock_process( (unsigned int)(uintptr_t) next_process->data);
     }
     release(&(sem->mutex));
     return 0;

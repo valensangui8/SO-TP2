@@ -4,7 +4,6 @@
 #include "videoDriver.h"
 #include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <utils.h>
 
 #define BLOCK_SIZE 4096

@@ -80,7 +80,7 @@ typedef struct vbe_mode_info_structure *VBEInfoPtr;
 VBEInfoPtr VBE_mode_info = (VBEInfoPtr) 0x0000000000005C00;
 
 void put_pixel(uint32_t hexColor, uint64_t x, uint64_t y) {
-	uint8_t *framebuffer = (uint8_t *) VBE_mode_info->framebuffer;
+	uint8_t *framebuffer = (uint8_t *)(uintptr_t) VBE_mode_info->framebuffer;
 	uint64_t offset = (x * ((VBE_mode_info->bpp) / 8)) + (y * VBE_mode_info->pitch);
 	framebuffer[offset] = (hexColor) & 0xFF;
 	framebuffer[offset + 1] = (hexColor >> 8) & 0xFF;
@@ -130,7 +130,7 @@ static void uint64_hexa_to_string(uint64_t valorHexa, char *hexaString) {
 
 // draw a character
 void draw_char(char character) {
-	char *bitMapChar = font[character];
+	unsigned char *bitMapChar = font[(unsigned char) character];
 	draw_square(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
 	if(character == '\t'){
 		x += TAB_SIZE * 8 * scale;

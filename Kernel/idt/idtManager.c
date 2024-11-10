@@ -133,7 +133,7 @@ uint64_t idt_manager(uint64_t rax, uint64_t *otherRegisters) {
 			return sys_create_process((char *) rdi, (Priority) rsi, (char**) rdx, (int) rcx, (main_function) r8, (int16_t *) r9);
 		
 		case 24:
-			sys_list_processes_state((int *) rdi, (char **) rsi, (uint64_t *) rdx, (uint64_t *) rcx, (char **) r8, (int *) r9);
+			sys_list_processes_state((int *) rdi, (char (*)[10]) rsi, (uint64_t *) rdx, (uint64_t *) rcx, (char (*)[30]) r8, (int *) r9);
 			break;
 		case 25:
 			return sys_get_pid();
