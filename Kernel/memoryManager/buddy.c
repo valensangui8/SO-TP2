@@ -229,6 +229,14 @@ void get_memory_info_buddy(char *type, uint64_t *free, uint64_t *allocated, uint
         }
         *free += level_free;
     }
+    
+    BuddyBlock *block = (BuddyBlock *)memory->start_address;
+    while ((uint64_t)block < (uint64_t)memory->start_address + memory->size) {
+        if (block->is_free) {
+            *free += (1 << block->level);
+        }
+        block = (BuddyBlock *)((uint64_t)block + (1 << block->level));
+    }
 
     *allocated = memory->size - *free;
     *total = memory->size;

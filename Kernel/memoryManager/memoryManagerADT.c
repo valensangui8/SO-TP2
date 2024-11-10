@@ -86,7 +86,7 @@ static MemoryManagerADT get_memory_manager() {
 
 void get_memory_info_ADT(char *type, uint64_t *free, uint64_t *allocated, uint64_t *total) {
     MemoryManagerADT memory = get_memory_manager();
-    my_strcpy(type, "Block memory");
+    my_strcpy(type, "Block Memory");
 
     *free = free_blocks_remaining(&(memory->info)) * BLOCK_SIZE;
 
