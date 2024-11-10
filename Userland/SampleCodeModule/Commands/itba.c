@@ -55,7 +55,7 @@ static char * itbaLogo[] = {
  void printLogo(){
     call_sys_clear();
     for(int i =0; i < ITBA_DIM; i++){
-        call_sys_drawWord(itbaLogo[i]);
-        call_sys_commandEnter();
+        call_sys_draw_word(itbaLogo[i]);
+        call_sys_command_enter();
     }
  }

@@ -3,25 +3,25 @@
 
 #include <stdint.h>
 
-extern void call_sys_drawWord(char *word);
+extern void call_sys_draw_word(char *word);
 extern void call_sys_error(char *word, int fd);
 extern void call_sys_read(char *buf, uint32_t count, uint32_t *size);
-extern void call_sys_drawChar(char letter);
+extern void call_sys_draw_char(char letter);
 extern void call_sys_delete();
 extern void call_sys_enter();
-extern void call_sys_drawError(char *command);
-extern void call_sys_commandEnter();
-extern void call_sys_zoomIn();
-extern void call_sys_zoomOut();
+extern void call_sys_draw_error(char *command);
+extern void call_sys_command_enter();
+extern void call_sys_zoom_in();
+extern void call_sys_zoom_out();
 extern int call_sys_get_date(int rax);
 extern void call_sys_clear();
-extern void call_sys_getScale(int *scale);
-extern void call_sys_drawWithColor(char *word, uint32_t hexColor);
-extern void call_sys_drawRegisters();
+extern void call_sys_get_scale(int *scale);
+extern void call_sys_draw_with_color(char *word, uint32_t hexColor);
+extern void call_sys_draw_registers();
 extern void call_sys_draw(uint32_t x, uint32_t y, uint32_t size, uint32_t color);
 extern void call_sys_sleep(unsigned long s);
 extern void call_sys_sound(uint32_t nFrequence, uint32_t time);
-extern void call_sys_checkHeight(char *HeightPassed, int command);
+extern void call_sys_check_height(char *HeightPassed, int command);
 extern void call_sys_draw_int(int number);
 
 extern uint64_t call_sys_kill_process(unsigned int pid);

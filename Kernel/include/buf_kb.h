@@ -12,11 +12,11 @@ struct buff_kb {
 	char buffer[SIZE];
 };
 
-int getPos();
+int get_pos();
 int newPos(int newPos);
-char *getAddress();
-char getCharAt(int write_pos);
-void setReadPos(int read_pos);
-int getReadPos();
+char *get_address();
+char get_charAt(int write_pos);
+void set_read_pos(int read_pos);
+int get_read_pos();
 
 #endif

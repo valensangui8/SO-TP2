@@ -1,6 +1,6 @@
 #include <myStdio.h>
 
-char getChar(){
+char get_char(){
     char c;
     uint32_t size = 0;
     while(size == 0){
@@ -44,13 +44,13 @@ void printf(char * fmt, ...){
             fmt++;
             switch (*fmt){
             case 'd':
-                index += intToString(va_arg(variables,int),toPrint+index);
+                index += int_to_string(va_arg(variables,int),toPrint+index);
                 break;
             case 's':
                 index += strcpy(toPrint+index,va_arg(variables,char *));
                 break;
             case 'p':
-                index += hexToString(va_arg(variables,uint64_t),toPrint+index);
+                index += hex_to_string(va_arg(variables,uint64_t),toPrint+index);
                 break;
             case 'c':
                 toPrint[index++]=va_arg(variables,int);
@@ -62,21 +62,21 @@ void printf(char * fmt, ...){
         } else toPrint[index++]=*fmt++; 
     }
     toPrint[index]=0;
-    call_sys_drawWord(toPrint);
+    call_sys_draw_word(toPrint);
     // puts(toPrint);
     va_end(variables);
 }
 
 void puts(char * buffer){
-    call_sys_drawWord(buffer);
-    call_sys_commandEnter();
+    call_sys_draw_word(buffer);
+    call_sys_command_enter();
 }
 
-void putchar(char c) {
-    call_sys_drawChar(c);
+void put_char(char c) {
+    call_sys_draw_char(c);
 }
 
-int intToString(int num, char *toPrint){
+int int_to_string(int num, char *toPrint){
     int i=0, j=0;
     int negativo = 0;
     char aux[10]; 
@@ -111,7 +111,7 @@ int intToString(int num, char *toPrint){
     return i;
 }
 
-int hexToString(uint64_t num, char *toPrint) {
+int hex_to_string(uint64_t num, char *toPrint) {
     char hexa[16] = "0123456789ABCDEF";
     char aux[16];
     int i = 0, j = 0;

@@ -20,9 +20,9 @@
 
 void date();
 
-void zoomIn();
+void zoom_in();
 
-void zoomOut();
+void zoom_out();
 
 void clear();
 

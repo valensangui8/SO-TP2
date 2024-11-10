@@ -32,8 +32,8 @@ void picMasterMask(uint8_t mask);
 
 void picSlaveMask(uint8_t mask);
 
-void saveState(void);
-void printRegAsm(void);
+void save_state(void);
+void print_reg_asm(void);
 
 void haltcpu(void);
 

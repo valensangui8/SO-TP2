@@ -55,8 +55,8 @@ int64_t test_processes(int argc, char **argv) {
 			p_rqs[rq].pid = call_sys_create_process("endless_loop", PRIORITY1, NULL, 0, &endless_loop, fds);
 		
 			if (p_rqs[rq].pid == -1) {
-				call_sys_drawWord("test_processes: ERROR creating process");
-				call_sys_commandEnter();
+				call_sys_draw_word("test_processes: ERROR creating process");
+				call_sys_command_enter();
 				
 				return -1;
 			}
@@ -72,7 +72,7 @@ int64_t test_processes(int argc, char **argv) {
 					case 0:
 						if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == BLOCKED || p_rqs[rq].state == READY) {
 							if (call_sys_kill_process(p_rqs[rq].pid) == 0) {
-								call_sys_drawWord("test_processes: ERROR Killing process");
+								call_sys_draw_word("test_processes: ERROR Killing process");
 								return -1;
 							}
 							p_rqs[rq].state = DEAD;
@@ -86,8 +86,8 @@ int64_t test_processes(int argc, char **argv) {
 						if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == READY) {
 						
 							if (call_sys_block_process(p_rqs[rq].pid) == 0) {
-								call_sys_drawWord("test_processes: ERROR blocking process");
-								call_sys_commandEnter();
+								call_sys_draw_word("test_processes: ERROR blocking process");
+								call_sys_command_enter();
 								
 								return -1;
 							}
@@ -103,7 +103,7 @@ int64_t test_processes(int argc, char **argv) {
 			for (rq = 0; rq < max_processes; rq++)
 				if (p_rqs[rq].state == BLOCKED && GetUniform(100) % 2) {
 					if (call_sys_unblock_process(p_rqs[rq].pid) == 0) {
-						call_sys_drawWord("test_processes: ERROR unblocking process ");
+						call_sys_draw_word("test_processes: ERROR unblocking process ");
 						return -1;
 					}
 					p_rqs[rq].state = RUNNING;

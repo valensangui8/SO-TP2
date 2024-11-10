@@ -48,14 +48,14 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
   uint64_t i;
   for (i = 0; i < n; i++) {
     if (use_sem){
-      // call_sys_drawWord(" START WAIT ");
+      // call_sys_draw_word(" START WAIT ");
       call_sys_sem_wait(SEM_ID);
-      // call_sys_drawWord(" - STOP WAIT ");
+      // call_sys_draw_word(" - STOP WAIT ");
     }
     slowInc(&global, inc);
     if (use_sem){
       call_sys_sem_post(SEM_ID);
-      // call_sys_drawWord(" POST DONE ");
+      // call_sys_draw_word(" POST DONE ");
     }
   }
   

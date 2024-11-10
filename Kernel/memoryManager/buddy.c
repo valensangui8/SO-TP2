@@ -32,9 +32,9 @@ void init_buddy_system(uint64_t size, void *start_address) {
     memory->max_levels = log2(size);
 
     if(memory->max_levels > MAX_LEVELS){
-        drawWithColor("Error: Size requested is too large", 0xFF0000);
+        draw_with_color("Error: Size requested is too large", 0xFF0000);
     }else if(memory->max_levels < MIN_LEVELS){
-        drawWithColor("Error: Size requested is too small", 0xFF0000);
+        draw_with_color("Error: Size requested is too small", 0xFF0000);
     }
 
     for (int i = 0; i < memory->max_levels; i++) {
@@ -114,13 +114,13 @@ void *alloc_buddy_memory(uint64_t size) {
     if(level < MIN_LEVELS){
         level = MIN_LEVELS;
     } else if(level > MAX_LEVELS){
-        drawWithColor("Error: Size requested is too large", 0xFF0000);
+        draw_with_color("Error: Size requested is too large", 0xFF0000);
         return NULL;
     }
     
     BuddyBlock *block = find_block_buddy(level);
     if(block == NULL){
-        drawWithColor("Error: No available blocks", 0xFF0000);
+        draw_with_color("Error: No available blocks", 0xFF0000);
         return NULL;
     }
 
@@ -204,7 +204,7 @@ void free_buddy_memory(void *ptr) {
     BuddyBlock *block = (BuddyBlock *)((uint64_t)ptr - sizeof(BuddyBlock));
 
     if (block->is_free) {
-        drawWithColor("Error: Double free", 0xFF0000);
+        draw_with_color("Error: Double free", 0xFF0000);
         return;
     }
 

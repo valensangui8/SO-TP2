@@ -22,9 +22,9 @@
 #define BLACK 0x000000
 #define YELLOW 0xFFFF00
 #define ORANGE 0xFFA500
-static void uint64HexaToString(uint64_t valorHexa, char *hexaString);
-static uint64_t binaryToHex(uint64_t binaryNum);
-static void drawLine2(char letter);
+static void uint64_hexa_to_string(uint64_t valorHexa, char *hexaString);
+static uint64_t binary_to_hex(uint64_t binaryNum);
+static void draw_line2(char letter);
 
 static uint32_t characterColor = 0xFFFFFF; // default color white
 //static uint32_t colorVariable = 0;
@@ -79,7 +79,7 @@ typedef struct vbe_mode_info_structure *VBEInfoPtr;
 
 VBEInfoPtr VBE_mode_info = (VBEInfoPtr) 0x0000000000005C00;
 
-void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
+void put_pixel(uint32_t hexColor, uint64_t x, uint64_t y) {
 	uint8_t *framebuffer = (uint8_t *) VBE_mode_info->framebuffer;
 	uint64_t offset = (x * ((VBE_mode_info->bpp) / 8)) + (y * VBE_mode_info->pitch);
 	framebuffer[offset] = (hexColor) & 0xFF;
@@ -90,35 +90,35 @@ void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
 /////////////////DRAW////////////////////
 
 // draws a square with the given color, width, height and position
-void drawSquare(uint32_t hexColor, uint64_t width, uint64_t height, int x, int y) {
+void draw_square(uint32_t hexColor, uint64_t width, uint64_t height, int x, int y) {
 	for (uint64_t i = x; i - x < width; i++) {
 		for (uint64_t j = y; j - y < height; j++) {
-			putPixel(hexColor, i, j);
+			put_pixel(hexColor, i, j);
 		}
 	}
 }
 
 // draws a square with the given color, size and position
 void draw(uint32_t x, uint32_t y, uint32_t size, uint32_t color) {
-	drawSquare(color, size, size, x, y);
+	draw_square(color, size, size, x, y);
 }
 
 // draw registers in the screen
-void drawRegisters(uint64_t value) {
+void draw_registers(uint64_t value) {
 	char buffer[256] = {0};
-	value = binaryToHex(value);
-	uint64HexaToString(value, buffer);
-	drawWord(buffer);
-	commandEnter();
+	value = binary_to_hex(value);
+	uint64_hexa_to_string(value, buffer);
+	draw_word(buffer);
+	command_enter();
 }
 
 // transform a binary number to a hexadecimal number
-static uint64_t binaryToHex(uint64_t binaryNum) {
+static uint64_t binary_to_hex(uint64_t binaryNum) {
 	return binaryNum;
 }
 
 // transform a hexadecimal number to a string
-static void uint64HexaToString(uint64_t valorHexa, char *hexaString) {
+static void uint64_hexa_to_string(uint64_t valorHexa, char *hexaString) {
 	int i;
 	for (i = 15; i >= 0; i--) {
 		uint64_t nibble = (valorHexa >> (i * 4)) & 0xF;
@@ -129,15 +129,15 @@ static void uint64HexaToString(uint64_t valorHexa, char *hexaString) {
 }
 
 // draw a character
-void drawChar(char character) {
+void draw_char(char character) {
 	char *bitMapChar = font[character];
-	drawSquare(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
+	draw_square(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
 	if(character == '\t'){
 		x += TAB_SIZE * 8 * scale;
 		return;
 	}
 	else if(character == '\n'){
-		commandEnter();
+		command_enter();
 		return;
 	}else if(character == '\b'){
 		delete();
@@ -149,7 +149,7 @@ void drawChar(char character) {
 		for (int j = 0; j < WIDTH_FONT * scale; j++) {
 			int bit = (bitMapChar[i / scale] >> (j / scale)) & 1;
 			if (bit) {
-				putPixel(characterColor, x + j, y + i);
+				put_pixel(characterColor, x + j, y + i);
 			}
 		}
 	}
@@ -157,28 +157,28 @@ void drawChar(char character) {
 }
 
 // draw error message after an unavailable command
-void drawError(char *word) {
-	drawSquare(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
-	commandEnter();
+void draw_error(char *word) {
+	draw_square(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
+	command_enter();
 	char *toDraw = "ERROR - command not found: ";
-	drawWord(toDraw);
-	drawWord(word);
+	draw_word(toDraw);
+	draw_word(word);
 	enter();
 }
 
 // function to draw a word
-void drawWord(char *word) {
+void draw_word(char *word) {
 	int i = 0;
 	while (word[i] != 0) {
-		drawLine2(word[i]);
+		draw_line2(word[i]);
 		i++;
 	}
 }
 
 // function to draw a line modified without updating cursor
-static void drawLine2(char letter) {
+static void draw_line2(char letter) {
 	if (x + 8 * scale >= VBE_mode_info->width) {
-		drawSquare(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
+		draw_square(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
 		x = 0;
 		y += 16 * scale;
 		flag_enter = 0;
@@ -189,28 +189,28 @@ static void drawLine2(char letter) {
 		flag_enter = 1;
 		return;
 	}
-	drawChar(letter);
+	draw_char(letter);
 }
 
 // function to draw a line when a character reaches the end of the X coordinates
-void drawLine(char letter) {
+void draw_line(char letter) {
 	if (x + 8 * scale >= VBE_mode_info->width) {
-		drawSquare(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
+		draw_square(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
 		x = 0;
 		y += 16 * scale;
 		flag_enter = 0;
 	}
 	if (y + 16 * scale >= VBE_mode_info->height) {
 		y = 0;
-		clearScreen();
+		clear_screen();
 		flag_enter = 1;
 		return;
 	}
-	drawChar(letter);
-	updateCursor();
+	draw_char(letter);
+	update_cursor();
 }
 
-void drawInt(int num) {
+void draw_int(int num) {
 	char buffer[256] = {0};
 	int i = 0;
 	if (num == 0) {
@@ -230,10 +230,10 @@ void drawInt(int num) {
 		i--;
 		j++;
 	}
-	drawWord(buffer);
+	draw_word(buffer);
 }
 
-void drawHex(uint64_t value) {
+void draw_hex(uint64_t value) {
 	char buffer[256] = {0};
 	int i = 0;
 	// Agregar el prefijo "0x"
@@ -261,37 +261,37 @@ void drawHex(uint64_t value) {
 		end--;
 		start++;
 	}
-	drawWord(buffer);
+	draw_word(buffer);
 }
 
 // function to update the cursor position
-void updateCursor() {
-	drawSquare(characterColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
+void update_cursor() {
+	draw_square(characterColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
 }
 
 // function to draw a word with a given color
-void drawWithColor(char *word, uint32_t hexColor) {
+void draw_with_color(char *word, uint32_t hexColor) {
 	characterColor = hexColor;
-	drawWord(word);
+	draw_word(word);
 	characterColor = WHITE;
 }
 
 /////////////////CLEAR////////////////////
 
 // function to clear the screen, printing the initial message
-void clearScreen() {
-	drawSquare(backgroundColor, VBE_mode_info->width, VBE_mode_info->height, 0, 0);
+void clear_screen() {
+	draw_square(backgroundColor, VBE_mode_info->width, VBE_mode_info->height, 0, 0);
 	x = 0;
 	y = 0;
-	drawWord("TP-SO-Grupo-10$");
+	draw_word("TP-SO-Grupo-10$");
 }
 
 // function to clear the screen entirely
 void clear() {
-	drawSquare(backgroundColor, VBE_mode_info->width, VBE_mode_info->height, 0, 0);
+	draw_square(backgroundColor, VBE_mode_info->width, VBE_mode_info->height, 0, 0);
 	x = 0;
 	y = 0;
-	updateAfterCommand();
+	update_after_command();
 }
 
 /////////////////INITIALIZE////////////////////
@@ -301,11 +301,11 @@ void start() {
 	scale = 3;
 	x = 435;
 	y = 350;
-	drawWord("voidOS");
+	draw_word("voidOS");
 	scale = 1;
 	x -= 100;
 	y += 50;
-	drawWord("Loading...");
+	draw_word("Loading...");
 }
 
 // function to initialize the screen
@@ -313,28 +313,28 @@ void initialize() {
 	scale = 1;
 	x = 0;
 	y = 0;
-	drawWord("TP-SO-Grupo-10$ ");
-	updateCursor();
+	draw_word("TP-SO-Grupo-10$ ");
+	update_cursor();
 }
 
 /////////////////ENTER////////////////////
 
 // function to do an enter
 void enter() {
-	drawSquare(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
+	draw_square(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
 	y += 16 * scale;
 	x = 0;
-	drawWord("TP-SO-Grupo-10$");
+	draw_word("TP-SO-Grupo-10$");
 	flag_enter = 1;
 	x += 8 * scale;
-	updateCursor();
+	update_cursor();
 
 	return;
 }
 
 // function to do an enter after a command
-void commandEnter() {
-	drawSquare(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
+void command_enter() {
+	draw_square(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
 	x = 0;
 	y += HEIGHT_FONT * scale;
 }
@@ -342,18 +342,18 @@ void commandEnter() {
 /////////////////SCALE////////////////////
 
 // function to get the scale of the font
-int getScale() {
+int get_scale() {
 	return scale;
 }
 
 // function to increase the scale of the font
-void incScale() {
+void inc_scale() {
 	scale++;
 	clear();
 }
 
 // function to decrease the scale of the font
-void decScale() {
+void dec_scale() {
 	if (scale > 1) {
 		scale--;
 		clear();
@@ -361,7 +361,7 @@ void decScale() {
 }
 
 // function to update the position of the coordinates after a command
-void updateAfterCommand() {
+void update_after_command() {
 	x -= WIDTH_FONT * scale;
 	y -= HEIGHT_FONT * scale;
 }
@@ -374,23 +374,23 @@ void delete() {
 		return;
 	}
 	if (x < WIDTH_FONT * scale) {
-		drawSquare(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y); // borro puntero linea de abajo
+		draw_square(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y); // borro puntero linea de abajo
 		x = VBE_mode_info->width - 2 * (WIDTH_FONT * scale);						// vuelvo a último lugar de la línea en X
 		y -= HEIGHT_FONT * scale;													// vuelvo un renglón para arriba
-		drawSquare(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y); // borro letra de linea arriba der
-		updateCursor();
+		draw_square(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y); // borro letra de linea arriba der
+		update_cursor();
 		return;
 	}
-	drawSquare(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
+	draw_square(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
 	x -= WIDTH_FONT * scale;
-	updateCursor();
+	update_cursor();
 	return;
 }
 
 /////////////////CHECK////////////////////
 
 // function to check if the command is too long
-void checkHeight(char *HeightPassed, int command) {
+void check_height(char *HeightPassed, int command) {
 	if (command < 10 && y + commands[command] * 16 * scale >= VBE_mode_info->height) {
 		*HeightPassed = 1;
 	}

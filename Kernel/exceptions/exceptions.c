@@ -6,24 +6,24 @@
 static void zero_division();
 static void invalid_op();
 
-void exceptionDispatcher(int exception, registerStructT * registers) {
+void exception_dispatcher(int exception, registerStructT * registers) {
 	if (exception == ZERO_EXCEPTION_ID)
 		zero_division();
 	if(exception == INVALID_OP_ID ){
 		invalid_op();
 	}
-	printRegisters(registers);
+	print_registers(registers);
 	enter();
 }
 
 void zero_division() {
-	drawWord("ERROR: division by zero");
-	commandEnter();
+	draw_word("ERROR: division by zero");
+	command_enter();
 	flag_screenShot = 1;
 }
 
 void invalid_op() {
-	drawWord("ERROR: invalid operation");
-	commandEnter();
+	draw_word("ERROR: invalid operation");
+	command_enter();
 	flag_screenShot = 1;
 }

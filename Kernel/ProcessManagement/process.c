@@ -42,7 +42,7 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 
 	process->stack_base = alloc_memory(STACK_SIZE);
 	if (process->stack_base == NULL) {
-		drawWithColor("Error: Could not allocate memory for process", 0xFF0000);
+		draw_with_color("Error: Could not allocate memory for process", 0xFF0000);
         free_memory(process->stack_base);
         return;
     }
@@ -125,23 +125,23 @@ char *process_state(PCBT process) {
 // change to find_process
 void process_status(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
-	commandEnter();
-	drawWord("STAT - T: Blocked - S: Ready  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Background - s: Session leader");
-	commandEnter();
-	drawWord("PID        STAT          RSP           RBP         COMMAND");
-	commandEnter();
+	command_enter();
+	draw_word("STAT - T: Blocked - S: Ready  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Background - s: Session leader");
+	command_enter();
+	draw_word("PID        STAT          RSP           RBP         COMMAND");
+	command_enter();
 	for (int i = 0; i < MAX_PROCESS; i++) {
 		if (scheduler->processes[i].pid == pid) {
-			drawInt(scheduler->processes[i].pid);
-			drawWord("        ");
-			drawWord(process_state(scheduler->processes[i]));
-			drawWord("        ");
-			drawHex((uint64_t) scheduler->processes[i].stack_pointer);
-			drawWord("        ");
-			drawHex((uint64_t) scheduler->processes[i].stack_base);
-			drawWord("        ");
-			drawWord(scheduler->processes[i].name);
-			commandEnter();
+			draw_int(scheduler->processes[i].pid);
+			draw_word("        ");
+			draw_word(process_state(scheduler->processes[i]));
+			draw_word("        ");
+			draw_hex((uint64_t) scheduler->processes[i].stack_pointer);
+			draw_word("        ");
+			draw_hex((uint64_t) scheduler->processes[i].stack_base);
+			draw_word("        ");
+			draw_word(scheduler->processes[i].name);
+			command_enter();
 		}
 	}
 	enter();

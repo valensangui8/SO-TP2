@@ -1,22 +1,22 @@
 #include <commands.h>
 
-void zoomIn(){
+void zoom_in(){
     int scale;
-    call_sys_getScale(&scale);
+    call_sys_get_scale(&scale);
     if(scale == 4){
         printf("Max zoom in reached");
     }else{
-        call_sys_zoomIn();
+        call_sys_zoom_in();
     }
 }
 
-void zoomOut(){
+void zoom_out(){
     int scale;
-    call_sys_getScale(&scale);
+    call_sys_get_scale(&scale);
     if(scale == 1){
         printf("Max zoom out reached");
     }else{
-        call_sys_zoomOut();
+        call_sys_zoom_out();
     }
 }
 
@@ -25,70 +25,70 @@ void clear(){
 }
 
 void help(){
-    call_sys_commandEnter();
+    call_sys_command_enter();
     
     printf("PROGRAMS AVAILABLE FOR USER: \n");
     
-    call_sys_drawWithColor(" help ", 0x32a852);
+    call_sys_draw_with_color(" help ", 0x32a852);
     printf(" - shows the different programs available.\n");
     
-    call_sys_drawWithColor(" date ", 0x32a852);
+    call_sys_draw_with_color(" date ", 0x32a852);
     printf(" - Retrieve the current day and time.\n");
    
-    call_sys_drawWithColor(" eliminator ", 0x32a852);
+    call_sys_draw_with_color(" eliminator ", 0x32a852);
     printf(" - Play the Eliminator game, available for both single-player and two-player modes.\n");
   
-    call_sys_drawWithColor(" clear ", 0x32a852);
+    call_sys_draw_with_color(" clear ", 0x32a852);
     printf(" - Clear the screen.\n");
    
-    call_sys_drawWithColor(" zoomIn ", 0x32a852);
+    call_sys_draw_with_color(" zoom_in ", 0x32a852);
     printf(" - Increase text size. Clears screen after change.\n");
 
-    call_sys_drawWithColor(" zoomOut ", 0x32a852);
+    call_sys_draw_with_color(" zoom_out ", 0x32a852);
     printf(" - Decrease text size. Clears screen after change.\n");
   
-    call_sys_drawWithColor(" registers ", 0x32a852);
+    call_sys_draw_with_color(" registers ", 0x32a852);
     printf(" - View the registers in use after pressing ',' .\n");
 
     printf(" TEST:\n");
 
-    call_sys_drawWithColor(" testprio ", 0x32a852);
+    call_sys_draw_with_color(" testprio ", 0x32a852);
     printf(" - Executes the memory manager test.\n");
 
-    call_sys_drawWithColor(" testmm <MAX_MERMORY> ", 0x32a852);
+    call_sys_draw_with_color(" testmm <MAX_MERMORY> ", 0x32a852);
     printf(" - Executes the memory manager test. Pass the max memory number as an argument.\n");
 
-    call_sys_drawWithColor(" testprocess <MAX_PROCESSES> ", 0x32a852);
+    call_sys_draw_with_color(" testprocess <MAX_PROCESSES> ", 0x32a852);
     printf(" - Executes the memory manager test. Pass the max number of processes as an argument.\n");
 
-    call_sys_drawWithColor(" testsync <ITERATIONS> <SEM_VALUE> ", 0x32a852);
+    call_sys_draw_with_color(" testsync <ITERATIONS> <SEM_VALUE> ", 0x32a852);
     printf(" - Executes the synchronization test. Pass the max number of iterations as the first argument and set the use of semaphores as the second.\n");
 
-    call_sys_drawWithColor(" ps ", 0x32a852);
+    call_sys_draw_with_color(" ps ", 0x32a852);
     printf(" - Lists all active processes and their statuses.\n");
 
-    call_sys_drawWithColor(" kill <PID> ", 0x32a852);
+    call_sys_draw_with_color(" kill <PID> ", 0x32a852);
     printf(" - Kill process. Pass the PID as an argument.\n");
     
-    call_sys_drawWithColor(" nice <PID> <NEW_PRIO> ", 0x32a852);
+    call_sys_draw_with_color(" nice <PID> <NEW_PRIO> ", 0x32a852);
     printf(" - Change process priority. Pass the PID and new priority as argument.\n");
 
-    call_sys_drawWithColor(" cat ", 0x32a852);
+    call_sys_draw_with_color(" cat ", 0x32a852);
     printf(" - Reads from input and outputs the same text.\n");
 
-    call_sys_drawWithColor(" wc ", 0x32a852);
+    call_sys_draw_with_color(" wc ", 0x32a852);
     printf(" - Reads from input and outputs the word count.\n");
 
-    call_sys_drawWithColor(" filter ", 0x32a852);
+    call_sys_draw_with_color(" filter ", 0x32a852);
     printf(" - Reads from input and outputs the text without vowels.\n");
 
-    call_sys_drawWithColor(" philo ", 0x32a852);
+    call_sys_draw_with_color(" philo ", 0x32a852);
     printf(" - Runs the philosopher's problem simulation.\n");
 
-    call_sys_drawWithColor(" loop <SECONDS>", 0x32a852);
+    call_sys_draw_with_color(" loop <SECONDS>", 0x32a852);
     printf(" - Prints its PID after a certain amount of seconds. Receives seconds as argument.\n");
 
-    call_sys_drawWithColor(" mem ", 0x32a852);
+    call_sys_draw_with_color(" mem ", 0x32a852);
     printf(" - Displays current memory usage details.\n");
 
 }
@@ -102,7 +102,7 @@ void div0() {
 }
 
 void registers(){
-    call_sys_drawRegisters();
+    call_sys_draw_registers();
 }
 
 
@@ -176,13 +176,13 @@ char * getDay() {
 }
 
 void date() {
-    call_sys_drawWord("Current day: ");
-    call_sys_drawWord(getDay());
+    call_sys_draw_word("Current day: ");
+    call_sys_draw_word(getDay());
 
-    call_sys_commandEnter();
+    call_sys_command_enter();
 
-    call_sys_drawWord("Current time: ");
-    call_sys_drawWord(getTime());
+    call_sys_draw_word("Current time: ");
+    call_sys_draw_word(getTime());
 }
 
 int test_mm_user(int16_t fds[], int argc, char **argv){
@@ -228,11 +228,11 @@ void ps(){
 
 void kill_process(int argc, char **argv) {
     if(call_sys_kill_process(satoi(argv[1])) == 1){
-        call_sys_drawWord("You killed the process: ");
+        call_sys_draw_word("You killed the process: ");
         call_sys_draw_int(satoi(argv[1]));
     }
     else{
-        call_sys_drawWord("Error killing the process");
+        call_sys_draw_word("Error killing the process");
     }
 }
 
@@ -244,8 +244,8 @@ int test_sync_user(int16_t fds[], int argc, char **argv){
 
 static void cat_process() {
     char c;
-    while ((c = getChar()) != EOF) { 
-        putchar(c);
+    while ((c = get_char()) != EOF) { 
+        put_char(c);
     }
     call_sys_enter();
 }
@@ -260,8 +260,8 @@ static void wc_process() {
     char c;
     int line_count = 0, word_count = 0, char_count = 0, in_word = 0;
 
-    while((c = getChar()) != EOF){
-        call_sys_drawChar(c);
+    while((c = get_char()) != EOF){
+        call_sys_draw_char(c);
         if(c == '\n'){
             line_count++;
         }
@@ -286,10 +286,10 @@ int wc(int16_t fds[]){
 
 static void filter_process() {
     char c;
-    while ((c = getChar()) != EOF) {
+    while ((c = get_char()) != EOF) {
         if (c != 'a' && c != 'e' && c != 'i' && c != 'o' && c != 'u' &&
             c != 'A' && c != 'E' && c != 'I' && c != 'O' && c != 'U') {
-            putchar(c);
+            put_char(c);
         }
     }
     call_sys_enter();
@@ -325,26 +325,27 @@ void get_memory_info(){
     char type[30];
     uint64_t free, allocated,total;
     call_sys_get_memory_info(type, &free, &allocated, &total);
-    call_sys_drawWithColor(type, 0x32a852);
-    call_sys_drawWord(" - Free: ");
+    call_sys_draw_with_color(type, 0x32a852);
+    call_sys_draw_word(" - Free: ");
     free = free / 1024;
     call_sys_draw_int(free);
-    call_sys_drawWord("KB -");
-    call_sys_drawWord(" Allocated: ");
+    call_sys_draw_word("KB -");
+    call_sys_draw_word(" Allocated: ");
     allocated = allocated / 1024;
     call_sys_draw_int(allocated);
-    call_sys_drawWord("KB");
-    call_sys_drawWord("- Total: ");
+    call_sys_draw_word("KB");
+    call_sys_draw_word("- Total: ");
     total = total / 1024;
     call_sys_draw_int(total);
-    call_sys_drawWord("KB");
+    call_sys_draw_word("KB");
 }
 
 static void text_process() {
-    call_sys_drawWord("Hello, I'm a text process\n");
-    call_sys_drawWord("I'm going to sleep for 5 seconds\n");
-    call_sys_drawWord("I woke up\n");
-    call_sys_drawChar(EOF);
+    call_sys_draw_word("Hello, I'm a text process,\n");
+    call_sys_draw_word("Just to test pipes\n");
+    call_sys_draw_word("and commands like wc, cat and filter.\n");
+    call_sys_draw_char(EOF);
+
 }
 
 int text(int16_t fds[]){

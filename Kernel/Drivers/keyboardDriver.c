@@ -107,8 +107,8 @@ char getKeyMapping(uint64_t number) {
 // function that handles the keyboard
 void keyboard_handler() {
 	uint64_t key = get_key();
-	char *buffer = getAddress();
-	int buffer_pos = getPos();
+	char *buffer = get_address();
+	int buffer_pos = get_pos();
 	if (key < 0 || key > 256 || getKeyMapping(key) == 0) {
 		return;
 	}
@@ -129,16 +129,16 @@ void keyboard_handler() {
 
 	if (letter == ',') {
 		flag_screenShot = 1;
-		saveState();
+		save_state();
 	}
 	return;
 }
 
 // function that reads the characters
-void readChar(char *buf, uint32_t count, uint32_t *size) {
-	char *buffer = getAddress();
-	int write_pos = getPos();	 // get writing position
-	int read_pos = getReadPos(); // get reading position
+void read_char(char *buf, uint32_t count, uint32_t *size) {
+	char *buffer = get_address();
+	int write_pos = get_pos();	 // get writing position
+	int read_pos = get_read_pos(); // get reading position
 	int i = 0;
 	while (count != 0 && read_pos != write_pos) {
 		buf[i] = buffer[read_pos];
@@ -146,5 +146,5 @@ void readChar(char *buf, uint32_t count, uint32_t *size) {
 		i++;
 	}
 	*size = i;
-	setReadPos(read_pos); // update reading position
+	set_read_pos(read_pos); // update reading position
 }

@@ -153,7 +153,7 @@ PCBT *update_quantum(void *stack_pointer) {
 
 void *scheduler(void *stack_pointer) {
     SchedulerInfo scheduler = get_scheduler();
-		
+	
     if (!initialized) {
         return stack_pointer;
     }
@@ -194,7 +194,7 @@ void list_processes_state(int *pids, char states[][10], uint64_t *rsps, uint64_t
 uint64_t kill_process(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
 	if(pid == INIT_PID){
-		drawWithColor("ERROR: You can not kill the Init process", 0xFF0000);
+		draw_with_color("ERROR: You can not kill the Init process", 0xFF0000);
 		return 0;
 	}
 	for (int i = 0; i < MAX_PROCESS; i++) {

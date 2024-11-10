@@ -26,12 +26,12 @@ void clearBSS(void *bssAddress, uint64_t bssSize) {
 	my_memset(bssAddress, 0, bssSize);
 }
 
-void *getStackBase() {
+void *get_stack_base() {
 	return (void *) ((uint64_t) &endOfKernel + PageSize * 8 // The size of the stack itself, 32KiB
 					 - sizeof(uint64_t)						// Begin at the top of the stack
 	);
 }
-void *retUserland() {
+void *ret_userland() {
 	return sampleCodeModuleAddress;
 }
 
@@ -49,7 +49,7 @@ void *initializeKernelBinary() {
 	create_semaphoreADT();
 	create_pipe_manager();
 
-	return getStackBase();
+	return get_stack_base();
 }
 
 void idle() {

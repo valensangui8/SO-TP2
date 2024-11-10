@@ -30,41 +30,41 @@ void test_prio() {
 	}
 
 	bussy_wait(WAIT);
-	call_sys_drawWord("CHANGING PRIORITIES...");
-	call_sys_commandEnter();
+	call_sys_draw_word("CHANGING PRIORITIES...");
+	call_sys_command_enter();
 
 	for (i = 0; i < TOTAL_PROCESSES; i++)
 		call_sys_update_priority(pids[i], prio[i]);
 
 	bussy_wait(WAIT);
-	call_sys_drawWord("BLOCKING...");
-	call_sys_commandEnter();
+	call_sys_draw_word("BLOCKING...");
+	call_sys_command_enter();
 
 	for (i = 0; i < TOTAL_PROCESSES; i++)
 		call_sys_block_process(pids[i]);
 
-	call_sys_drawWord("CHANGING PRIORITIES WHILE BLOCKED...");
-	call_sys_commandEnter();
+	call_sys_draw_word("CHANGING PRIORITIES WHILE BLOCKED...");
+	call_sys_command_enter();
 
 	for (i = 0; i < TOTAL_PROCESSES; i++){
 		call_sys_update_priority(pids[i], MEDIUM);
 	}
 
-	call_sys_drawWord("UNBLOCKING...");
-	call_sys_commandEnter();
+	call_sys_draw_word("UNBLOCKING...");
+	call_sys_command_enter();
 
 	for (i = 0; i < TOTAL_PROCESSES; i++)
 		call_sys_unblock_process(pids[i]);
 
 	bussy_wait(WAIT);
-	call_sys_drawWord("KILLING...");
-	call_sys_commandEnter();
+	call_sys_draw_word("KILLING...");
+	call_sys_command_enter();
 
 	for (i = 0; i < TOTAL_PROCESSES; i++){
 		call_sys_kill_process(pids[i]);
 	}
 
-	call_sys_drawWord("FINISHED");
-	call_sys_commandEnter();
+	call_sys_draw_word("FINISHED");
+	call_sys_command_enter();
 	call_sys_kill_process(call_sys_get_pid());
 }

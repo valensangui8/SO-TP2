@@ -1,22 +1,22 @@
 #include <idtManager.h>
 
 static void sys_Read(char *buf, uint32_t count, uint32_t *size);
-static void sys_DrawWord(char *word, int fd_user);
-static void sys_DrawChar(char letter);
+static void sys_draw_word(char *word, int fd_user);
+static void sys_draw_char(char letter);
 static void sys_delete();
 static void sys_enter();
-static void sys_drawError(char *command);
-static void sys_commandEnter();
-static void sys_zoomIn();
-static void sys_zoomOut();
+static void sys_draw_error(char *command);
+static void sys_command_enter();
+static void sys_zoom_in();
+static void sys_zoom_out();
 static void sys_clear();
-static void sys_getScale(int *scale);
-static void sys_drawWithColor(char *word, uint32_t hexColor);
-static void sys_drawRegisters();
+static void sys_get_scale(int *scale);
+static void sys_draw_with_color(char *word, uint32_t hexColor);
+static void sys_draw_registers();
 static void sys_draw(uint32_t x, uint32_t y, uint32_t size, uint32_t color);
 static void sys_sleep(unsigned long s);
 static void sys_sound(uint32_t nFrequence, uint32_t time);
-static void sys_checkHeight(char *HeightPassed, int indexCommand);
+static void sys_check_height(char *HeightPassed, int indexCommand);
 static void sys_draw_int(int number);
 
 static uint64_t sys_kill_process(unsigned int pid);
@@ -51,7 +51,7 @@ static void sys_get_memory_info(char *type, uint64_t *free, uint64_t *allocated,
 static int sys_foreground();
 
 
-uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
+uint64_t idt_manager(uint64_t rax, uint64_t *otherRegisters) {
     uint64_t rdi, rsi, rdx, rcx, r8, r9;
     rdi = otherRegisters[0];
     rsi = otherRegisters[1];
@@ -64,10 +64,10 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 			sys_Read((char *) rdi, (uint32_t) rsi, (uint32_t *) rdx); // rdi = buffer ; rsi = size , rdx = count
 			break;
 		case 1:							// write
-			sys_DrawWord((char *) rdi, (int) rsi); // rdi = palabra
+			sys_draw_word((char *) rdi, (int) rsi); // rdi = palabra
 			break;
 		case 2:
-			sys_DrawChar((char) rdi); // rdi = letra
+			sys_draw_char((char) rdi); // rdi = letra
 			break;
 		case 3:
 			sys_enter();
@@ -76,28 +76,28 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 			sys_delete();
 			break;
 		case 5:
-			sys_drawError((char *) rdi);
+			sys_draw_error((char *) rdi);
 			break;
 		case 6:
-			sys_commandEnter();
+			sys_command_enter();
 			break;
 		case 7:
-			sys_zoomIn();
+			sys_zoom_in();
 			break;
 		case 8:
-			sys_zoomOut();
+			sys_zoom_out();
 			break;
 		case 9:
 			sys_clear();
 			break;
 		case 10:
-			sys_getScale((int *) rdi);
+			sys_get_scale((int *) rdi);
 			break;
 		case 11:
-			sys_drawWithColor((char *) rdi, (uint32_t) rsi);
+			sys_draw_with_color((char *) rdi, (uint32_t) rsi);
 			break;
 		case 12:
-			sys_drawRegisters();
+			sys_draw_registers();
 			break;
 		case 13:
 			sys_draw((uint32_t) rdi, (uint32_t) rsi, (uint32_t) rdx, (uint32_t) rcx);
@@ -109,7 +109,7 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 			sys_sound((uint32_t) rdi, (uint32_t) rsi);
 			break;
 		case 16:
-			sys_checkHeight((char *) rdi, (uint32_t) rsi);
+			sys_check_height((char *) rdi, (uint32_t) rsi);
 			break;
 		case 17:
 			return sys_kill_process((unsigned int) rdi);
@@ -194,32 +194,32 @@ uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters) {
 void sys_Read(char *buf, uint32_t count, uint32_t *size) {
 	int fd = get_current_file_descriptor_read();
 	if(fd == STDIN){
-		readChar(buf, count, size);
+		read_char(buf, count, size);
 	}else if(fd != DEV_NULL){
 		read_pipe(fd, buf, size);
 		
 	}
 }
 
-void sys_DrawWord(char *word, int fd_user) {
+void sys_draw_word(char *word, int fd_user) {
 	int fd = get_current_file_descriptor_write();
 	uint32_t bytes = 0;
 	if(fd_user == STDERR){
-		drawWithColor(word, 0xFF0000);
+		draw_with_color(word, 0xFF0000);
 		return;
 	}
 	if(fd == STDOUT){
-		drawWord(word);
+		draw_word(word);
 	}else if(fd != DEV_NULL){
 		write_pipe(fd, word, &bytes);
 	}
 }
 
-void sys_DrawChar(char letter) {
+void sys_draw_char(char letter) {
 	int fd = get_current_file_descriptor_write();
 	uint32_t bytes = 0;
 	if(fd == STDOUT){
-		drawLine(letter);
+		draw_line(letter);
 	}else if(fd != DEV_NULL){
 		write_pipe(fd, &letter, &bytes);
 	}
@@ -233,36 +233,36 @@ void sys_delete() {
 	delete ();
 }
 
-void sys_drawError(char *command) {
-	drawError(command);
+void sys_draw_error(char *command) {
+	draw_error(command);
 }
 
-void sys_commandEnter() {
-	commandEnter();
+void sys_command_enter() {
+	command_enter();
 }
 
-void sys_zoomIn() {
-	incScale();
+void sys_zoom_in() {
+	inc_scale();
 }
 
-void sys_zoomOut() {
-	decScale();
+void sys_zoom_out() {
+	dec_scale();
 }
 
 void sys_clear() {
 	clear();
 }
 
-void sys_getScale(int *scale) {
-	*scale = getScale();
+void sys_get_scale(int *scale) {
+	*scale = get_scale();
 }
 
-void sys_drawWithColor(char *word, uint32_t hexColor) {
-	drawWithColor(word, hexColor);
+void sys_draw_with_color(char *word, uint32_t hexColor) {
+	draw_with_color(word, hexColor);
 }
 
-void sys_drawRegisters() {
-	printRegAsm();
+void sys_draw_registers() {
+	print_reg_asm();
 }
 
 void sys_draw(uint32_t x, uint32_t y, uint32_t size, uint32_t color) {
@@ -277,8 +277,8 @@ void sys_sound(uint32_t nFrequence, uint32_t time) {
 	start_sound(nFrequence, time);
 }
 
-void sys_checkHeight(char *HeightPassed, int command) {
-	checkHeight(HeightPassed, command);
+void sys_check_height(char *HeightPassed, int command) {
+	check_height(HeightPassed, command);
 }
 
 uint64_t sys_kill_process(unsigned int pid) {
@@ -328,7 +328,7 @@ int64_t sys_get_ppid() {
 }
 
 void sys_draw_int(int number) {
-	drawInt(number);
+	draw_int(number);
 }
 
 void sys_halt() {

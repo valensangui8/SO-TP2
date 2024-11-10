@@ -132,7 +132,7 @@ static char delete_philosoper(){
 
 void table_manager() {
     char input;
-    while ((input = getChar()) != QUIT) {
+    while ((input = get_char()) != QUIT) {
         switch(input) {
             case ADD:
                 add_philosopher();

@@ -1,5 +1,5 @@
-#ifndef _IDTMANAGER_H
-#define _IDTMANAGER_H
+#ifndef _idt_manager_H
+#define _idt_manager_H
 
 #include <keyboardDriver.h>
 #include <process.h>
@@ -14,6 +14,6 @@
 #include <semaphoreManager.h>
 #include <pipeManager.h>
 
-uint64_t idtManager(uint64_t rax, uint64_t *otherRegisters);
+uint64_t idt_manager(uint64_t rax, uint64_t *otherRegisters);
 
 #endif

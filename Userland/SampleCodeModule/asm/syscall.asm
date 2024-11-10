@@ -1,23 +1,23 @@
 section .text
-GLOBAL call_sys_drawWord
+GLOBAL call_sys_draw_word
 GLOBAL call_sys_error
 GLOBAL call_sys_read
-GLOBAL call_sys_drawChar
+GLOBAL call_sys_draw_char
 GLOBAL call_sys_enter
 GLOBAL call_sys_delete
-GLOBAL call_sys_drawError
-GLOBAL call_sys_commandEnter
-GLOBAL call_sys_zoomIn
-GLOBAL call_sys_zoomOut
+GLOBAL call_sys_draw_error
+GLOBAL call_sys_command_enter
+GLOBAL call_sys_zoom_in
+GLOBAL call_sys_zoom_out
 GLOBAL call_sys_get_date
 GLOBAL call_sys_clear
-GLOBAL call_sys_getScale
-GLOBAL call_sys_drawWithColor
-GLOBAL call_sys_drawRegisters
+GLOBAL call_sys_get_scale
+GLOBAL call_sys_draw_with_color
+GLOBAL call_sys_draw_registers
 GLOBAL call_sys_draw
 GLOBAL call_sys_sleep
 GLOBAL call_sys_sound
-GLOBAL call_sys_checkHeight
+GLOBAL call_sys_check_height
 
 GLOBAL call_sys_kill_process
 GLOBAL call_sys_update_priority
@@ -53,7 +53,7 @@ call_sys_read:
     mov rax, 0
     int 80h
     ret
-call_sys_drawWord:
+call_sys_draw_word:
     mov rax, 1
     int 80h
     ret
@@ -63,7 +63,7 @@ call_sys_error:
     int 80h
     ret
 
-call_sys_drawChar:
+call_sys_draw_char:
     mov rax, 2
     int 80h
     ret
@@ -78,22 +78,22 @@ call_sys_delete:
     int 80h
     ret
 
-call_sys_drawError:
+call_sys_draw_error:
     mov rax, 5
     int 80h
     ret
 
-call_sys_commandEnter:
+call_sys_command_enter:
     mov rax, 6
     int 80h
     ret
 
-call_sys_zoomIn:
+call_sys_zoom_in:
     mov rax, 7
     int 80h
     ret
 
-call_sys_zoomOut:
+call_sys_zoom_out:
     mov rax, 8
     int 80h
     ret
@@ -103,17 +103,17 @@ call_sys_clear:
     int 80h
     ret
 
-call_sys_getScale:
+call_sys_get_scale:
     mov rax, 10
     int 80h
     ret
 
-call_sys_drawWithColor:
+call_sys_draw_with_color:
     mov rax, 11
     int 80h
     ret
 
-call_sys_drawRegisters:
+call_sys_draw_registers:
     mov rax, 12
     int 80h
     ret
@@ -147,7 +147,7 @@ call_sys_sound:
     ret
 
 
-call_sys_checkHeight:
+call_sys_check_height:
     mov rax, 16
     int 80h
     ret
