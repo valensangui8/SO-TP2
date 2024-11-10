@@ -28,14 +28,14 @@ void _sti(void);
 
 void _hlt(void);
 
-void picMasterMask(uint8_t mask);
+void pic_master_mask(uint8_t mask);
 
-void picSlaveMask(uint8_t mask);
+void pic_slave_mask(uint8_t mask);
 
 void save_state(void);
 void print_reg_asm(void);
 
-void haltcpu(void);
+void halt_cpu(void);
 
 void _yield();
 void * _initialize_stack_frame(void *rip, void *function, void *stack, void *argv);

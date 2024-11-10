@@ -1,4 +1,4 @@
-GLOBAL cpuVendor
+GLOBAL cpu_vendor
 GLOBAL get_key
 GLOBAL outb
 GLOBAL inb
@@ -8,7 +8,7 @@ GLOBAL release
 
 section .text
 	
-cpuVendor:
+cpu_vendor:
 	push rbp
 	mov rbp, rsp
 

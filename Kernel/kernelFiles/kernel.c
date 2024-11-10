@@ -55,7 +55,6 @@ void *initializeKernelBinary() {
 void idle() {
 	while (1) {
 		_hlt();
-		//yield();
 	}
 }
 

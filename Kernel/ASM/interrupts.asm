@@ -1,9 +1,9 @@
 
 GLOBAL _cli
 GLOBAL _sti
-GLOBAL picMasterMask
-GLOBAL picSlaveMask
-GLOBAL haltcpu
+GLOBAL pic_master_mask
+GLOBAL pic_slave_mask
+GLOBAL halt_cpu
 GLOBAL _hlt
 
 GLOBAL _irq80Handler
@@ -239,7 +239,7 @@ _sti:
 	sti
 	ret
 
-picMasterMask:
+pic_master_mask:
 	push rbp
     mov rbp, rsp
     mov ax, di
@@ -247,7 +247,7 @@ picMasterMask:
     pop rbp
     retn
 
-picSlaveMask:
+pic_slave_mask:
 	push    rbp
     mov     rbp, rsp
     mov     ax, di  ; ax = mascara de 16 bits
@@ -328,7 +328,7 @@ _exception0Handler:
 _exception6Handler:
 	exceptionHandler 6
 
-haltcpu:
+halt_cpu:
 	cli
 	hlt
 	ret
