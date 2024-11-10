@@ -1,9 +1,9 @@
 #include <semaphoreManager.h>
 
-struct MySem{
+struct MySem {
     int id;
-	char *name;
-	uint64_t value;
+    char *name;
+    uint64_t value;
     uint8_t mutex;
     LinkedListADT waiting_processes;
 }; 
@@ -28,11 +28,8 @@ SemaphoresADT get_semaphoresADT() {
 
 MySem_t get_semaphore(char *sem_id) {
     SemaphoresADT semaphores = get_semaphoresADT();
-    drawHex((uint64_t) semaphores);
-    
     for (int i = 0; i < MAX_SEMAPHORE; i++) {
         if (semaphores->semaphores[i] != NULL && my_strcmp(semaphores->semaphores[i]->name, sem_id) == 0) {
-
             return semaphores->semaphores[i];
         }
     }
@@ -41,8 +38,8 @@ MySem_t get_semaphore(char *sem_id) {
 
 int add_semaphore(MySem_t sem) {
     SemaphoresADT semaphoreADT = get_semaphoresADT();
-    for(int i = 0; i < MAX_SEMAPHORE; i++){
-        if(semaphoreADT->semaphores[i] == NULL){
+    for (int i = 0; i < MAX_SEMAPHORE; i++) {
+        if (semaphoreADT->semaphores[i] == NULL) {
             semaphoreADT->semaphores[i] = sem;
             semaphoreADT->semaphores[i]->waiting_processes = create_linked_list(); 
             semaphoreADT->size++;
@@ -62,11 +59,10 @@ static void delete_semaphore(MySem_t sem) {
 }
 
 int create_sem(char *sem_id, uint64_t initial_value) {
-    MySem_t sem = (MySem_t) alloc_memory(sizeof(MySem_t));
+    MySem_t sem = (MySem_t) alloc_memory(sizeof(struct MySem));
     if (sem == NULL) {
         return -1; 
     }
-
     sem->mutex = 1;
     sem->name = (char *) alloc_memory(my_strlen(sem_id) + 1);
     if (sem->name == NULL) {
@@ -75,7 +71,6 @@ int create_sem(char *sem_id, uint64_t initial_value) {
     }
     my_strcpy(sem->name, sem_id);
     sem->value = initial_value;
-
     int id = add_semaphore(sem);
     if (id == -1) {
         free_memory(sem->name);
@@ -83,7 +78,6 @@ int create_sem(char *sem_id, uint64_t initial_value) {
         return -1;
     }
     sem->id = id;
-
     return id;
 }
 
@@ -92,10 +86,7 @@ int64_t sem_open(char *sem_id, uint64_t initial_value) {
     if (existing != NULL) {
         return existing->id;
     }
-
     int id = create_sem(sem_id, initial_value);
-    // drawInt(id);
-    // commandEnter();
     return id;
 }
 
