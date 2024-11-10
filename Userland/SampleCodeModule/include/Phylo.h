@@ -7,24 +7,18 @@
 #include <stdlib.h>
 
 #define MAX_PHILOSOPHERS 10
-#define MIN_PHILOSOPHERS 2
+#define MIN_PHILOSOPHERS 5
 #define ADD 'a'
 #define REMOVE 'r'
 #define QUIT 'q'
 #define THINKING '.'
 #define EATING 'E'
-#define HUNGRY 'H'
-#define EATING_TIME = 1;
-
-// Function to initialize the philosophers and start the table manager process
-int initialize_philosophers();
+#define EATING_TIME 3
+#define THINKING_TIME 1
 
 
 // Process function for individual philosophers
 void philosopher_process(int argc, char **argv);
-
-// Function to print the current state of the table
-void print_table_state();
 
 // Table manager process function
 void table_manager();
