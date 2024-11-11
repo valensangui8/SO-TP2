@@ -208,6 +208,9 @@ uint64_t kill_process(unsigned int pid) {
 			scheduler->amount_processes--;
 			free_memory(scheduler->processes[i].stack_base);
 			free_memory(scheduler->processes[i].argv);
+			close_file_descriptor(STDIN, scheduler->processes[i].pid);
+			close_file_descriptor(STDOUT, scheduler->processes[i].pid);
+			close_file_descriptor(STDERR, scheduler->processes[i].pid);
 			for (int j = 0; j < MAX_PROCESS; j++) {
 				if (scheduler->processes[j].ppid == pid && scheduler->processes[j].state != DEAD) {
 					scheduler->processes[j].ppid = INIT_PID;

@@ -47,9 +47,6 @@ static Pipe *create_pipe(uint64_t id) {
 		pipe->buffer[i] = 0;
 	}
 
-	sem_open(my_itoa(id), 0);
-	my_strcpy(pipe->readable, my_itoa(id));
-
 	return pipe;
 }
 
@@ -105,6 +102,8 @@ int16_t open_pipe(int id, char mode, int pid) {
 			return -1;
 		}
 		pipe->input_pid = pid;
+		sem_open(my_itoa(pid), 0);
+		my_strcpy(pipe->readable, my_itoa(pid));
 	}
 	else {
 		draw_with_color("ERROR: Invalid mode", 0xFF0000);
@@ -126,9 +125,8 @@ static void free_pipe(Pipe *pipe) {
 	}
 }
 
-static int16_t close_pipe_pid(int id, int16_t pid) {
+int16_t close_pipe(int id, int16_t pid) {
 	Pipe *pipe = get_pipe(id);
-	draw_word("CERRANDO PIPE INPUT");
 	if (pipe == NULL) {
 		draw_with_color("ERROR: Pipe not found", 0xFF0000);
 		return -1;
@@ -151,10 +149,6 @@ static int16_t close_pipe_pid(int id, int16_t pid) {
 	return 0;
 }
 
-int16_t close_pipe(uint16_t fd) {
-	return close_pipe_pid(fd, get_pid());
-}
-
 int32_t write_pipe(uint16_t fd, char *buffer, uint32_t *count) {
 	Pipe *pipe = get_pipe(fd);
 	int len = my_strlen(buffer);
@@ -164,7 +158,7 @@ int32_t write_pipe(uint16_t fd, char *buffer, uint32_t *count) {
 		draw_with_color("ERROR: Pipe not found", 0xFF0000);
 		return -1;
 	}
-	if (pipe->input_pid != get_pid() || pipe->output_pid == -1) {
+	if (pipe->input_pid != get_pid()) {
 		draw_with_color("ERROR: No permission to write pid", 0xFF0000);
 		draw_int(get_pid());
 		return -1;
@@ -190,7 +184,7 @@ int32_t read_pipe(uint16_t fd, char *buffer, uint32_t *count) {
 		draw_with_color("ERROR: Pipe not found!", 0xFF0000);
 		return -1;
 	}
-	if (pipe->output_pid != get_pid() || pipe->input_pid == -1) {
+	if (pipe->output_pid != get_pid()) {
 		draw_with_color("ERROR: No permission to read pid", 0xFF0000);
 		return -1;
 	}

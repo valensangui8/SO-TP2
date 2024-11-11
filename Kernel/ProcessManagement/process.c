@@ -13,9 +13,6 @@ static void exit_process(int ret, unsigned int pid) {
 	PCBT *process = find_process(pid);
 	process->ret = ret;
 	kill_process(pid);
-	close_pipe(process->fds[STDIN]);
-	close_pipe(process->fds[STDOUT]);
-	close_pipe(process->fds[STDERR]);
 	yield();
 }
 
@@ -158,4 +155,11 @@ unsigned int get_ppid() {
 	SchedulerInfo scheduler = get_scheduler();
 	PCBT *process = &(scheduler->processes[scheduler->index_rr]);
 	return process->ppid;
+}
+
+void close_file_descriptor(int16_t fd, int pid) {
+	PCBT *process = find_process(get_pid());
+	if (process->fds[fd] >= BUILT_IN_FD) {
+		close_pipe(process->fds[fd], pid);
+	}
 }

@@ -22,5 +22,6 @@ void process_status(unsigned int pid);
 char *process_state(PCBT process);
 unsigned int get_pid();
 unsigned int get_ppid();
+void close_file_descriptor(int16_t fd, int pid);
 
 #endif

@@ -45,7 +45,7 @@ static int64_t sys_sem_close(char *sem_id);
 
 static int16_t sys_get_pipe_fd();
 static int16_t sys_open_pipe(int id, char mode, int pid);
-static int16_t sys_close_pipe(uint16_t fd);
+static int16_t sys_close_pipe(uint16_t fd, int pid);
 static int16_t sys_write_pipe(uint16_t fd, char *buffer, uint32_t *count);
 static int16_t sys_read_pipe(uint16_t fd, char *buffer, uint32_t *count);
 
@@ -174,7 +174,7 @@ uint64_t idt_manager(uint64_t rax, uint64_t *otherRegisters) {
 			return sys_open_pipe((int) rdi, (char) rsi, (int) rdx);
 			break;
 		case 38:
-			return sys_close_pipe((uint16_t) rdi);
+			return sys_close_pipe((uint16_t) rdi, (int) rsi);
 			break;
 		case 39:
 			return sys_write_pipe((uint16_t) rdi, (char *) rsi, (uint32_t *) rdx);
@@ -370,8 +370,8 @@ int16_t sys_open_pipe(int id, char mode, int pid) {
 	return open_pipe(id, mode, pid);
 }
 
-int16_t sys_close_pipe(uint16_t fd) {
-	return close_pipe(fd);
+int16_t sys_close_pipe(uint16_t fd, int pid) {
+	return close_pipe(fd, pid);
 }
 
 int16_t sys_write_pipe(uint16_t fd, char *buffer, uint32_t *count) {
