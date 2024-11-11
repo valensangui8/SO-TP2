@@ -54,8 +54,18 @@ static int parse_command(char *buffer, char *argv1[], int *argc1, char *argv2[],
 
 		token = strtok(NULL, " ");
 	}
+
 	argv1[*argc1] = NULL;
 	argv2[*argc2] = NULL;
+
+	while (*argc1 > 0 && argv1[*argc1 - 1] == NULL) {
+		(*argc1)--;
+	}
+
+	while (*argc2 > 0 && argv2[*argc2 - 1] == NULL) {
+		(*argc2)--;
+	}
+
 	return 0;
 }
 

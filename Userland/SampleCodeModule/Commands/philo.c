@@ -152,8 +152,15 @@ int initialize_philosophers(int16_t fds[]) {
 
 int philo(int16_t fds[]) {
 	int parent_pid = initialize_philosophers(fds);
-	if(fds[0]!=DEV_NULL){
+	if (fds[0] != DEV_NULL) {
 		call_sys_wait_children(parent_pid);
 	}
 	return parent_pid;
+}
+
+void kill_philosophers() {
+	for (int i = 0; i < amount_of_philosophers; i++) {
+		delete_philosopher();
+	}
+	printf("All philosophers have been killed\n");
 }

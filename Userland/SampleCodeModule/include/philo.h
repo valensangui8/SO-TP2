@@ -25,4 +25,6 @@ void table_manager();
 // Entry function to start the dining philosophers process
 int philo(int16_t fds[]);
 
+void kill_philosophers();
+
 #endif // PHILO_H

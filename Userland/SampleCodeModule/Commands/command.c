@@ -31,8 +31,12 @@ void clear() {
 void help() {
 	call_sys_command_enter();
 
-	printf("PROGRAMS AVAILABLE FOR USER: \n");
+	printf("PROGRAMS AVAILABLE FOR USER: \n\n");
 
+	printf(" If you want to run a program in the background, type the name of the program followed by '&' and press enter.\n");
+	printf(" If you want to run programs in parallel, type the name of the first program followed by '|' and then the name of the second program.\n\n");
+
+	printf(" BASIC COMMANDS:\n");
 	call_sys_draw_with_color(" help ", 0x32a852);
 	printf(" - shows the different programs available.\n");
 
@@ -52,7 +56,7 @@ void help() {
 	printf(" - Decrease text size. Clears screen after change.\n");
 
 	call_sys_draw_with_color(" registers ", 0x32a852);
-	printf(" - View the registers in use after pressing ',' .\n");
+	printf(" - View the registers in use after pressing ',' .\n\n");
 
 	printf(" TEST:\n");
 
@@ -66,16 +70,26 @@ void help() {
 	printf(" - Executes the memory manager test. Pass the max number of processes as an argument.\n");
 
 	call_sys_draw_with_color(" testsync <ITERATIONS> <SEM_VALUE> ", 0x32a852);
-	printf(" - Executes the synchronization test. Pass the max number of iterations as the first argument and set the use of semaphores as the second.\n");
+	printf(" - Executes the synchronization test. Pass the max number of iterations as the first argument and set the use of semaphores as the second.\n\n");
+
+	printf(" PROCESS COMMANDS:\n");
 
 	call_sys_draw_with_color(" ps ", 0x32a852);
 	printf(" - Lists all active processes and their statuses.\n");
+
+	call_sys_draw_with_color(" loop <SECONDS>", 0x32a852);
+	printf(" - Prints its PID after a certain amount of seconds. Receives seconds as argument.\n");
 
 	call_sys_draw_with_color(" kill <PID> ", 0x32a852);
 	printf(" - Kill process. Pass the PID as an argument.\n");
 
 	call_sys_draw_with_color(" nice <PID> <NEW_PRIO> ", 0x32a852);
 	printf(" - Change process priority. Pass the PID and new priority as argument.\n");
+
+	call_sys_draw_with_color(" block <PID> ", 0x32a852);
+	printf(" - Block process. Pass the PID as an argument.\n\n");
+
+	printf(" IPC COMMANDS:\n");
 
 	call_sys_draw_with_color(" cat ", 0x32a852);
 	printf(" - Reads from input and outputs the same text.\n");
@@ -86,17 +100,19 @@ void help() {
 	call_sys_draw_with_color(" filter ", 0x32a852);
 	printf(" - Reads from input and outputs the text without vowels.\n");
 
+	call_sys_draw_with_color(" text ", 0x32a852);
+	printf(" - Process that writes sample text to test the functionality of pipes.\n");
+
 	call_sys_draw_with_color(" philo ", 0x32a852);
 	printf(" - Runs the philosopher's problem simulation.\n");
 
-	call_sys_draw_with_color(" loop <SECONDS>", 0x32a852);
-	printf(" - Prints its PID after a certain amount of seconds. Receives seconds as argument.\n");
+	call_sys_draw_with_color(" kill_philo ", 0x32a852);
+	printf(" - Kills the philosopher's problem simulation.\n\n");
+
+	printf(" MEMORY INFO STATE:\n");
 
 	call_sys_draw_with_color(" mem ", 0x32a852);
-	printf(" - Displays current memory usage details.\n");
-
-	call_sys_draw_with_color(" text ", 0x32a852);
-	printf(" - Process that writes sample text to test the functionality of pipes.\n");
+	printf(" - Displays current memory usage details.\n\n");
 }
 
 void div0() {

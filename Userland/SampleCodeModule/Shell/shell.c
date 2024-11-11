@@ -39,7 +39,8 @@ Command commands_list[COMMANDS] = {
 	{"block", .function_params = block_process, FUNC_PARAMS},
 	{"mem", .function_void = get_memory_info, VOID},
 	{"text", .process_no_params = text, PROCESS_NO_PARAMS},
-	{"philo", .process_no_params = philo, PROCESS_NO_PARAMS}};
+	{"philo", .process_no_params = philo, PROCESS_NO_PARAMS},
+	{"killphilo", .function_void = kill_philosophers, VOID}};
 
 static int run_command(char *command, int argc, char **argv, char *flag, int16_t fds[]);
 
