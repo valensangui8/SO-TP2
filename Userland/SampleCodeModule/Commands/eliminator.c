@@ -10,11 +10,11 @@ static int matrix[X_SQUARES][Y_SQUARES] = {{0}};
 void eliminator(){
     exit = 0;
   
-    call_sys_commandEnter();
+    call_sys_command_enter();
     printf("Ingrese la cantidad de jugadores (1 o 2): ");
-    call_sys_commandEnter();
+    call_sys_command_enter();
     char c;
-    while ( (c = getChar()) != '1' && c != '2'){
+    while ( (c = get_char()) != '1' && c != '2'){
     }
     int d = c - '0';
     players = d;
@@ -27,25 +27,25 @@ void eliminator(){
 }
 
 void printMessage() {
-    call_sys_zoomIn();
+    call_sys_zoom_in();
     call_sys_sleep(1000); 
     call_sys_clear();
 
-    for (int i = 0; i < 3; i++) call_sys_commandEnter();
+    for (int i = 0; i < 3; i++) call_sys_command_enter();
 
-    call_sys_drawWithColor("                ELIMINATOR ", RED);
+    call_sys_draw_with_color("                ELIMINATOR ", RED);
     printf("PRESIONAR 'V' PARA SALIR ");
     call_sys_sleep(1000); 
     call_sys_clear();
     call_sys_sleep(500);
 
-    for (int i = 0; i < 3; i++) call_sys_commandEnter();
+    for (int i = 0; i < 3; i++) call_sys_command_enter();
     
-    call_sys_drawWithColor("               ELIMINATOR ", GREEN);
+    call_sys_draw_with_color("               ELIMINATOR ", GREEN);
     printf("PRESIONAR 'V' PARA SALIR ");
     call_sys_sleep(1000);
     call_sys_clear();
-    call_sys_zoomOut();
+    call_sys_zoom_out();
 }
 
 void drawBorders(){
@@ -81,7 +81,7 @@ void startGame(){
     player1.score = 0;
     player2.score = 0;
 
-    unsigned char c;
+    char c;
     
     while(exit != 1) {
         startPlayer();
@@ -217,7 +217,7 @@ void movePlayer(player * p, player * otherPlayer, char * flag){
 }
 
 void displayScore(player * p1, player * p2){
-    call_sys_commandEnter();
+    call_sys_command_enter();
     
     printf("                                            PLAYER1: %d         PLAYER2: %d", p1->score, p2->score);
 }

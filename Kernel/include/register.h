@@ -19,5 +19,5 @@ typedef struct registerStructT {
 extern registerStructT *registers;
 extern int flag_screenShot;
 
-void printRegisters(registerStructT *registers);
+void print_registers(registerStructT *registers);
 #endif /* _REGISTERS_H */

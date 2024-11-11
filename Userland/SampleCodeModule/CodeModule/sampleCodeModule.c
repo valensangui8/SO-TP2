@@ -35,7 +35,7 @@ static int parse_command(char *buffer, char *argv1[], int *argc1, char *argv2[],
 				*background = 1;
 				break;
 			} else {
-				call_sys_commandEnter();
+				call_sys_command_enter();
 				call_sys_error("Parse error: near '&'", STDERR);
 				call_sys_enter();
 				return 1;
@@ -60,7 +60,7 @@ void terminal(){
 	while (1) {
 		char buffer[BUFFER_SIZE] = {0};
 		int buffer_pos = 0;
-		while ((c = getChar()) != '\n') {
+		while ((c = get_char()) != '\n') {
 			if (c == 8) { // Backspace key
 				if (buffer_pos > 0) {
 					buffer_pos--;
@@ -70,22 +70,30 @@ void terminal(){
 			else if (c == 9) { // tab key
 				for (int i = 0; i < TAB_SIZE; i++) {
 					buffer[buffer_pos++] = ' ';
-					call_sys_drawChar(' ');
+					call_sys_draw_char(' ');
 				}
 			}
 			else if (c != 27) {
 				buffer[buffer_pos++] = c;
-				call_sys_drawChar(c);
+				call_sys_draw_char(c);
 			}
 		}
-		buffer[buffer_pos] = '\0';
+
+		int foreground = call_sys_foreground();
+		if(!foreground){
+			buffer[buffer_pos] = '\0';
+		}
+		else{
+			buffer[buffer_pos] = '\0';
+			call_sys_draw_char('\n');
+		}
 
 		char *argv1[MAX_ARGS] = {NULL};
 		char *argv2[MAX_ARGS] = {NULL};   
-        int argc1 = 0, argc2 = 0, one_process = 1, background = 0;
+        int argc1 = 0, argc2 = 0, background = 0;
 
 		int not_valid = parse_command(buffer, argv1, &argc1, argv2, &argc2, &background);
-        
+		
 		if(!not_valid){
 			initialize_shell(argv1[0], argc1, argv1, argv2[0], argc2, argv2, background);
 		}

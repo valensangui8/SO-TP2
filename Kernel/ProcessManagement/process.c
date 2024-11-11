@@ -25,8 +25,8 @@ void process_function(main_function rip, char **argv, uint64_t argc) {
 
 static void assign_fd(PCBT *process, int16_t index, int16_t fd, char mode){
 	process->fds[index]= fd;
-	if(fd>=BUILT_IN_FD){
-		open_pipe(fd, mode);
+	if(fd >= BUILT_IN_FD){
+		open_pipe(fd, mode, process->pid);
 	}
 }
 
@@ -37,11 +37,12 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 	process->priority = priority;
 	process->times_to_run = priority;
 	assign_fd(process, STDIN, fds[STDIN], 'r');
-	assign_fd(process, STDOUT, fds[STDOUT], 'w');
+	assign_fd(process, STDOUT, fds[STDOUT], 'w'); 
 	assign_fd(process, STDERR, fds[STDERR], 'w');
 
 	process->stack_base = alloc_memory(STACK_SIZE);
 	if (process->stack_base == NULL) {
+		draw_with_color("Error: Could not allocate memory for process", 0xFF0000);
         free_memory(process->stack_base);
         return;
     }
@@ -50,14 +51,10 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 	process->argv = argv;
 	process->argc = argc;
 	process->stack_pointer = _initialize_stack_frame(&process_function, rip, stackEnd,(void *) process->argv);
-	if(fds[STDIN] == DEV_NULL || pid == SESSION_LEADER){
-		process->foreground = 0;
-	} else {
-		process->foreground = 1;
-	}
 }
 
 int64_t wait_children(unsigned int pid) {
+	SchedulerInfo scheduler = get_scheduler();
 	if(pid == INIT_PID){ // Has no father
 		return -1;
 	}
@@ -71,7 +68,7 @@ int64_t wait_children(unsigned int pid) {
 	} 
 	
 	child->state = DEAD;
-	
+	scheduler->amount_processes--;
 
 	return child->ret;
 }
@@ -101,11 +98,19 @@ char *process_state(PCBT process) {
 			my_strcat(status, "UNKNOWN");
 			return status;
 	}
-	if (process.priority == PRIORITY4) {
-		my_strcat(status, "<"); 
-	}
-	else if (process.priority == PRIORITY1) {
-		my_strcat(status, "N"); 
+	switch(process.priority) {
+		case PRIORITY3:
+			my_strcat(status, "H");
+			break;
+		case PRIORITY2:
+			my_strcat(status, "M");
+			break;
+		case PRIORITY4:
+			my_strcat(status, "<");
+			break;
+		case PRIORITY1:
+			my_strcat(status, "N");
+			break;
 	}
 	if (process.fds[STDIN] == DEV_NULL) { // Background
 		my_strcat(status, "+"); 
@@ -120,23 +125,23 @@ char *process_state(PCBT process) {
 // change to find_process
 void process_status(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
-	commandEnter();
-	drawWord("STAT - T: Blocked - S: Ready  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Background - s: Session leader");
-	commandEnter();
-	drawWord("PID        STAT          RSP           RBP         COMMAND");
-	commandEnter();
-	for (int i = 0; i < scheduler->amount_processes; i++) {
+	command_enter();
+	draw_word("STAT - T: Blocked - S: Ready  - R: Running - Z: Zombie - <: Top priority - N: Lowest priority - +: Background - s: Session leader");
+	command_enter();
+	draw_word("PID        STAT          RSP           RBP         COMMAND");
+	command_enter();
+	for (int i = 0; i < MAX_PROCESS; i++) {
 		if (scheduler->processes[i].pid == pid) {
-			drawInt(scheduler->processes[i].pid);
-			drawWord("        ");
-			drawWord(process_state(scheduler->processes[i]));
-			drawWord("        ");
-			drawHex((uint64_t) scheduler->processes[i].stack_pointer);
-			drawWord("        ");
-			drawHex((uint64_t) scheduler->processes[i].stack_base);
-			drawWord("        ");
-			drawWord(scheduler->processes[i].name);
-			commandEnter();
+			draw_int(scheduler->processes[i].pid);
+			draw_word("        ");
+			draw_word(process_state(scheduler->processes[i]));
+			draw_word("        ");
+			draw_hex((uint64_t) scheduler->processes[i].stack_pointer);
+			draw_word("        ");
+			draw_hex((uint64_t) scheduler->processes[i].stack_base);
+			draw_word("        ");
+			draw_word(scheduler->processes[i].name);
+			command_enter();
 		}
 	}
 	enter();

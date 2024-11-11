@@ -55,11 +55,11 @@ void free_memory_ADT(void *ptr) {
 	MemoryManagerADT memory = get_memory_manager();
 	if (ptr > memory->size + memory->start_address || ptr < memory->start_address || memory->info.current == 0) {
 		// error no es válido el puntero
-		drawWithColor("Error: Pointer is not valid", 0xFF0000);
+		draw_with_color("Error: Pointer is not valid", 0xFF0000);
 		return;
 	}
 	if (check_already_free(ptr) == 1 || free_blocks_remaining(&(memory->info)) == 0) { 
-		drawWithColor("Error: Double free not allowed", 0xFF0000);
+		draw_with_color("Error: Double free not allowed", 0xFF0000);
 		return;
 	}
 	memory->info.free_blocks[--(memory->info.current)] = ptr;
@@ -84,13 +84,14 @@ static MemoryManagerADT get_memory_manager() {
 	return (MemoryManagerADT) MM_ADDRESS;
 }
 
-void get_memory_info_ADT(char *type, uint64_t *free, uint64_t *allocated) {
+void get_memory_info_ADT(char *type, uint64_t *free, uint64_t *allocated, uint64_t *total) {
     MemoryManagerADT memory = get_memory_manager();
-    my_strcpy(type, "Block memory");
+    my_strcpy(type, "Block Memory");
 
     *free = free_blocks_remaining(&(memory->info)) * BLOCK_SIZE;
 
     *allocated = memory->size - *free;
+	*total = memory->size;
 }
 
 #endif

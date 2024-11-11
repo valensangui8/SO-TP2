@@ -37,24 +37,30 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
     return -1;
   }
 
-  if (use_sem)
+  if (use_sem){
     if (call_sys_sem_open(SEM_ID, 1) == -1) {
       printf("test_sync: ERROR opening semaphore\n");
       return -1;
     }
+    
+  }
 
   uint64_t i;
   for (i = 0; i < n; i++) {
     if (use_sem){
+      // call_sys_draw_word(" START WAIT ");
       call_sys_sem_wait(SEM_ID);
+      // call_sys_draw_word(" - STOP WAIT ");
     }
     slowInc(&global, inc);
     if (use_sem){
       call_sys_sem_post(SEM_ID);
+      // call_sys_draw_word(" POST DONE ");
     }
   }
   
   if (use_sem){
+    
     call_sys_sem_close(SEM_ID);
   }
   return 0;

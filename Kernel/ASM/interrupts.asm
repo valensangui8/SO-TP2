@@ -1,9 +1,9 @@
 
 GLOBAL _cli
 GLOBAL _sti
-GLOBAL picMasterMask
-GLOBAL picSlaveMask
-GLOBAL haltcpu
+GLOBAL pic_master_mask
+GLOBAL pic_slave_mask
+GLOBAL halt_cpu
 GLOBAL _hlt
 
 GLOBAL _irq80Handler
@@ -17,19 +17,19 @@ GLOBAL _irq05Handler
 
 GLOBAL _exception0Handler
 GLOBAL _exception6Handler
-GLOBAL saveState
-GLOBAL printRegAsm
+GLOBAL save_state
+GLOBAL print_reg_asm
 
 GLOBAL _initialize_stack_frame
 
 GLOBAL _yield
 
-EXTERN idtManager
-EXTERN irqDispatcher
-EXTERN exceptionDispatcher
-EXTERN retUserland
-EXTERN getStackBase
-EXTERN printRegisters
+EXTERN idt_manager
+EXTERN irq_dispatcher
+EXTERN exception_dispatcher
+EXTERN ret_userland
+EXTERN get_stack_base
+EXTERN print_registers
 EXTERN scheduler
 
 SECTION .text
@@ -152,15 +152,15 @@ _yield:
 	int 20h
 	ret
 
-saveState:
+save_state:
 	pushState
 	dState
 	popState
 	ret
 
-printRegAsm:
+print_reg_asm:
 	mov qword rdi, registers
-	call printRegisters
+	call print_registers
 	ret
 
 %macro irqHandlerMaster 1
@@ -174,7 +174,7 @@ printRegAsm:
 	.noSave:
 	mov rsi, rsp
 	mov rdi, %1 ; pasaje de parametro
-	call irqDispatcher
+	call irq_dispatcher
 
 	; signal pic EOI (End of Interrupt)
 	mov al, 20h
@@ -194,14 +194,14 @@ printRegAsm:
 	mov rsi, registers
 	;mov rsi, rsp
 	mov rdi, %1 ; pasaje de parametro
-	call exceptionDispatcher
+	call exception_dispatcher
 
 	popState
 
-	call getStackBase
+	call get_stack_base
 	sub rax, 20h
 	mov qword [rsp+8*3], rax
-	call retUserland
+	call ret_userland
 	mov qword [rsp], rax
 	iretq
 %endmacro
@@ -239,7 +239,7 @@ _sti:
 	sti
 	ret
 
-picMasterMask:
+pic_master_mask:
 	push rbp
     mov rbp, rsp
     mov ax, di
@@ -247,7 +247,7 @@ picMasterMask:
     pop rbp
     retn
 
-picSlaveMask:
+pic_slave_mask:
 	push    rbp
     mov     rbp, rsp
     mov     ax, di  ; ax = mascara de 16 bits
@@ -272,7 +272,7 @@ _irq80Handler:
 
     mov rdi, rax
     mov rsi, rsp   ; stack pointer is pointing towards first element in the stack
-	call idtManager
+	call idt_manager
 	add rsp, 8*6    ; Restablezco el stack
 
     popStateNoRax
@@ -287,7 +287,7 @@ _irq00Handler:
 	pushState
 
 	mov rdi, 0 
-	call irqDispatcher
+	call irq_dispatcher
 
 	mov rdi, rsp
 	call scheduler
@@ -328,7 +328,7 @@ _exception0Handler:
 _exception6Handler:
 	exceptionHandler 6
 
-haltcpu:
+halt_cpu:
 	cli
 	hlt
 	ret

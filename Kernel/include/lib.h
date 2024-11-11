@@ -19,7 +19,7 @@ char *my_itoa(int num);
 char *hexToChar(uint64_t num);
 
 
-char *cpuVendor(char *result);
+char *cpu_vendor(char *result);
 void outb(uint16_t port, uint8_t data);
 uint8_t inb(uint16_t port);
 uint64_t get_key();

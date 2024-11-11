@@ -28,8 +28,8 @@ void load_idt() {
   setup_IDT_entry(0x21, (uint64_t) &_irq01Handler); // keyboard
   setup_IDT_entry (0x80, (uint64_t)&_irq80Handler); // System call
 
-	picMasterMask(0xFC); 
-	picSlaveMask(0xFF);
+	pic_master_mask(0xFC); 
+	pic_slave_mask(0xFF);
 }
 
 static void setup_IDT_entry (int index, uint64_t offset) {

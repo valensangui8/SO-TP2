@@ -16,12 +16,13 @@
 #define DAY     0x7
 #define MONTH   0x8
 #define YEAR    0x9
+#define MAX_PROCESS 20
 
 void date();
 
-void zoomIn();
+void zoom_in();
 
-void zoomOut();
+void zoom_out();
 
 void clear();
 
@@ -43,16 +44,20 @@ void ps();
 
 void kill_process(int argc, char **argv);
 
-void cat(int16_t fds[], int argc, char **argv);
+int cat(int16_t fds[]);
 
-void wc(int16_t fds[]);
+int wc(int16_t fds[]);
 
-void filter(int16_t fds[], int argc, char **argv);
+int filter(int16_t fds[]);
 
-void loop(int16_t fds[], int argc, char **argv);
+int loop(int16_t fds[], int argc, char **argv);
 
 void nice(int argc, char **argv);
 
 void block_process(int argc, char **argv);
+
+void get_memory_info();
+
+int text(int16_t fds[]);
 
 #endif

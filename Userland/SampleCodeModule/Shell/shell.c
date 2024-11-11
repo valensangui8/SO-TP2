@@ -12,9 +12,9 @@ typedef struct command {
 } Command;
 
 // Define si BACKGROUND es 0 o 1 según tu sistema
-Command commandsList[COMMANDS] = {
-    {"zoomIn", .function_void = zoomIn, VOID},                          
-    {"zoomOut", .function_void = zoomOut, VOID},
+Command commands_list[COMMANDS] = {
+    {"zoomIn", .function_void = zoom_in, VOID},                          
+    {"zoomOut", .function_void = zoom_out, VOID},
     {"clear", .function_void = clear, VOID},
     {"div0", .function_void = div0, VOID},
     {"invalidOpcode", .function_void = invalidOpcode, VOID},
@@ -26,16 +26,18 @@ Command commandsList[COMMANDS] = {
     {"testprio", .process_no_params = test_prio_user, PROCESS_NO_PARAMS},              
     {"testmm", .process_params = test_mm_user, PROCESS_PARAMS},
     {"testprocess", .process_params = test_process_user, PROCESS_PARAMS},
-    {"ps", .process_no_params = ps, VOID},
+    {"ps", .function_void = ps, VOID},
     {"kill", .function_params = kill_process, FUNC_PARAMS},
     {"testsync", .process_params = test_sync_user, PROCESS_PARAMS},
-    {"cat", .process_params = cat, PROCESS_PARAMS},
-    {"filter", .process_params = filter, PROCESS_PARAMS},
+    {"cat", .process_no_params = cat, PROCESS_NO_PARAMS},
+    {"filter", .process_no_params = filter, PROCESS_NO_PARAMS},
     {"wc", .process_no_params = wc, PROCESS_NO_PARAMS},
     {"loop", .process_params = loop, PROCESS_PARAMS},
-    //{"phylo", .process_params = phylo, PROCESS_PARAMS}
     {"nice", .function_params = nice, FUNC_PARAMS},
-    {"block", .function_params = block_process, FUNC_PARAMS}
+    {"block", .function_params = block_process, FUNC_PARAMS},
+    {"mem", .function_void = get_memory_info, VOID},
+    {"text", .process_no_params = text,PROCESS_NO_PARAMS},
+    {"philo", .process_no_params = philo, PROCESS_NO_PARAMS}
 };
 
 static int run_command(char *command, int argc, char **argv, char *flag, int16_t fds[]);
@@ -44,15 +46,9 @@ void initialize_shell(char *command, int argc, char **argv, char *command2, int 
     char flag = 0;
     int16_t fds1[3], fds2[3];
     if(argc2 == 0){ // one process
-        if(background){
-            fds1[STDIN] = DEV_NULL;
-            fds1[STDOUT]= STDOUT; 
-            fds1[STDERR] = STDERR;
-        }else{
-            fds1[STDIN] = STDIN;
-            fds1[STDOUT] = STDOUT; 
-            fds1[STDERR] = STDERR;
-        }
+        fds1[STDIN] =  (background)? DEV_NULL : STDIN;
+        fds1[STDOUT] = STDOUT; 
+        fds1[STDERR] = STDERR;
         run_command(command, argc, argv, &flag, fds1);
         return;
     }
@@ -86,40 +82,40 @@ void initialize_shell(char *command, int argc, char **argv, char *command2, int 
 int run_command(char *command, int argc, char **argv, char *flag, int16_t fds[]){
     if(*command == 0){
         call_sys_enter();
-        return;
+        return -1;
     }
-    int id = readCommand(command);
+    int id = read_command(command);
     int pid = 0;
-    executeCommand(id, flag, command, argc, argv, fds, &pid);
+    execute_command(id, flag, command, argc, argv, fds, &pid);
     return pid;
 }
 
-int readCommand(char * command) {
+int read_command(char * command) {
     for (int i = 0; i < COMMANDS; i++) {
-        if (strcmp(command, commandsList[i].name) == 0) {
+        if (strcmp(command, commands_list[i].name) == 0) {
             return i;
         }
     }
     return -1;
 }
 
-void executeCommand(int index, char * flag, char * command, int argc, char **argv, int16_t fds[], int *pid) {
+void execute_command(int index, char * flag, char * command, int argc, char **argv, int16_t fds[], int *pid) {
     if (index == -1 ) {
-        call_sys_commandEnter();
+        call_sys_command_enter();
         call_sys_error("ERROR: Command not found: ", STDERR);
         call_sys_error(command, STDERR);
         call_sys_enter();
         *flag = 0;
         return;
     }
-    call_sys_commandEnter();
+    call_sys_command_enter();
     char HeightPassed = 0;
-    call_sys_checkHeight(&HeightPassed,index);
+    call_sys_check_height(&HeightPassed, index);
     if(HeightPassed == 1){
         call_sys_clear();
     }
 
-    switch(commandsList[index].type){
+    switch(commands_list[index].type){
         case PROCESS_PARAMS:
             if(argc == 1){
                 call_sys_error("ERROR: Invalid number of arguments", STDERR);
@@ -127,20 +123,20 @@ void executeCommand(int index, char * flag, char * command, int argc, char **arg
                 *flag = 0;
                 return;
             }
-            *pid = commandsList[index].process_params(fds, argc, argv);
+            *pid = commands_list[index].process_params(fds, argc, argv);
             break;
         case PROCESS_NO_PARAMS:
-            *pid = commandsList[index].process_no_params(fds);
+            *pid = commands_list[index].process_no_params(fds);
             break;
         case FUNC_PARAMS:
-            commandsList[index].function_params(argc, argv);
+            commands_list[index].function_params(argc, argv);
+            call_sys_enter();
             break;
         case VOID:
-            commandsList[index].function_void();
+            commands_list[index].function_void();
+            call_sys_enter();
             break;
     }
-    call_sys_enter();
-    
     *flag = 1;
 }
 

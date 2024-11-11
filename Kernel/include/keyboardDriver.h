@@ -19,8 +19,8 @@
 #define D_KEY 32
 
 void keyboard_handler();									 // function that handles the keyboard
-int8_t getKeyMapping(uint64_t number);						 // function that returns the key mapping
-void readChar(uint8_t *buf, uint32_t count, uint32_t *size); // function that reads the characters
+char getKeyMapping(uint64_t number);						 // function that returns the key mapping
+void read_char(char *buf, uint32_t count, uint32_t *size); // function that reads the characters
 extern uint64_t get_key();									 // function that returns the key pressed value
-extern void saveState();									 // function that saves the state of the registers
+extern void save_state();									 // function that saves the state of the registers
 #endif

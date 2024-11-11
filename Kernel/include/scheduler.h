@@ -25,13 +25,16 @@ PCBT * find_process(unsigned int pid);
 uint64_t create_process(char *name, Priority priority, char *argv[], int argc, main_function rip, const int16_t fds[]);
 void list_processes_state();
 uint64_t kill_process(unsigned int pid);
+void kill_foreground_process();
 uint16_t unblock_process(unsigned int pid);
 uint16_t block_process(unsigned int pid);
-void update_priority(unsigned int pid, Priority new_priority);
+uint64_t update_priority(unsigned int pid, Priority new_priority);
 PCBT * find_process(unsigned int pid);
 
 int get_current_file_descriptor_read();
 int get_current_file_descriptor_write();
 int get_current_file_descriptor_error();
+
+int foreground();
 
 #endif

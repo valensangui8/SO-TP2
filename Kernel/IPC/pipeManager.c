@@ -8,7 +8,7 @@ typedef struct Pipe {
     uint16_t write_index;
     uint16_t read_index;
     int16_t input_pid, output_pid;
-    int64_t mutex;
+    char readable[10];
 } Pipe;
 
 struct PipeManagerCDT {
@@ -31,24 +31,10 @@ PipeManagerADT create_pipe_manager() {
     return pipe_manager;
 }
 
-static char *name_pipe_sem(int fd) {
-    char *name = (char *) alloc_memory(10); // CAMBIAR DESPUES
-    if (name == NULL) {
-        return NULL;
-    }
-    my_strcpy(name, "pipe_");
-    char *fd_str = my_itoa(fd);
-    if (fd_str == NULL) {
-        free_memory(name);
-        return NULL;
-    }
-    my_strcat(name, fd_str);
-    return name;
-}
-
 static Pipe *create_pipe(uint64_t id) {
     Pipe *pipe = (Pipe *) alloc_memory(sizeof(Pipe));
     if (pipe == NULL) {
+        draw_with_color("ERROR: Could not allocate memory for pipe", 0xFF0000);
         return NULL;
     }
     pipe->read_index = 0;
@@ -59,7 +45,8 @@ static Pipe *create_pipe(uint64_t id) {
         pipe->buffer[i] = 0;
     }
 
-    pipe->mutex = sem_open(name_pipe_sem(id), 0);
+    sem_open(my_itoa(id), 0);
+    my_strcpy(pipe->readable, my_itoa(id));
 
     return pipe;
 }
@@ -67,6 +54,7 @@ static Pipe *create_pipe(uint64_t id) {
 static Pipe *get_pipe(int id){
     PipeManagerADT pipe_manager = get_pipe_manager();
     if (id < 0 || id >= MAX_PIPES || id < BUILT_IN_FD) {
+        draw_with_color("ERROR: Invalid pipe id", 0xFF0000);
         return NULL;
     }
     if(pipe_manager->pipes[id - BUILT_IN_FD] == NULL){
@@ -79,12 +67,14 @@ static Pipe *get_pipe(int id){
 int16_t get_pipe_fd() {
     PipeManagerADT pipe_manager = get_pipe_manager();
     if (pipe_manager->pipes_used == MAX_PIPES) {
+        draw_with_color("ERROR: No more pipes available", 0xFF0000);
         return -1;
     }
     for (int i = 0; i < MAX_PIPES; i++) {
         if (pipe_manager->pipes[i] == NULL) {
             Pipe *pipe = create_pipe(i + BUILT_IN_FD);
             if (pipe == NULL) {
+                draw_with_color("ERROR: Could not create pipe", 0xFF0000);
                 return -1;
             }
             pipe_manager->pipes[i] = pipe;
@@ -95,33 +85,33 @@ int16_t get_pipe_fd() {
     return -1;
 }
 
-static int16_t open_pipe_pid(int id, char mode, int16_t pid) {
+int16_t open_pipe(int id, char mode, int pid) {
     Pipe *pipe = get_pipe(id);
     if (pipe == NULL) {
+        draw_with_color("ERROR: Pipe not found", 0xFF0000);
         return -1;
     }
     if (mode == 'r') {
-        if (pipe->input_pid != -1) {
-            return -1;
-        }
-        pipe->input_pid = pid;
-    } else if (mode == 'w') {
         if (pipe->output_pid != -1) {
+            draw_with_color("ERROR: Pipe already in use", 0xFF0000);
             return -1;
         }
         pipe->output_pid = pid;
+    } else if (mode == 'w') {
+        if (pipe->input_pid != -1) {
+            draw_with_color("ERROR: Pipe already in use", 0xFF0000);
+            return -1;
+        }
+        pipe->input_pid = pid;
     } else {
+        draw_with_color("ERROR: Invalid mode", 0xFF0000);
         return -1;
     }
     return id;
 }
 
-int16_t open_pipe(int id, char mode) {
-    return open_pipe_pid(id, mode, get_pid());
-}
-
 static void free_pipe(Pipe *pipe) {
-    sem_close(pipe->mutex);
+    sem_close(pipe->readable);
     free_memory(pipe);
 
     PipeManagerADT pipe_manager = get_pipe_manager();
@@ -135,14 +125,17 @@ static void free_pipe(Pipe *pipe) {
 
 static int16_t close_pipe_pid(int id, int16_t pid) {
     Pipe *pipe = get_pipe(id);
+    draw_word("CERRANDO PIPE INPUT");
     if (pipe == NULL) {
+        draw_with_color("ERROR: Pipe not found", 0xFF0000);
         return -1;
     }
     if (pipe->input_pid == pid) {
         pipe->input_pid = -1;
     } else if (pipe->output_pid == pid) {
         pipe->output_pid = -1;
-    } else { // The process is not using the pipe
+    } else {
+        draw_with_color("ERROR: No permission to close pipe", 0xFF0000);
         return -1;
     }
 
@@ -157,40 +150,52 @@ int16_t close_pipe(uint16_t fd) {
     return close_pipe_pid(fd, get_pid());
 }
 
-int16_t write_pipe(uint16_t fd, char *buffer, uint16_t *count) {
+int32_t write_pipe(uint16_t fd, char *buffer, uint32_t *count) {
     Pipe *pipe = get_pipe(fd);
     int len = my_strlen(buffer);
     *count = 0;
-    if (pipe == NULL) {
-        return -1;
-    }
-    if (pipe->output_pid != get_pid() || pipe->input_pid == -1) {
-        return -1;
-    }
-    for (int i = 0; i < len; i++) {
-        pipe->buffer[pipe->write_index] = buffer[i];
-        pipe->write_index = (pipe->write_index + 1) % PIPE_SIZE;
-        *count++;
-        sem_post(pipe->mutex);
-    }
-    
-    return count;
-}
 
-int16_t read_pipe(uint16_t fd, char *buffer, uint16_t *count) {
-    Pipe *pipe = get_pipe(fd);
-    *count = 0;
     if (pipe == NULL) {
+        draw_with_color("ERROR: Pipe not found", 0xFF0000);
         return -1;
     }
     if (pipe->input_pid != get_pid() || pipe->output_pid == -1) {
+        draw_with_color("ERROR: No permission to write pid", 0xFF0000);
+        draw_int(get_pid());
         return -1;
     }
-    for (int i = 0; pipe->read_index != pipe->read_index; i++) {
-        sem_wait(pipe->mutex);
-        buffer[i] = pipe->buffer[pipe->read_index];
-        pipe->read_index = (pipe->read_index + 1) % PIPE_SIZE;
-        *count++;
+    for (int i = 0; i < len; i++) {
+        if ((pipe->write_index + 1) % PIPE_SIZE == pipe->read_index) {
+            return -1;
+        }
+        
+        pipe->buffer[pipe->write_index] = buffer[i];
+        pipe->write_index = (pipe->write_index + 1) % PIPE_SIZE;
+        (*count)++;
+        sem_post(pipe->readable);  
     }
-    return count;
+    return (int32_t) *count;
+}
+
+
+int32_t read_pipe(uint16_t fd, char *buffer, uint32_t *count) {
+    Pipe *pipe = get_pipe(fd);
+    *count = 0;
+    
+    if (pipe == NULL) {
+        draw_with_color("ERROR: Pipe not found!", 0xFF0000);
+        return -1;
+    }
+    if (pipe->output_pid != get_pid() || pipe->input_pid == -1) {
+        draw_with_color("ERROR: No permission to read pid", 0xFF0000);
+        return -1;
+    }
+    sem_wait(pipe->readable);
+    int write = pipe->buffer[pipe->write_index];
+    if ( pipe->buffer[pipe->read_index] !=  write ) {
+        *buffer = pipe->buffer[pipe->read_index];
+        pipe->read_index = (pipe->read_index + 1) % PIPE_SIZE;
+        (*count)++;
+    }
+    return (int32_t) *count;
 }

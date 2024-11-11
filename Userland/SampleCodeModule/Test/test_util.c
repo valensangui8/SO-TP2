@@ -72,7 +72,7 @@ void endless_loop_print(int argc, char **argv) {
 	while (1) {
 		//printf("%d ", pid);
 		call_sys_draw_int(pid);
-		call_sys_drawChar(' ');
+		call_sys_draw_char(' ');
 		bussy_wait((uint64_t) argv[0]);
 	}
 }
