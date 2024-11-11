@@ -25,11 +25,13 @@ make all
 ```
 ### 2. Build the project
 From the Toolchain directory, build the project:
+
+If you want to use the **Block Memory Manager** when building project, use the following command:
 ```bash
 cd ..
 make all
 ```
-If you want to use Buddy Memory Manager when building project, use the following command: 
+If you want to use the **Buddy Memory Manager** when building project, use the following command: 
 ```bash
 cd ..
 make all MM=BUDDY
