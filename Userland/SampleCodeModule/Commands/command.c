@@ -106,7 +106,7 @@ void help() {
 	call_sys_draw_with_color(" philo ", 0x32a852);
 	printf(" - Runs the philosopher's problem simulation.\n");
 
-	call_sys_draw_with_color(" kill_philo ", 0x32a852);
+	call_sys_draw_with_color(" killphilo ", 0x32a852);
 	printf(" - Kills the philosopher's problem simulation.\n\n");
 
 	printf(" MEMORY INFO STATE:\n");
