@@ -38,6 +38,6 @@ void print_reg_asm(void);
 void halt_cpu(void);
 
 void _yield();
-void * _initialize_stack_frame(void *rip, void *function, void *stack, void *argv);
+void *_initialize_stack_frame(void *rip, void *function, void *stack, void *argv);
 
 #endif /* _INTERRUPTS_H_ */

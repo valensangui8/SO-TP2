@@ -1,12 +1,14 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include <idtLoader.h>
 #include <moduleLoader.h>
+#include <pipeManager.h>
+#include <scheduler.h>
+#include <semaphoreManager.h>
 #include <time.h>
 #include <utils.h>
 #include <videoDriver.h>
-#include <scheduler.h>
-#include <semaphoreManager.h>
-#include <pipeManager.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -58,27 +60,21 @@ void idle() {
 	}
 }
 
-
 int main() {
 	_cli();
 	load_idt();
 	int16_t fd[] = {STDIN, STDOUT, STDERR};
-	create_process("init", PRIORITY1, NULL, 0,(main_function) &idle, fd);
+	create_process("init", PRIORITY1, NULL, 0, (main_function) &idle, fd);
 	create_process("Shell", PRIORITY4, NULL, 0, (main_function) sampleCodeModuleAddress, fd);
 
 	start();
 	sleep(500);
 	clear();
 
-
 	_sti();
 	initialize();
-	while(1);
+	while (1)
+		;
 
 	return 0;
 }
-
-
-
-
-

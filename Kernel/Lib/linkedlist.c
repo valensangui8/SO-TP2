@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <linkedlist.h>
 
 struct LinkedListCDT {
@@ -17,7 +19,7 @@ LinkedListADT create_linked_list() {
 }
 
 TNode *append_element(LinkedListADT list, void *data) {
-	if (list == NULL){
+	if (list == NULL) {
 		return NULL;
 	}
 	TNode *newNode = (TNode *) alloc_memory(sizeof(TNode));
@@ -26,14 +28,14 @@ TNode *append_element(LinkedListADT list, void *data) {
 }
 
 int delete_element(LinkedListADT list, void *data) {
-	if(list == NULL){
+	if (list == NULL) {
 		return -1;
 	}
 	begin(list);
-	while(has_next(list)){
+	while (has_next(list)) {
 		TNode *current = list->current;
-        list->current = current->next;
-		if(current->data == data){
+		list->current = current->next;
+		if (current->data == data) {
 			remove_node(list, current);
 			return 0;
 		}
@@ -129,7 +131,7 @@ void *next(LinkedListADT list) {
 }
 
 void free_linked_list(LinkedListADT list) {
-  TNode *current = list->first;
+	TNode *current = list->first;
 	TNode *next;
 	while (current != NULL) {
 		next = current->next;

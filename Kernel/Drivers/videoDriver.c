@@ -1,5 +1,7 @@
-#include <videoDriver.h>
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <font.h>
+#include <videoDriver.h>
 
 // font
 #define WIDTH_FONT 8
@@ -27,14 +29,14 @@ static uint64_t binary_to_hex(uint64_t binaryNum);
 static void draw_line2(char letter);
 
 static uint32_t characterColor = 0xFFFFFF; // default color white
-//static uint32_t colorVariable = 0;
+// static uint32_t colorVariable = 0;
 static uint32_t backgroundColor = 0x000000; // default color black
 
 static uint16_t x = 0;
 static uint16_t y = 0;
 static int scale;
 static int flag_enter = 1;
-//static int flag_bottom_enter = 0;
+// static int flag_bottom_enter = 0;
 static int commands[10] = {0, 0, 0, 21, 21, 31, 23, 4, 0, 0};
 
 struct vbe_mode_info_structure {
@@ -80,7 +82,7 @@ typedef struct vbe_mode_info_structure *VBEInfoPtr;
 VBEInfoPtr VBE_mode_info = (VBEInfoPtr) 0x0000000000005C00;
 
 void put_pixel(uint32_t hexColor, uint64_t x, uint64_t y) {
-	uint8_t *framebuffer = (uint8_t *)(uintptr_t) VBE_mode_info->framebuffer;
+	uint8_t *framebuffer = (uint8_t *) (uintptr_t) VBE_mode_info->framebuffer;
 	uint64_t offset = (x * ((VBE_mode_info->bpp) / 8)) + (y * VBE_mode_info->pitch);
 	framebuffer[offset] = (hexColor) & 0xFF;
 	framebuffer[offset + 1] = (hexColor >> 8) & 0xFF;
@@ -132,17 +134,19 @@ static void uint64_hexa_to_string(uint64_t valorHexa, char *hexaString) {
 void draw_char(char character) {
 	unsigned char *bitMapChar = font[(unsigned char) character];
 	draw_square(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y);
-	if(character == '\t'){
+	if (character == '\t') {
 		x += TAB_SIZE * 8 * scale;
 		return;
 	}
-	else if(character == '\n'){
+	else if (character == '\n') {
 		command_enter();
 		return;
-	}else if(character == '\b'){
-		delete();
+	}
+	else if (character == '\b') {
+		delete ();
 		return;
-	} else if(character == EOF){
+	}
+	else if (character == EOF) {
 		return;
 	}
 	for (int i = 0; i < HEIGHT_FONT * scale; i++) {
@@ -375,8 +379,8 @@ void delete() {
 	}
 	if (x < WIDTH_FONT * scale) {
 		draw_square(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y); // borro puntero linea de abajo
-		x = VBE_mode_info->width - 2 * (WIDTH_FONT * scale);						// vuelvo a último lugar de la línea en X
-		y -= HEIGHT_FONT * scale;													// vuelvo un renglón para arriba
+		x = VBE_mode_info->width - 2 * (WIDTH_FONT * scale);						 // vuelvo a último lugar de la línea en X
+		y -= HEIGHT_FONT * scale;													 // vuelvo un renglón para arriba
 		draw_square(backgroundColor, WIDTH_FONT * scale, HEIGHT_FONT * scale, x, y); // borro letra de linea arriba der
 		update_cursor();
 		return;

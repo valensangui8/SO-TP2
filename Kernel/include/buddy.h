@@ -6,7 +6,7 @@
 #include <utils.h>
 
 // #define MIN_LEVELS 5
-// #define MAX_LEVELS 27 
+// #define MAX_LEVELS 27
 #define MIN_LEVELS 1
 #define MAX_LEVELS 24
 
@@ -15,7 +15,7 @@
 // #define TOTAL_BLOCKS (MM_SIZE / BLOCK_SIZE)
 #define BASE 2
 
-typedef struct MemoryManagerCDT * MemoryManagerADT;
+typedef struct MemoryManagerCDT *MemoryManagerADT;
 
 void init_buddy_system(uint64_t size, void *start_address);
 void *alloc_buddy_memory(uint64_t size);

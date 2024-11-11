@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <idtManager.h>
 
 static void sys_Read(char *buf, uint32_t count, uint32_t *size);
@@ -50,20 +52,19 @@ static int16_t sys_read_pipe(uint16_t fd, char *buffer, uint32_t *count);
 static void sys_get_memory_info(char *type, uint64_t *free, uint64_t *allocated, uint64_t *total);
 static int sys_foreground();
 
-
 uint64_t idt_manager(uint64_t rax, uint64_t *otherRegisters) {
-    uint64_t rdi, rsi, rdx, rcx, r8, r9;
-    rdi = otherRegisters[0];
-    rsi = otherRegisters[1];
-    rdx = otherRegisters[2];
-    rcx = otherRegisters[3];
-    r8 = otherRegisters[4];
-    r9 = otherRegisters[5];
+	uint64_t rdi, rsi, rdx, rcx, r8, r9;
+	rdi = otherRegisters[0];
+	rsi = otherRegisters[1];
+	rdx = otherRegisters[2];
+	rcx = otherRegisters[3];
+	r8 = otherRegisters[4];
+	r9 = otherRegisters[5];
 	switch (rax) {
-		case 0:															 // read
+		case 0:														  // read
 			sys_Read((char *) rdi, (uint32_t) rsi, (uint32_t *) rdx); // rdi = buffer ; rsi = size , rdx = count
 			break;
-		case 1:							// write
+		case 1:										// write
 			sys_draw_word((char *) rdi, (int) rsi); // rdi = palabra
 			break;
 		case 2:
@@ -130,10 +131,10 @@ uint64_t idt_manager(uint64_t rax, uint64_t *otherRegisters) {
 			sys_process_status((unsigned int) rdi);
 			break;
 		case 23:
-			return sys_create_process((char *) rdi, (Priority) rsi, (char**) rdx, (int) rcx, (main_function) r8, (int16_t *) r9);
-		
+			return sys_create_process((char *) rdi, (Priority) rsi, (char **) rdx, (int) rcx, (main_function) r8, (int16_t *) r9);
+
 		case 24:
-			sys_list_processes_state((int *) rdi, (char (*)[10]) rsi, (uint64_t *) rdx, (uint64_t *) rcx, (char (*)[30]) r8, (int *) r9);
+			sys_list_processes_state((int *) rdi, (char(*)[10]) rsi, (uint64_t *) rdx, (uint64_t *) rcx, (char(*)[30]) r8, (int *) r9);
 			break;
 		case 25:
 			return sys_get_pid();
@@ -193,24 +194,25 @@ uint64_t idt_manager(uint64_t rax, uint64_t *otherRegisters) {
 
 void sys_Read(char *buf, uint32_t count, uint32_t *size) {
 	int fd = get_current_file_descriptor_read();
-	if(fd == STDIN){
+	if (fd == STDIN) {
 		read_char(buf, count, size);
-	}else if(fd != DEV_NULL){
+	}
+	else if (fd != DEV_NULL) {
 		read_pipe(fd, buf, size);
-		
 	}
 }
 
 void sys_draw_word(char *word, int fd_user) {
 	int fd = get_current_file_descriptor_write();
 	uint32_t bytes = 0;
-	if(fd_user == STDERR){
+	if (fd_user == STDERR) {
 		draw_with_color(word, 0xFF0000);
 		return;
 	}
-	if(fd == STDOUT){
+	if (fd == STDOUT) {
 		draw_word(word);
-	}else if(fd != DEV_NULL){
+	}
+	else if (fd != DEV_NULL) {
 		write_pipe(fd, word, &bytes);
 	}
 }
@@ -218,9 +220,10 @@ void sys_draw_word(char *word, int fd_user) {
 void sys_draw_char(char letter) {
 	int fd = get_current_file_descriptor_write();
 	uint32_t bytes = 0;
-	if(fd == STDOUT){
+	if (fd == STDOUT) {
 		draw_line(letter);
-	}else if(fd != DEV_NULL){
+	}
+	else if (fd != DEV_NULL) {
 		write_pipe(fd, &letter, &bytes);
 	}
 }
@@ -307,7 +310,7 @@ void sys_process_status(unsigned int pid) {
 
 uint64_t sys_create_process(char *name, Priority priority, char *argv[], int argc, main_function rip, int16_t fds[]) {
 	uint64_t pid = create_process(name, priority, argv, argc, rip, fds);
-	
+
 	return pid;
 }
 
@@ -335,54 +338,54 @@ void sys_halt() {
 	_hlt();
 }
 
-void *sys_alloc_memory(uint64_t size){
+void *sys_alloc_memory(uint64_t size) {
 	return alloc_memory(size);
 }
 
-void sys_free_memory(void *ptr){
+void sys_free_memory(void *ptr) {
 	free_memory(ptr);
 }
 
-int64_t sys_sem_open(char *sem_id, uint64_t initialValue){
+int64_t sys_sem_open(char *sem_id, uint64_t initialValue) {
 	return sem_open(sem_id, initialValue);
 }
 
-int64_t sys_sem_wait(char *sem_id){
+int64_t sys_sem_wait(char *sem_id) {
 	return sem_wait(sem_id);
 }
 
-int64_t sys_sem_post(char *sem_id){
+int64_t sys_sem_post(char *sem_id) {
 	return sem_post(sem_id);
 }
 
-int64_t sys_sem_close(char *sem_id){
+int64_t sys_sem_close(char *sem_id) {
 	return sem_close(sem_id);
 }
 
-int16_t sys_get_pipe_fd(){
+int16_t sys_get_pipe_fd() {
 	return get_pipe_fd();
 }
 
-int16_t sys_open_pipe(int id, char mode, int pid){
+int16_t sys_open_pipe(int id, char mode, int pid) {
 	return open_pipe(id, mode, pid);
 }
 
-int16_t sys_close_pipe(uint16_t fd){
+int16_t sys_close_pipe(uint16_t fd) {
 	return close_pipe(fd);
 }
 
-int16_t sys_write_pipe(uint16_t fd, char *buffer, uint32_t *count){
+int16_t sys_write_pipe(uint16_t fd, char *buffer, uint32_t *count) {
 	return write_pipe(fd, buffer, count);
 }
 
-int16_t sys_read_pipe(uint16_t fd, char *buffer, uint32_t *count){
+int16_t sys_read_pipe(uint16_t fd, char *buffer, uint32_t *count) {
 	return read_pipe(fd, buffer, count);
 }
 
-void sys_get_memory_info(char *type, uint64_t *free, uint64_t *allocated, uint64_t *total){
+void sys_get_memory_info(char *type, uint64_t *free, uint64_t *allocated, uint64_t *total) {
 	get_memory_info(type, free, allocated, total);
 }
 
-int sys_foreground(){
+int sys_foreground() {
 	return foreground();
 }

@@ -1,21 +1,20 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-
-#include <syscalls.h>
-#include <myStdio.h>
 #include <eliminator.h>
-#include <itba.h>
 #include <invOpcode.h>
+#include <itba.h>
+#include <myStdio.h>
+#include <syscalls.h>
 #include <test.h>
 #include <test_util.h>
 
 #define SECONDS 0x0
 #define MINUTES 0x2
-#define HOURS   0x4
-#define DAY     0x7
-#define MONTH   0x8
-#define YEAR    0x9
+#define HOURS 0x4
+#define DAY 0x7
+#define MONTH 0x8
+#define YEAR 0x9
 #define MAX_PROCESS 20
 
 void date();
@@ -34,11 +33,11 @@ void registers();
 
 int test_mm_user(int16_t fds[], int argc, char **argv);
 
-int test_process_user(int16_t fds[],int argc, char **argv);
+int test_process_user(int16_t fds[], int argc, char **argv);
 
 int test_prio_user(int16_t fds[]);
 
-int test_sync_user(int16_t fds[],int argc, char **argv);
+int test_sync_user(int16_t fds[], int argc, char **argv);
 
 void ps();
 

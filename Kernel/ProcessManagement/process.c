@@ -1,9 +1,12 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <process.h>
 
 static int argsLen(char **array) {
-    int i = 0;
-    while (array[i] != NULL) i++;
-    return i;
+	int i = 0;
+	while (array[i] != NULL)
+		i++;
+	return i;
 }
 
 static void exit_process(int ret, unsigned int pid) {
@@ -18,14 +21,13 @@ static void exit_process(int ret, unsigned int pid) {
 
 void process_function(main_function rip, char **argv, uint64_t argc) {
 	int new_argc = argsLen(argv);
-    int ret = rip(new_argc, argv);
+	int ret = rip(new_argc, argv);
 	exit_process(ret, get_pid());
-
 }
 
-static void assign_fd(PCBT *process, int16_t index, int16_t fd, char mode){
-	process->fds[index]= fd;
-	if(fd >= BUILT_IN_FD){
+static void assign_fd(PCBT *process, int16_t index, int16_t fd, char mode) {
+	process->fds[index] = fd;
+	if (fd >= BUILT_IN_FD) {
 		open_pipe(fd, mode, process->pid);
 	}
 }
@@ -37,36 +39,36 @@ void init_process(PCBT *process, char *name, uint16_t pid, uint16_t ppid, Priori
 	process->priority = priority;
 	process->times_to_run = priority;
 	assign_fd(process, STDIN, fds[STDIN], 'r');
-	assign_fd(process, STDOUT, fds[STDOUT], 'w'); 
+	assign_fd(process, STDOUT, fds[STDOUT], 'w');
 	assign_fd(process, STDERR, fds[STDERR], 'w');
 
 	process->stack_base = alloc_memory(STACK_SIZE);
 	if (process->stack_base == NULL) {
 		draw_with_color("Error: Could not allocate memory for process", 0xFF0000);
-        free_memory(process->stack_base);
-        return;
-    }
+		free_memory(process->stack_base);
+		return;
+	}
 	void *stackEnd = (void *) ((uint64_t) process->stack_base + STACK_SIZE);
 	my_strncpy(process->name, name, sizeof(process->name));
 	process->argv = argv;
 	process->argc = argc;
-	process->stack_pointer = _initialize_stack_frame(&process_function, rip, stackEnd,(void *) process->argv);
+	process->stack_pointer = _initialize_stack_frame(&process_function, rip, stackEnd, (void *) process->argv);
 }
 
 int64_t wait_children(unsigned int pid) {
 	SchedulerInfo scheduler = get_scheduler();
-	if(pid == INIT_PID){ // Has no father
+	if (pid == INIT_PID) { // Has no father
 		return -1;
 	}
 	PCBT *child = find_process(pid);
 	PCBT *parent = find_process(child->ppid);
-	
-	if(child->state != ZOMBIE) {
+
+	if (child->state != ZOMBIE) {
 		parent->waiting_pid = pid;
 		block_process(parent->pid);
 		yield();
-	} 
-	
+	}
+
 	child->state = DEAD;
 	scheduler->amount_processes--;
 
@@ -98,7 +100,7 @@ char *process_state(PCBT process) {
 			my_strcat(status, "UNKNOWN");
 			return status;
 	}
-	switch(process.priority) {
+	switch (process.priority) {
 		case PRIORITY3:
 			my_strcat(status, "H");
 			break;
@@ -113,10 +115,10 @@ char *process_state(PCBT process) {
 			break;
 	}
 	if (process.fds[STDIN] == DEV_NULL) { // Background
-		my_strcat(status, "+"); 
+		my_strcat(status, "+");
 	}
 	if (process.pid == SESSION_LEADER) { // Session leader
-		my_strcat(status, "s"); 
+		my_strcat(status, "s");
 	}
 	my_strcat(status, "\0");
 	return status;

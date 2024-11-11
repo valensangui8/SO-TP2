@@ -18,14 +18,13 @@ uint64_t pow2(uint64_t argument);
 char *my_itoa(int num);
 char *hexToChar(uint64_t num);
 
-
 char *cpu_vendor(char *result);
 void outb(uint16_t port, uint8_t data);
 uint8_t inb(uint16_t port);
 uint64_t get_key();
 void enter();
 void timer_tick();
-void acquire(uint8_t * lock);
-void release(uint8_t * lock);
+void acquire(uint8_t *lock);
+void release(uint8_t *lock);
 
 #endif

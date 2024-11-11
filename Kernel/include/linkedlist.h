@@ -3,12 +3,12 @@
 
 #include <memoryManagerADT.h>
 
-typedef struct LinkedListCDT * LinkedListADT;
+typedef struct LinkedListCDT *LinkedListADT;
 
 typedef struct Node {
-  void *data;
-  struct Node *next;
-  struct Node *prev;
+	void *data;
+	struct Node *next;
+	struct Node *prev;
 } TNode;
 
 LinkedListADT create_linked_list();

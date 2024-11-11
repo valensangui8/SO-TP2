@@ -1,6 +1,8 @@
-#include <time.h>
-#include <stdint.h>
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <keyboardDriver.h>
+#include <stdint.h>
+#include <time.h>
 
 void int_00();
 void int_01();
@@ -24,4 +26,3 @@ void int_00() {
 void int_01() {
 	keyboard_handler();
 }
-

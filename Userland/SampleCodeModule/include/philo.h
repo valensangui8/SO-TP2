@@ -1,10 +1,10 @@
 #ifndef PHILO_H
 #define PHILO_H
 
-#include <stdint.h>
 #include <myStdio.h>
-#include <syscalls.h>
+#include <stdint.h>
 #include <stdlib.h>
+#include <syscalls.h>
 
 #define MAX_PHILOSOPHERS 10
 #define MIN_PHILOSOPHERS 5
@@ -15,7 +15,6 @@
 #define EATING 'E'
 #define EATING_TIME 3
 #define THINKING_TIME 1
-
 
 // Process function for individual philosophers
 void philosopher_process(int argc, char **argv);

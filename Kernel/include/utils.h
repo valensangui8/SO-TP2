@@ -1,6 +1,7 @@
 #ifndef _UTILS_H
 #define _UTILS_H
 
+#include "memory.h"
 #include <interrupts.h>
 #include <lib.h>
 #include <memoryManagerADT.h>
@@ -9,7 +10,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include "memory.h"
 
 #define MAX_PROCESS 20
 #define MM_ADDRESS 0x50000
@@ -18,12 +18,12 @@
 #define PIPE_MANAGER_ADDRESS 0x80000
 
 #define BUILT_IN_FD 3
-#define STDIN 0 
+#define STDIN 0
 #define STDOUT 1
 #define STDERR 2
 #define DEV_NULL -1
 
-#define NO_CHILDREN 0 
+#define NO_CHILDREN 0
 
 typedef enum { BLOCKED = 0,
 			   READY,
@@ -40,8 +40,6 @@ typedef enum { PRIORITY1 = 1,
 
 typedef int (*main_function)(uint64_t argc, char **argv);
 
-
-
 typedef struct PCB {
 	char name[32];
 	uint16_t pid;
@@ -50,8 +48,8 @@ typedef struct PCB {
 	Priority priority;
 	int times_to_run; // contador de veces que se ejecuto
 	PCBState state;
-	void * stack_pointer;
-	void * stack_base;
+	void *stack_pointer;
+	void *stack_base;
 	int16_t fds[BUILT_IN_FD];
 	char **argv;
 	int argc;
@@ -71,6 +69,5 @@ typedef struct Scheduler {
 } Scheduler;
 
 typedef struct Scheduler *SchedulerInfo;
-
 
 #endif

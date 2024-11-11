@@ -1,15 +1,16 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <register.h>
 #define ZERO_EXCEPTION_ID 0
 #define INVALID_OP_ID 6
 
-
 static void zero_division();
 static void invalid_op();
 
-void exception_dispatcher(int exception, registerStructT * registers) {
+void exception_dispatcher(int exception, registerStructT *registers) {
 	if (exception == ZERO_EXCEPTION_ID)
 		zero_division();
-	if(exception == INVALID_OP_ID ){
+	if (exception == INVALID_OP_ID) {
 		invalid_op();
 	}
 	print_registers(registers);

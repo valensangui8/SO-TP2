@@ -1,10 +1,10 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <register.h>
 
-
-
 int flag_screenShot = 0;
-void print_registers(registerStructT * registers){
-	if (flag_screenShot == 0){
+void print_registers(registerStructT *registers) {
+	if (flag_screenShot == 0) {
 		draw_word("Error - No hay screenshots de registros");
 		return;
 	}

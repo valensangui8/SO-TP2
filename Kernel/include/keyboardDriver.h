@@ -5,8 +5,8 @@
 #include <interrupts.h>
 #include <lib.h>
 #include <register.h>
-#include <stdint.h>
 #include <scheduler.h>
+#include <stdint.h>
 
 #define LEFT_SHIFT_NBR 42
 #define RIGHT_SHIFT_NBR 54
@@ -18,9 +18,9 @@
 #define C_KEY 46
 #define D_KEY 32
 
-void keyboard_handler();									 // function that handles the keyboard
-char getKeyMapping(uint64_t number);						 // function that returns the key mapping
+void keyboard_handler();								   // function that handles the keyboard
+char getKeyMapping(uint64_t number);					   // function that returns the key mapping
 void read_char(char *buf, uint32_t count, uint32_t *size); // function that reads the characters
-extern uint64_t get_key();									 // function that returns the key pressed value
-extern void save_state();									 // function that saves the state of the registers
+extern uint64_t get_key();								   // function that returns the key pressed value
+extern void save_state();								   // function that saves the state of the registers
 #endif

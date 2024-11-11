@@ -1,8 +1,10 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <myStdio.h>
 #include <shell.h>
+#include <stddef.h>
 #include <syscalls.h>
 #include <test.h>
-#include <stddef.h>
 
 #define CHARACTER_COLOR 0xB0CA07
 #define TAB_SIZE 4
@@ -21,7 +23,7 @@ int main() {
 	return 0;
 }
 
-static int parse_command(char *buffer, char *argv1[], int *argc1, char *argv2[], int *argc2, int *background){
+static int parse_command(char *buffer, char *argv1[], int *argc1, char *argv2[], int *argc2, int *background) {
 	char *token = strtok(buffer, " ");
 	int one_process = 1;
 	while (token != NULL) {
@@ -30,11 +32,12 @@ static int parse_command(char *buffer, char *argv1[], int *argc1, char *argv2[],
 			token = strtok(NULL, " ");
 			continue;
 		}
-			if (strcmp(token, "&") == 0) {
+		if (strcmp(token, "&") == 0) {
 			if (strtok(NULL, " ") == NULL) {
 				*background = 1;
 				break;
-			} else {
+			}
+			else {
 				call_sys_command_enter();
 				call_sys_error("Parse error: near '&'", STDERR);
 				call_sys_enter();
@@ -44,7 +47,8 @@ static int parse_command(char *buffer, char *argv1[], int *argc1, char *argv2[],
 
 		if (one_process) {
 			argv1[(*argc1)++] = token;
-		} else {
+		}
+		else {
 			argv2[(*argc2)++] = token;
 		}
 
@@ -55,7 +59,7 @@ static int parse_command(char *buffer, char *argv1[], int *argc1, char *argv2[],
 	return 0;
 }
 
-void terminal(){
+void terminal() {
 	char c;
 	while (1) {
 		char buffer[BUFFER_SIZE] = {0};
@@ -80,23 +84,22 @@ void terminal(){
 		}
 
 		int foreground = call_sys_foreground();
-		if(!foreground){
+		if (!foreground) {
 			buffer[buffer_pos] = '\0';
 		}
-		else{
+		else {
 			buffer[buffer_pos] = '\0';
 			call_sys_draw_char('\n');
 		}
 
 		char *argv1[MAX_ARGS] = {NULL};
-		char *argv2[MAX_ARGS] = {NULL};   
-        int argc1 = 0, argc2 = 0, background = 0;
+		char *argv2[MAX_ARGS] = {NULL};
+		int argc1 = 0, argc2 = 0, background = 0;
 
 		int not_valid = parse_command(buffer, argv1, &argc1, argv2, &argc2, &background);
-		
-		if(!not_valid){
+
+		if (!not_valid) {
 			initialize_shell(argv1[0], argc1, argv1, argv2[0], argc2, argv2, background);
 		}
 	}
-
 }
