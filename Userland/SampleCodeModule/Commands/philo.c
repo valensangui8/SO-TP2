@@ -1,4 +1,4 @@
-#include <phylo.h>
+#include <philo.h>
 
 typedef struct {
     char state;

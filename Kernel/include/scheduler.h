@@ -28,7 +28,7 @@ uint64_t kill_process(unsigned int pid);
 void kill_foreground_process();
 uint16_t unblock_process(unsigned int pid);
 uint16_t block_process(unsigned int pid);
-void update_priority(unsigned int pid, Priority new_priority);
+uint64_t update_priority(unsigned int pid, Priority new_priority);
 PCBT * find_process(unsigned int pid);
 
 int get_current_file_descriptor_read();

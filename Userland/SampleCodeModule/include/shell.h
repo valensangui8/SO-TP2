@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <commands.h>
 #include <stddef.h>
-#include <Phylo.h>
+#include <philo.h>
 #include <myStdio.h>
 
 #define COMMANDS 25

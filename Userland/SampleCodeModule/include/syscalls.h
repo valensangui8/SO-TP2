@@ -25,7 +25,7 @@ extern void call_sys_check_height(char *HeightPassed, int command);
 extern void call_sys_draw_int(int number);
 
 extern uint64_t call_sys_kill_process(unsigned int pid);
-extern void call_sys_update_priority(unsigned int pid, unsigned int new_priority);
+extern uint64_t call_sys_update_priority(unsigned int pid, unsigned int new_priority);
 extern uint16_t call_sys_block_process(unsigned int pid);
 extern uint16_t call_sys_unblock_process(unsigned int pid);
 extern void call_sys_yield();

@@ -235,23 +235,22 @@ void kill_foreground_process(){
 	yield();
 }
 
-void update_priority(unsigned int pid, Priority new_priority) {
+uint64_t update_priority(unsigned int pid, Priority new_priority) {
 	SchedulerInfo scheduler = get_scheduler();
 	PCBT *process = NULL;
 
 	for (int i = 0; i < MAX_PROCESS; i++) {
-		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != DEAD) {
+		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != DEAD && scheduler->processes[i].state != ZOMBIE) {
 			process = &(scheduler->processes[i]);
 			break;
 		}
 	}
 	if (process == NULL || process->priority == new_priority) {
-		return;
+		return 0;
 	}
-
 	process->times_to_run = new_priority;
-
 	process->priority = new_priority;
+	return 1;
 }
 
 uint16_t block_process(unsigned int pid) {

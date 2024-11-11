@@ -20,7 +20,7 @@ static void sys_check_height(char *HeightPassed, int indexCommand);
 static void sys_draw_int(int number);
 
 static uint64_t sys_kill_process(unsigned int pid);
-static void sys_update_priority(unsigned int pid, Priority new_priority);
+static uint64_t sys_update_priority(unsigned int pid, Priority new_priority);
 static uint16_t sys_block_process(unsigned int pid);
 static uint16_t sys_unblock_process(unsigned int pid);
 static void sys_yield();
@@ -115,7 +115,7 @@ uint64_t idt_manager(uint64_t rax, uint64_t *otherRegisters) {
 			return sys_kill_process((unsigned int) rdi);
 			break;
 		case 18:
-			sys_update_priority((unsigned int) rdi, (Priority) rsi);
+			return sys_update_priority((unsigned int) rdi, (Priority) rsi);
 			break;
 		case 19:
 			return sys_block_process((unsigned int) rdi);
@@ -285,8 +285,8 @@ uint64_t sys_kill_process(unsigned int pid) {
 	return kill_process(pid);
 }
 
-void sys_update_priority(unsigned int pid, Priority new_priority) {
-	update_priority(pid, new_priority);
+uint64_t sys_update_priority(unsigned int pid, Priority new_priority) {
+	return update_priority(pid, new_priority);
 }
 
 uint16_t sys_block_process(unsigned int pid) {

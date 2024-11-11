@@ -41,10 +41,10 @@ void help(){
     call_sys_draw_with_color(" clear ", 0x32a852);
     printf(" - Clear the screen.\n");
    
-    call_sys_draw_with_color(" zoom_in ", 0x32a852);
+    call_sys_draw_with_color(" zoomIn ", 0x32a852);
     printf(" - Increase text size. Clears screen after change.\n");
 
-    call_sys_draw_with_color(" zoom_out ", 0x32a852);
+    call_sys_draw_with_color(" zoomOut ", 0x32a852);
     printf(" - Decrease text size. Clears screen after change.\n");
   
     call_sys_draw_with_color(" registers ", 0x32a852);
@@ -90,6 +90,9 @@ void help(){
 
     call_sys_draw_with_color(" mem ", 0x32a852);
     printf(" - Displays current memory usage details.\n");
+
+    call_sys_draw_with_color(" text ", 0x32a852);
+    printf(" - Process that writes sample text to test the functionality of pipes.\n");
 
 }
 
@@ -314,7 +317,13 @@ int loop(int16_t fds[], int argc, char **argv){
 }
 
 void nice(int argc, char **argv){
-    call_sys_update_priority(my_atoi(argv[1]), my_atoi(argv[2]));
+    uint64_t success = call_sys_update_priority(my_atoi(argv[1]), my_atoi(argv[2]));
+    if(success == 1){
+        printf("Priority updated successfully.\n");
+    }
+    else{
+        call_sys_error("Error: updating priority.\n",STDERR);
+    }
 }
 
 void block_process(int argc, char **argv) {

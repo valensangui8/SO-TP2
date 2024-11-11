@@ -13,8 +13,8 @@ typedef struct command {
 
 // Define si BACKGROUND es 0 o 1 según tu sistema
 Command commands_list[COMMANDS] = {
-    {"zoom_in", .function_void = zoom_in, VOID},                          
-    {"zoom_out", .function_void = zoom_out, VOID},
+    {"zoomIn", .function_void = zoom_in, VOID},                          
+    {"zoomOut", .function_void = zoom_out, VOID},
     {"clear", .function_void = clear, VOID},
     {"div0", .function_void = div0, VOID},
     {"invalidOpcode", .function_void = invalidOpcode, VOID},
