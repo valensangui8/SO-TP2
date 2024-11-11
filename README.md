@@ -29,6 +29,11 @@ From the Toolchain directory, build the project:
 cd ..
 make all
 ```
+If you want to use Buddy Memory Manager when building project, use the following command: 
+```bash
+cd ..
+make all MM=BUDDY
+```
 ### 3. Clean the project
 To clean the project, run the following command from the root of the project directory:
 ```bash
