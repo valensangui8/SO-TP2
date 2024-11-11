@@ -11,7 +11,6 @@ static Philosopher philosophers[MAX_PHILOSOPHERS];
 static int amount_of_philosophers = 0;
 static char *mutex = "mtx";
 static char *change_philo = "chng";
-static int16_t fds[3] = {STDIN, STDOUT, STDERR};
 static int16_t philosopher_fds[3] = {DEV_NULL, STDOUT, STDERR};
 
 static void can_eat(int id) {
@@ -134,7 +133,7 @@ static void header() {
 	printf("----------------------------------\n");
 }
 
-int initialize_philosophers() {
+int initialize_philosophers(int16_t fds[]) {
 	call_sys_sem_open(mutex, 1);
 	call_sys_sem_open(change_philo, 1);
 
@@ -152,7 +151,9 @@ int initialize_philosophers() {
 }
 
 int philo(int16_t fds[]) {
-	int parent_pid = initialize_philosophers();
-	call_sys_wait_children(parent_pid);
+	int parent_pid = initialize_philosophers(fds);
+	if(fds[0]!=DEV_NULL){
+		call_sys_wait_children(parent_pid);
+	}
 	return parent_pid;
 }
