@@ -17,6 +17,7 @@
 #define CTRL_RELEASED 157
 #define C_KEY 46
 #define D_KEY 32
+#define MAX_KEY_MAP 58
 
 void keyboard_handler();								   // function that handles the keyboard
 char getKeyMapping(uint64_t number);					   // function that returns the key mapping

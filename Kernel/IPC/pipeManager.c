@@ -52,7 +52,7 @@ static Pipe *create_pipe(uint64_t id) {
 
 static Pipe *get_pipe(int id) {
 	PipeManagerADT pipe_manager = get_pipe_manager();
-	if (id < 0 || id >= MAX_PIPES || id < BUILT_IN_FD) {
+	if (id >= MAX_PIPES || id < BUILT_IN_FD) {
 		draw_with_color("ERROR: Invalid pipe id", 0xFF0000);
 		return NULL;
 	}

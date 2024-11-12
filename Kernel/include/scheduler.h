@@ -5,7 +5,7 @@
 #include <utils.h>
 
 #define QUANTUM 1
-#define RR_INDEX(i) ((i + 1) % (MAX_PROCESS * PRIORITY4))
+#define RR_INDEX(i) (((i) + 1) % (MAX_PROCESS * PRIORITY4))
 #define INIT_PID 1
 
 #define PID_WIDTH 6
@@ -23,7 +23,7 @@ PCBT *update_quantum(void *stack_pointer);
 PCBT *find_process(unsigned int pid);
 
 uint64_t create_process(char *name, Priority priority, char *argv[], int argc, main_function rip, const int16_t fds[]);
-void list_processes_state();
+void list_processes_state(int *pids, char states[][10], uint64_t *rsps, uint64_t *rbps, char commands[][30], int *process_count);
 uint64_t kill_process(unsigned int pid);
 void kill_foreground_process();
 uint16_t unblock_process(unsigned int pid);

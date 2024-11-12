@@ -89,21 +89,24 @@ char getKeyMapping(uint64_t number) {
 		return 0;
 	}
 
-	if (shiftPressed) {
-		return keyMap[number][1];
-	}
-
-	if (ctrlPressed && number == C_KEY) { // kill process foreground
+	if (ctrlPressed && number == C_KEY) {
 		kill_foreground_process();
 		enter();
 		return 0;
 	}
 
-	if (ctrlPressed && number == D_KEY) { // send EOF
+	if (ctrlPressed && number == D_KEY) {
 		return EOF;
 	}
 
-	return keyMap[number][0];
+	if (number < MAX_KEY_MAP && shiftPressed) {
+		return keyMap[number][1];
+	}
+
+	if (number < MAX_KEY_MAP) {
+		return keyMap[number][0];
+	}
+	return 0;
 }
 
 // function that handles the keyboard
@@ -111,7 +114,7 @@ void keyboard_handler() {
 	uint64_t key = get_key();
 	char *buffer = get_address();
 	int buffer_pos = get_pos();
-	if (key < 0 || key > 256 || getKeyMapping(key) == 0) {
+	if (key > 256 || getKeyMapping(key) == 0) {
 		return;
 	}
 	if (buffer_pos + 1 < SIZE) {

@@ -133,14 +133,14 @@ static void merge_block(BuddyBlock *block) {
 	int level = block->level;
 
 	uint64_t relative_address = (uint64_t) block - (uint64_t) memory->start_address;
-	uint64_t buddy_number = relative_address / (1 << level);
+	uint64_t buddy_number = relative_address / (1ULL << level);
 	uint64_t buddy_relative_address = 0;
 
 	if (buddy_number % 2 == 0) {
-		buddy_relative_address = relative_address + (1 << level);
+		buddy_relative_address = relative_address + (1ULL << level);
 	}
 	else {
-		buddy_relative_address = relative_address - (1 << level);
+		buddy_relative_address = relative_address - (1ULL << level);
 	}
 
 	BuddyBlock *buddy = (BuddyBlock *) ((uint64_t) memory->start_address + buddy_relative_address);
@@ -218,13 +218,12 @@ void get_memory_info_buddy(char *type, uint64_t *free, uint64_t *allocated, uint
 	my_strcpy(type, "Buddy memory");
 
 	*free = 0;
-	*allocated = 0;
 
 	for (int i = 0; i < memory->max_levels; i++) {
 		BuddyBlock *block = memory->free_list[i];
 		uint64_t level_free = 0;
 		while (block != NULL) {
-			level_free += (1 << i);
+			level_free += (1ULL << i);
 			block = block->next;
 		}
 		*free += level_free;
@@ -233,7 +232,7 @@ void get_memory_info_buddy(char *type, uint64_t *free, uint64_t *allocated, uint
 	BuddyBlock *block = (BuddyBlock *) memory->start_address;
 	while ((uint64_t) block < (uint64_t) memory->start_address + memory->size) {
 		if (block->is_free) {
-			*free += (1 << block->level);
+			*free += (1ULL << block->level);
 		}
 		block = (BuddyBlock *) ((uint64_t) block + (1 << block->level));
 	}
