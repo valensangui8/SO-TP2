@@ -1,8 +1,8 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-#include <syscalls.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <syscalls.h>
 
 // Random
 static uint32_t m_z = 362436069;
@@ -67,12 +67,10 @@ void endless_loop() {
 }
 
 void endless_loop_print(int argc, char **argv) {
-
-	
 	int64_t pid = call_sys_get_pid();
 
 	while (1) {
-		//printf("%d ", pid);
+		// printf("%d ", pid);
 		call_sys_draw_int(pid);
 		call_sys_draw_char(' ');
 		bussy_wait((uint64_t) argv[0]);

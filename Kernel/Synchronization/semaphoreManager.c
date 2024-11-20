@@ -95,6 +95,7 @@ int64_t sem_open(char *sem_id, uint64_t initial_value) {
 int64_t sem_wait(char *sem_id) {
 	MySem_t sem = get_semaphore(sem_id);
 	if (sem == NULL) {
+		draw_with_color("Error: Semaphore not found", 0xFF0000);
 		return -1;
 	}
 	acquire(&(sem->mutex));
@@ -106,6 +107,7 @@ int64_t sem_wait(char *sem_id) {
 		acquire(&(sem->mutex));
 	}
 	sem->value -= 1;
+
 	release(&(sem->mutex));
 	return 0;
 }

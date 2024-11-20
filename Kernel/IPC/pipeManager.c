@@ -46,7 +46,6 @@ static Pipe *create_pipe(uint64_t id) {
 	for (int i = 0; i < PIPE_SIZE; i++) {
 		pipe->buffer[i] = 0;
 	}
-
 	return pipe;
 }
 
@@ -167,7 +166,6 @@ int32_t write_pipe(uint16_t fd, char *buffer, uint32_t *count) {
 		if ((pipe->write_index + 1) % PIPE_SIZE == pipe->read_index) {
 			return -1;
 		}
-
 		pipe->buffer[pipe->write_index] = buffer[i];
 		pipe->write_index = (pipe->write_index + 1) % PIPE_SIZE;
 		(*count)++;
@@ -178,8 +176,8 @@ int32_t write_pipe(uint16_t fd, char *buffer, uint32_t *count) {
 
 int32_t read_pipe(uint16_t fd, char *buffer, uint32_t *count) {
 	Pipe *pipe = get_pipe(fd);
-	*count = 0;
 
+	*count = 0;
 	if (pipe == NULL) {
 		draw_with_color("ERROR: Pipe not found!", 0xFF0000);
 		return -1;
@@ -189,8 +187,7 @@ int32_t read_pipe(uint16_t fd, char *buffer, uint32_t *count) {
 		return -1;
 	}
 	sem_wait(pipe->readable);
-	int write = pipe->buffer[pipe->write_index];
-	if (pipe->buffer[pipe->read_index] != write) {
+	if (pipe->read_index != pipe->write_index) {
 		*buffer = pipe->buffer[pipe->read_index];
 		pipe->read_index = (pipe->read_index + 1) % PIPE_SIZE;
 		(*count)++;

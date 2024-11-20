@@ -243,6 +243,11 @@ uint64_t update_priority(unsigned int pid, Priority new_priority) {
 	SchedulerInfo scheduler = get_scheduler();
 	PCBT *process = NULL;
 
+	if (pid == INIT_PID) {
+		draw_with_color("ERROR: You can not change the priority of the Init process", 0xFF0000);
+		return 0;
+	}
+
 	for (int i = 0; i < MAX_PROCESS; i++) {
 		if (scheduler->processes[i].pid == pid && scheduler->processes[i].state != DEAD && scheduler->processes[i].state != ZOMBIE) {
 			process = &(scheduler->processes[i]);

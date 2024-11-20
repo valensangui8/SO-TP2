@@ -194,6 +194,7 @@ uint64_t idt_manager(uint64_t rax, uint64_t *otherRegisters) {
 
 void sys_Read(char *buf, uint32_t count, uint32_t *size) {
 	int fd = get_current_file_descriptor_read();
+	int bytes = 0;
 	if (fd == STDIN) {
 		read_char(buf, count, size);
 	}
@@ -207,6 +208,10 @@ void sys_draw_word(char *word, int fd_user) {
 	uint32_t bytes = 0;
 	if (fd_user == STDERR) {
 		draw_with_color(word, 0xFF0000);
+		return;
+	}
+	if (fd_user == 3) {
+		draw_word(word);
 		return;
 	}
 	if (fd == STDOUT) {

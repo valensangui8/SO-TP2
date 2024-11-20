@@ -264,23 +264,22 @@ int test_sync_user(int16_t fds[], int argc, char **argv) {
 static void cat_process() {
 	char c;
 	while ((c = get_char()) != EOF) {
-		put_char(c);
+		printf("%c", c);
 	}
+	call_sys_draw_char(EOF);
 	call_sys_enter();
 }
 
 int cat(int16_t fds[]) {
 	int pid = call_sys_create_process("cat", 4, NULL, 0, &cat_process, fds);
-	call_sys_wait_children(pid);
 	return pid;
 }
 
 static void wc_process() {
 	char c;
 	int line_count = 0, word_count = 0, char_count = 0, in_word = 0;
-
 	while ((c = get_char()) != EOF) {
-		call_sys_draw_char(c);
+		printf("%c", c);
 		if (c == '\n') {
 			line_count++;
 		}
@@ -300,7 +299,6 @@ static void wc_process() {
 
 int wc(int16_t fds[]) {
 	int pid = call_sys_create_process("wc", 4, NULL, 0, &wc_process, fds);
-	call_sys_wait_children(pid);
 	return pid;
 }
 
@@ -309,7 +307,7 @@ static void filter_process() {
 	while ((c = get_char()) != EOF) {
 		if (c != 'a' && c != 'e' && c != 'i' && c != 'o' && c != 'u' &&
 			c != 'A' && c != 'E' && c != 'I' && c != 'O' && c != 'U') {
-			put_char(c);
+			printf("%c", c);
 		}
 	}
 	call_sys_enter();
@@ -317,7 +315,6 @@ static void filter_process() {
 
 int filter(int16_t fds[]) {
 	int pid = call_sys_create_process("filter", 4, NULL, 0, &filter_process, fds);
-	call_sys_wait_children(pid);
 	return pid;
 }
 

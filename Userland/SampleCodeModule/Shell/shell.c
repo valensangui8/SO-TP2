@@ -47,11 +47,15 @@ static int run_command(char *command, int argc, char **argv, char *flag, int16_t
 void initialize_shell(char *command, int argc, char **argv, char *command2, int argc2, char **argv2, int background) {
 	char flag = 0;
 	int16_t fds1[3], fds2[3];
+	int pid1, pid2;
 	if (argc2 == 0) { // one process
 		fds1[STDIN] = (background) ? DEV_NULL : STDIN;
 		fds1[STDOUT] = STDOUT;
 		fds1[STDERR] = STDERR;
-		run_command(command, argc, argv, &flag, fds1);
+		pid1 = run_command(command, argc, argv, &flag, fds1);
+		if (!background) {
+			call_sys_wait_children(pid1);
+		}
 		return;
 	}
 
@@ -70,15 +74,11 @@ void initialize_shell(char *command, int argc, char **argv, char *command2, int 
 	fds2[STDOUT] = STDOUT;
 	fds2[STDERR] = STDERR;
 
-	int pid = run_command(command, argc, argv, &flag, fds1);
-	if (flag == 0 || argc2 == 0) {
-		return;
-	}
-	else {
-		run_command(command2, argc2, argv2, &flag, fds2);
-	}
+	pid1 = run_command(command, argc, argv, &flag, fds1);
+	pid2 = run_command(command2, argc2, argv2, &flag, fds2);
 	if (!background) {
-		call_sys_wait_children(pid);
+		call_sys_wait_children(pid1);
+		call_sys_wait_children(pid2);
 	}
 }
 
